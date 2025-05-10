@@ -1,0 +1,2661 @@
+﻿[img]https://i.imgur.com/46LC7jf.png[/img]
+
+
+[right][size=85]Made by Alex Mpache, January of 2022.[/size][/right]
+
+
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+
+
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white]
+[hr][/hr]
+[center][size=150][b]The Privileges of an LSEMS Supervisor[/b][/size][/center]
+[center][color=transparent]SPACER[/color][/center]
+[center][b]As a Supervisor, you get access to many things you will find useful on your day-to-day shifts, along with some things you will need to utilize from time to time.[/b][/center]
+[center][color=transparent]SPACER[/color][/center]
+[b][size=115]The list of things is as follows: [/size][/b]
+[center][color=transparent]SPACER[/color][/center]
+[b]--> [/b]Access to new vehicles - The trusty Scout, with a customized livery depending on your rank 
+
+
+[b]--> [/b]Additionally, you have full access to any non-emergency vehicles in the fleet. These still are not toys, and should only be used when necessary, such as an event.
+[center][color=transparent]SPACER[/color][/center]
+[b]--> [/b] Betsy is now an even greater friend of yours! She will be happy to tow any and all LSEMS vehicles no matter where they are, you only need to ask her nicely! 
+[b](( You can now delete vehicles that are TIED TO A UNIT. If a vehicle has been detached from its unit, you cannot remotely get rid of it. The command is "/clearunit unitname" (input the corresponding unit name in the place of 'unitname', for example: "/clearunit C-6" ). This will also delete the Unit, so it will need to be re-created, and its non-leader members need to rejoin. )) [/b]
+[center][color=transparent]SPACER[/color][/center]
+[b]--> [/b] You are now allowed to sign Medical Licenses for people. You hand these out to people who have completed their EMT Certification or have completed a BLS Course. [b](( /givemedical ID  |  /removemedical ID | Note: It is very short range! Ensure the person received it by having them check their licences.  )) [/b]
+[center][color=transparent]SPACER[/color][/center]
+[b]--> [/b] You can now ask Betsy to issue new badges to people (be nice to her though)!! [b](( You now have access to adjusting ranks and groups within F4. Be careful when using this, make sure you've selected the correct person. More details in the guide below. )) [/b]
+
+
+[/divbox]
+
+
+[divbox=white]
+[hr][/hr]
+[center][size=130][b](( The F4 Menu for Dummies ♥ ))[/b][/size][/center]
+
+
+[spoil]
+You are about to learn how to use the F4 Menu. Please do not take this tool lightly, you can literally rank down a Lieutenant to EMT-B on accident, and you cannot reverse it yourself. 
+Further, [b] DO NOT ABUSE THE F4 MENU[/b], there is no reason to toy with it. Using F4 for the first time is most certainly a scary experience, but this guide is supposed to help you through it.
+[list]
+[*] Press F4 and navigate to the LSEMS faction. Make sure to click on "View Details"
+[img]https://i.imgur.com/kjOyKny.png[/img]
+[*] Focus on the left side where you will find the faction menu
+[img]https://i.imgur.com/qtkLCeY.png[/img]
+[b]NOTE:[/b] The two things you will be working with are:
+[list=1]
+[*]Managing current members
+[img]https://i.imgur.com/P1uQOSA.png[/img]
+By clicking on "Members" as highlighted in the image above, you will get access to the currents members of LSEMS, alongside with 3 buttons: [b]Branch[/b] (which is the divisional badge), [b]Group [/b](which is the field of operations rank) and [b]Kick [/b](which kicks from the faction).
+[list]
+[*]Overview of members section
+[img]https://i.imgur.com/1PDYsCH.png[/img]
+[*]Overview of "Branch" button
+[img]https://i.imgur.com/aOSllnX.png[/img]
+[*]Overview of "Group" button
+[img]https://i.imgur.com/KgtHIvG.png[/img]
+Just clicking a certain rank will update the person. Be careful as there are no confirmations, once you click it, it's done.
+[/list]
+[*]Inviting new members
+[img]https://i.imgur.com/lwh8QTq.png[/img]
+Inviting new members into the faction should and can only be done when handling a Contract for a new Employee. Simply type out their name or ID (double-check you have the correct one), and submit it. Then, let them know in a PM that you've sent them an F4 Faction Invite.
+[list]
+[*]Overview of the Invite menu
+[img]https://i.imgur.com/FAQSFB7.png[/img]
+[/list]
+[/list]
+[/list]
+
+
+[/spoil]
+[/divbox]
+[center][LSEMSfooter][/LSEMSfooter][/center]
+
+
+[img]https://i.imgur.com/oqlw936.png[/img]
+
+
+[right][size=85]Made by Alex Mpache, January of 2022.[/size][/right]
+
+
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+
+
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white]
+[hr][/hr]
+[center][size=150][b]The Responsiblities of an LSEMS Supervisor[/b][/size][/center]
+[center][color=transparent]SPACER[/color][/center]
+[center][b]As a Supervisor, your responsibilities are many. In this section, we will be predominantly covering responsibilities in the field with 'desk' responsibilities sprinkled in. These are not listed in any order. [/b][/center]
+
+
+[hr][/hr]
+
+
+[list]
+[*]As a Supervisor, it is expected of you to diversify and maintain your divisional skill set. At this point in time, all Junior Paramedic+ are required to:
+[list][*]Have a Certification in at least two out of the three: Medevac, Kamacho or Firefighter
+[*]Hold an Instructor position in any division [i](excluding the IA Division)[/i] - Instructor = Can train trainees within the division
+[*]Membership with completed training [i](completed basic training for the division)[/i] in [b]any three [/b]LSEMS divisions [i](it can be a mix of all offices)[/i]:
+[list][*] [b]Office of Operations:[/b] Field Training Division, Air & Rescue Division, Fire & Rescue Division, Lifeguard Division (Note: Medevac & Kamacho combined don't count as two, but either of them count as one)
+[*][b]Office of Special Operations: [/b] CRU Division, AMU Division, Forensics Division 
+[*][b]Office of Administration:[/b] Recruitment and Employment Division, Public Relations Division, Basic Life Support Division
+[/list]
+[/list]
+
+
+[hr][/hr]
+[*]Make sure you are aware of your available units at all times (10-21) and make sure you spread the units out to have coverage in areas with high call loads. You do not always need a unit up north, but if you have 5 total units, it is a great idea to send someone who is Medevac or Mountain rescue trained up there.
+[hr][/hr]
+[*]Make sure any and all radio calls are clear and as compact as possible. If someone is slurring their speech [i][b]purposefully [/b][/i]or making unnecessarily long radio calls, call them out on it, as nicely as possible, and off of frequency if and when possible. (If they are a repeat offender, this should be brought up to other supervisor+ in meetings and in person if necessary).
+[hr][/hr]
+[*]Manage department radio efficiently. You need to know who's 10-8 at the moment of the Dep. Radio requests and send them to the requested call or location. You can send multiple units if you have at least one remaining after sending the others. (don't leave yourself with 0 10-8 units essentially). [b][u]Be polite on department radio, even if the other party is not; save your bodycam and IA if necessary.[/u][/b]
+[hr][/hr]
+[*]Avoid explaining things and answering questions in detail via radio, but rather opt to meet with the EMT (go to them, you will make them feel better). This will significantly reduce radio clutter and will keep the channel nice and clean for more urgent communication. 
+[hr][/hr]
+[*]Make sure that the call list is handled as efficiently as possible. This directly goes hand in hand with unit management.
+[hr][/hr]
+[*]Make sure to clean up duplicate calls as quickly as possible to avoid stacking units at calls (encourage 10-70s though). CHECK BEFORE YOU CLOSE!!!
+[hr][/hr]
+[*]Perform random bodycam checks, but do not do it too often to the same people. (( RP Looking at their bodycams and looking for a light indicating their bodycams being on ))
+[hr][/hr]
+[*]Attend calls as a 10-70 if you are 10-8, AT ALL TIMES. Try having as little downtime as possible. Supervisor presence raises morale (Yes, you literally standing there like a log is better than you not being there, but please do scene management and talk to people, and assist with the call to the best of your ability). For regular 911 calls, you do not need to make a 10-70 radio call (especially if multiple units are responding), however, calls from other departments do require the 10-70 radio call.
+[hr][/hr]
+[*]Encourage activity! Talk to EMTs, ask them how they are, and make their shift entertaining! Code 1's are a decent way of doing this, everyone gets to practice driving, scene management, patient treatment, radio calls, and most importantly everyone gets to socialize on the call. (([u]Make the game more fun essentially. Nobody likes doing nothing[/u].))
+[hr][/hr]
+[*]Whenever you attend a call as a 10-70 or during a Code 1 (drill or actual), make sure to look at what your EMTs and EMRs are up to. Catching mistakes early is crucial for improvement and efficiency. ([b]If you do catch someone messing up, correct them for it quietly or entirely in private.[/b])
+[hr][/hr]
+[*]Scene management. [b]Do it. [/b] See the guide: 
+[spoil]
+[center][size=85]Guide written by Kevin Grabber, retouched by Mpache. Thank you Kev <3 ![/size][/center]
+[center][b][size=150][font=Franklin Gothic Medium][color=#800000]SCENE MANAGEMENT:[/color][/size][/b][/center][/font]
+[divbox=white]
+[font=Verdana][b]Scene Setup Examples[/b]
+[list]Example 1 can be used for 2way and 1way traffic scenarios.
+[*]Example 2 can be used for when patients are in an intersection.[/list][/font]
+[hr]
+[b][font=Lucida Console][color=#0000FF]EXAMPLE 1:[/color][/font][/b]
+
+
+[img]https://imgur.com/8HUGr5D.png[/img]
+[hr]
+[b][font=Lucida Console][color=#0000FF]EXAMPLE 2:[/color][/font][/b]
+
+
+[img]https://imgur.com/7VNRTM3.png[/img]
+[hr]
+[list][b][font=Verdana]CODE1 and CODE 1 Drills[/b][/list][/font]
+[hr]
+[i][b][font=Verdana]BELOW[/b][/i] is a guideline to follow when responding to a [b][i]CODE 1[/i][/b] and a [b][i]CODE 1 drill[/i][/b] involving 1 way traffic. 
+This guide can also be used without a [color=#FF0000]CODE 1[/color] for calls where more than 2 units are needed.[/font]
+[hr]
+[img]https://imgur.com/fXdvWXi.png[/img]
+[hr]
+[font=Verdana][highlight=yellow]Figure 1.[/highlight] can be expanded exponentially.
+[list]In this 2 lane 1-way road, one lane is blocked off leaving 1 land open for incoming traffic.
+[*]Additional units can be placed between [b]Optional Backup[/b] vehicles and [b]Commander/Supervisor[/b] vehicles[/list]
+[hr]
+[font=Verdana][i][align=center][b][color=#FF0000]*If there are no Command/Supervisors and this scene management procedure is needed feel free to use a ambulance in their place*[/color][/b][/align][/i][/font]
+[hr]
+
+
+[font=Verdana][i][b]BELOW[/b][/i] is a guideline to follow when responding to a [i][b]CODE 1[/b][/i] and a [b][i]CODE 1 drill[/i][/b] involving 2 way traffic. 
+This guide can also be used without a [color=#FF0000]CODE 1[/color] for calls where more than 2 units are needed.[/font]
+[hr]
+[img]https://imgur.com/4Wuw5vf.png[/img]
+[hr]
+[font=Verdana][color=#FF0000][size=150]CODE 1[/size][/color] calls dealing with a single lane 2 way traffic situation can be tricky. 
+[list]In this 1 lane 2 way traffic road, we control the flow of traffic by [b][u]STOPPING[/u][/b] incoming vehicles illustrated in [highlight=yellow]Figure 2.[/highlight]
+[*]The traffic is controlled at each end by a Commander/Supervisor ensuring maximum safety.[/list]
+[b]Commander/Supervisor[/b] and [b]Optional Backup Vehicles[/b] can be switched around depending on who responds to the [color=#FF0000]CODE 1[/color]
+[b]In cases[/b] in which more units respond to the [color=#FF0000]CODE 1[/color]more Optional Backup Vehicles can be placed in line with the Transport Vehicles.
+[i][align=center][b]*If there are no Commander/Supervisors and this scene management procedure is needed use the next highest rank on scene*[/b][/align][/i][/font]
+[hr]
+[font=Verdana][b][i][size=150]Brief Description:[/size][/i][/b]
+[b]Buffer Zone:[/b]
+[list]This zone gives the ability for the ambulance to be hit by a vehicle and slide without hitting you or the patient.[/list]
+[b](( /blockade barrier2 ))[/b]
+[list] This barrier is used to block off traffic, it has no directional markings.[/list]
+[b](( /blockade arrow ))[/b]
+[list] This barrier is used to re-direct traffic away from the scene, ( direction of the arrow will points to your right when placed )[/list]
+[b](( /blockade cone ))[/b]
+[list] This barrier is to create a line that will prevent vehicles from crossing into the scene.[/list][/font]
+[/divbox][/spoil]
+[hr][/hr]
+[*]While you are not out and about in the field, try making an attempt at inspecting EMT paperwork in the divisions you are in. EMTs uncommonly need guidance with paperwork detailing or general direction, if you spot paperwork that could be improved on, try catching the EMT on duty and talk to them about it. If the corrections/mistakes are more significant, you can also contact the divisional command of the corresponding division.
+[hr][/hr]
+[*] General EMT activity is important for promotions. If they exclusively do field work and no divisional work, this is [i]no bueno[/i], divisional work is very important for promotions, the more the merrier. ( keep in mind, [i]good[/i] divisional work is important )
+[hr][/hr]
+[*] (( [b]OOC Behaviour also impacts promotions[/b]. If someone is being toxic or passive-aggressive, this does not promote a healthy environment. However, do not assume stuff. Approach them via personal messages, ask them how they're doing and slowly try to uncover why they are being toxic and if there is a reason behind it. )) 
+[hr][/hr]
+[*] Ideally, conduct any Supervisory paperwork during downtimes, such as but not limited to LOAs, Reinstatement Requests, Contracts, and Certifications. You are of course permitted to do any paperwork off duty, but you are expected to do paperwork, therefore are paid to do it and are not salary farming by doing paperwork on duty. Of course, if a situation pops up where a medic is needed, you should be pausing paperwork for that.
+[hr][/hr]
+[*]A recently new addition to Supervisory Responsibilities is 1 on 1 meetings, commonly stylized as "1:1" and "1on1" meetings.
+
+
+In brief, these meetings serve as a touch-base meeting that takes place every three months between an EMT and Supervisors and provide insight into the thoughts and activities of EMTs.
+
+
+To properly understand and perform these, visit this section - [url=https://gov.eclipse-rp.net/viewtopic.php?t=177330][b]1:1 Guide & Formats[/b][/url].
+[/list]
+[/divbox]
+[center][LSEMSfooter][/LSEMSfooter][/center]
+
+
+[img]https://i.imgur.com/2Domk6D.png[/img]
+
+
+[right][size=85]Made by Alex Mpache, January of 2022.
+Facelifted by Alex Mpache, April of 2024.[/size][/right]
+
+
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+
+
+[lsemsfooter][/lsemsfooter]
+[divbox=white]
+[center][lsemssubtitle][size=120][b]Promotion Process[/b][/size][/lsemssubtitle][/center]
+[hr][/hr]
+[center][color=transparent]SPACER[/color][/center]
+[center][b][size=105]Every single EMT Promotion is a story of its own. Two identical employees do not exist, and as such, every single promotion must be looked at individually. Employees must first qualify for a promotion as per the Promotion Guidelines of Section 3 of the Supervisor Handbook, after that, it is a matter of fine details.[/size][/b][/center]
+[center][color=transparent]SPACER[/color][/center]
+
+
+[center][size=105]Once an employee meets the requirements for a promotion, paired with the fine details such as Duty Reports and their general mood (if someone is passive-aggressive and/or toxic, they are not to be promoted but reformed) (( both IC and OOC )), the process for 'pushing' someone for a promotion is rather straightforward. [/size]
+[hr][/hr]
+[size=135][b]See below:[/b][/size][/center]
+[center][color=transparent]SPACER[/color][/center]
+[b]-> STEP ONE ->[/b] Every Thursday (give or take), Command+ will send out the upcoming Supervisor+ Meeting Agenda. All of these are posted and available for viewing [url=https://gov.eclipse-rp.net/viewforum.php?f=1932]right here.[/url] You, as a Supervisor+, should be opening up the agenda and filling it out with your input timely. 
+The agenda contains four main sections: General Agenda, Employee Feedback, High Command Agenda, Notes.
+The header of the agenda also contains the date & time of the meeting, along with the attendees. 
+
+
+[b]-> STEP TWO ->[/b] After accessing the Agenda and getting comfortable with it, you need to drop in your input. This can and will vary from very little to a lot. You should primarily focus on writing out information about EMTs you are in contact with during your shifts and employees who you see doing good divisional work. If you have a topic you would like to bring up for discussion, you add it to the first section, General Agenda, with your name, topic, and description of it. 
+[b]Example of an agenda topic[/b] (imaginary situation): 
+[spoil]Mpache - Pillbox Parking Issues - We've recently had to request PD's assistance with towing multiple vehicles from the lower Pillbox parking lot, but PD has been half-ignoring these requests. Is there anything that we can do differently to improve their response rate to us?[/spoil]
+[b]Example of employee feedback[/b] (imaginary EMT | NAME - RANK  - [ CALLSIGN ] - LAST PROMO): 
+[spoil]John Bofus - EMT-I - [ ECHO-69 ] - 29/NOV/2021 
+      -> Mpache: EMT Bofus has been showing significant improvement since his last promotion. He has joined Field Training and is now actively training EMRs. Additionally, I have talked to him and he is planning on applying to another division as well as getting a certification in either Lifeguard or Forensics. [/spoil]
+
+
+[b]-> STEP THREE ->[/b] After you've added your input for the EMT, you will need to advocate for it once the Sunday meeting comes up, basically extending your words and talking a bit more about the EMT in general. After this, other employees present their feedback on the EMT as well, and then a vote is made. The vote is decided by the majority, and High Command can Veto any promotions for Internal reasons if need be. Additionally, High Command can promote EMTs without a previous 'campaign' for promotion, if High Command notices a greater quality within the EMT. 
+
+
+[b]-> STEP FOUR ->[/b] If the promotion goes through successfully, the EMT needs to be promoted in the field. Additionally, EMTs pending promotion are listed just below the Employee Feedback section. For a guide on promoting an employee, go to Section 5 of the Supervisor Handbook.
+
+
+[hr][/hr]
+[/divbox]
+[center][color=transparent]SPACER[/color][/center]
+[divbox=white]
+[center][lsemssubtitle][size=120][b]Promotion Guidelines[/b][/size][/lsemssubtitle][/center]
+[hr][/hr]
+[center][color=transparent]SPACER[/color][/center]
+[center][b]General promotion guidelines for all ranks currently present within LSEMS. Deviations are always a possibility, depending on surrounding circumstances and events. With reinforced guidelines, deviations are going to be very unlikely to happen.[/b][/center]
+[center][color=transparent]SPACER[/color][/center]
+
+
+[b]Applies across the board:[/b][list]
+[*]Consistency in meeting the LSEMS 5-hour minimum per week.
+[*]Being clean of Internal Affairs (accepted or ongoing) reports and/or disciplinary actions. 
+[*]The Time in Rank Before Promotion does not mean that the promotion happens instantly after the time is up - other factors named in the per-rank list matter.
+[*]An LOA essentially pauses the promotion progress unless you are active during it (making hours, and/or doing substantial divisional). 
+[*](( Long LOAs that are requested due to long-term OOC free time instability due to work, education, illness, or other similar reasons are a slightly different story, in the sense that it is not held against you as it is a video game at the end of the day, but do expect a slowdown due to promotions requiring more consistency the higher up you go. This doesn't mean you are held back, you are never held back, but rather slowed down in progress towards the next rank within the faction. ))
+[*]Divisional work is extremely valuable to your promotion progress from one rank to the next. Early EMT ranks are far less subjected to this however - as an example, an EMT-B promotion is achieved through completion of the FTP, an EMT-I promotion is achieved by further polishing your EMT-B self, whereas an EMT-A promotion requires divisional work, without which you are not going to be promoted. 
+[/list]
+
+
+[b]What is defined as 'divisional work'?[/b]
+[list][*]First and foremost, divisions are divided into three Offices - Operations, Special Operations, and Administration. This dictates a baseline of what each division's activity consists of, with each unique division building on top of it. Below are descriptions of the [b]basic duties of each division[/b] - these are not fully encompassing of what each division does, but just their very base of divisional operations. You will notice that a lot of the below-listed entries work towards expanding your skill set as a medic, which means that you have the ability to cover a wider variety of tasks and challenges in the field and office.
+[color=transparent]spacer[/color]
+[*]Divisional Work in the [b]Office of Operations[/b]
+[list][*]Field Training Division - a fully certified FTO performing training sessions for EMRs.
+[*]Air & Rescue Division - obtaining the division's certifications for a Pilot (Medevac) / a Rescuer (Kamacho).
+[*]Fire & Rescue Division - obtaining the division's (full) Firefighter Certification.
+[*]Lifeguard Division - obtaining the division's Lifeguard Certification.[/list]
+[color=transparent]spacer[/color]
+[*]Divisional Work in the [b]Office of Special Operations[/b]
+[list][*]CRU Division - obtaining the division's First Responder Certification.
+[*]AMU Division - obtaining the division's Doctor Certification.
+[*]Forensics Division - obtaining the division's Serologist Certification.
+[/list]
+[color=transparent]spacer[/color]
+[*]Divisional Work in the [b]Office of Administration[/b]
+[list][*]Recruitment & Employment Division - obtaining the division's Application Handler Certification.
+[*]Public Relations Division - obtaining the division's Representative Certification.
+[*]Basic Life Support Division - obtaining the division's Basic Life Support Instructor Certification. 
+[/list][/list]
+[color=transparent]spacer[/color]
+
+
+
+
+[b]EMR to EMT-B[/b][list=none]
+[b]-> [/b]Time in Rank Before Promotion: 1-8 weeks (Allowed a total of 12 weeks, 4 of which are LOA) (( Special consideration for cases of OOC absence may be considered - Contact the Chief! ))
+[b]-> [/b]Must have read and [u]understood[/u] the department manuals.
+[b]-> [/b]Must have passed their Certification and completed the Field Training Program.
+[b]-> [/b]Must be clean of Internal Affairs report and/or disciplinary actions.
+[b]-> [/b](( Has shown improvement in roleplay standards. It is expected of you to grasp the basics of being a medic. ))[/list]
+[hr][/hr]
+
+
+[b]EMT-B to EMT-I[/b]
+[list=none][b]-> [/b]Time in Rank Before Promotion: 3+ weeks
+[b]-> [/b]Must have shown visible improvement on the field with treatment and radio calls.
+[b]-> [/b]Must feel comfortable with and [b]demonstrate [/b]the knowledge in the department manuals.
+[b]-> [/b]Divisional Work is not mandatory for this promotion but will accelerate it (not shorter than 3 weeks). Applying to divisions, and being a trainee displays proactivity.
+[b]-> [/b](( Has shown improvement in roleplay standards. It is expected of you to have a more firm grasp of being a medic. ))[/list]
+[hr][/hr]
+
+
+[b]EMT-I to EMT-A[/b]
+[list=none][b]-> [/b]Time in Rank Before Promotion: 4+ Weeks
+[b]-> [/b]Must be fully trained in at least 1 Divisions to be eligible for promotion.
+[b]-> [/b]Divisional Work is mandatory for this position. More divisions equal a faster promotion (not shorter than 4 weeks).
+[b]-> [/b](( Has shown improvement in roleplay standards. It is expected of you to have a very firm grasp of being a medic. ))[/list]
+[hr][/hr]
+
+
+[b]EMT-A to Master EMT[/b]
+[list=none][b]-> [/b]Time in Rank Before Promotion: 4+ Weeks
+[b]-> [/b]Must be fully trained in at least [b]3 divisions[/b], furthermore:
+[list=none][b]-> [/b]Must be fully trained (and active where applicable) in at least one of the following: Pilot/Medevac Certification, Kamacho Certification, Firefighter Certification
+[b]-> [/b]Must be a fully trained member in an additional two divisions from any Office - Operations, Special Operations, or Administration. [i](Note: Pilot/Medevac + Kamacho do not count as 2; applies to any other divisions that may have multiple certificates as well.)[/i]
+[b]-> [/b]Must be an Instructor within at least 1 Division[/list]
+[b]-> [/b]Must have a great grip on every single thing regarding the field duties of an EMT.
+[b]-> [/b]Must be clean of Internal Affairs report and/or disciplinary actions
+[b]-> [/b](( Has shown improvement in roleplay standards. It is expected of you to have a full grasp of being a medic, serving as a role model for lower ranking EMTs. ))[/list]
+[hr][/hr]
+
+
+[b]Master EMT to Junior Paramedic[/b]
+[list=none][b]-> [/b]Successfully passed the application process and been invited to the Supervisor Training Program
+[b]-> [/b]Time in Rank Before Promotion: N/A - Entry to the Supervisor Training Program is gained via the application process, which periodically opens depending on the needs of the department, which include but are not limited to total supervisor count, supervisor coverage, and supervisor rank structure.
+[b]-> [/b]Has to show seeds of a quality leader during day-to-day shifts.
+[b]-> [/b]Is consistent in meeting the LSEMS 5-hour minimum per week, but strives for more when possible.
+[b]-> [/b]Must be clean of Internal Affairs report and/or disciplinary actions.
+[b]-> [/b](( Substantial improvement in roleplay standards as well as the ability to coach others are valued. ))[/list]
+[hr][/hr]
+
+
+[b]Junior Paramedic to Paramedic[/b]
+[list=none][b]-> [/b] Successfully completed the Supervisor Training Program.
+[b]-> [/b]Must be fully trained in at least two of the following: Pilot/Medevac Certification, Kamacho Certification, Firefighter Certification
+[b]-> [/b](( Substantial improvement in roleplay standards as well as the ability to coach others are valued. ))[/list]
+[hr][/hr]
+
+
+[b]Paramedic to Senior Paramedic[/b]
+[list=none][b]-> [/b]Time in Rank Before Promotion: 6+ Weeks, affected by the structure of the Leadership Team.
+[b]-> [/b]Must have shown serious activity within their divisions.
+[b]-> [/b]Must have shown activity within the instructor positions held within divisions.
+[b]-> [/b]Must have shown the ability to be a professional Supervisor.
+[b]-> [/b]Must be a prime example of a good employee.
+[b]-> [/b]Has shown the ability to have coaching conversations with EMTs.
+[b]-> [/b]Must have shown the ability to provide valuable input during any and all Supervisor+ meetings.
+[b]-> [/b]Can be fully trusted to own Code 1 situations and take the lead in JTAC. 
+[b]-> [/b]Must be clean of Internal Affairs report and/or disciplinary actions.
+[b]-> [/b](( Has shown improvement in roleplay standards and is a day-to-day RP Role Model for EMRs and EMTs. ))[/list]
+[hr][/hr]
+
+
+[b]Senior Paramedic to Lead Paramedic[/b]
+[list=none][b]-> [/b]Time in Rank Before Promotion: 8+ Weeks, affected by the structure of the Leadership Team.
+[b]-> [/b]Must continue to show serious activity within their divisions.
+[b]-> [/b]Must continue to show activity within the instructor positions held within divisions.
+[b]-> [/b]Must have shown the ability to be a professional Supervisor, and the ability to coach current Paramedics.
+[b]-> [/b]Has shown the ability to have coaching conversations with EMTs as well as resolve conflicts on the spot effectively.
+[b]-> [/b]Has gained serious comfort as a Supervisor and as a coach for STP candidates.
+[b]-> [/b]Must continue to show the ability to provide valuable input during any and all Supervisor+ meetings.
+[b]-> [/b]Must be clean of Internal Affairs report and/or disciplinary actions.
+[b]-> [/b](( Has shown improvement in roleplay standards and is a day-to-day RP Role Model for EMRs and EMTs. ))[/list]
+[hr][/hr]
+
+
+[b]Lead Paramedic to Lieutenant[/b]
+[list=none][b]-> [/b]First LSEMS Command Rank.
+[b]-> [/b]Continues to excel as a member, instructor, and role member in divisions.
+[b]-> [/b]Must showcase the ability to provide contributions on a department-wide scale, as well as the ability to initiate discussions that affect the entire department, as well as any other personal passion projects.
+[b]-> [/b]Must have shown the ability to coach lower ranking Paramedics consistently, through day-to-day operations as well the Supervisor Training Program.
+[b]-> [/b]Has shown the ability to consistently prevent major conflicts between employees and assists in resolving issues at all times.
+[b]-> [/b]Has gained the ability to comfortably coach lower-ranking Paramedics on how to gain comfort as Supervisors.
+[b]-> [/b]Continues day-to-day divisional work with the added effort of assisting Divisional Command in their duties as well as providing assistance with Handbook or other format updates.
+[b]-> [/b]Must continue to show the ability to provide valuable input during any and all Supervisor+ meetings, as well as the ability to kickstart brainstorming on topics.
+[b]-> [/b]Has shown drive and passion for taking on broader projects within LSEMS to improve the department, and improve its well-being.
+[b]-> [/b]Must be clean of Internal Affairs report and/or disciplinary actions
+[b]-> [/b]Subject to High-Command discussion, and the needs of the department.
+[b]-> [/b](( Has shown improvement in roleplay standards and is a day-to-day RP Role Model for EMRs and EMTs, as well as Supervisors. ))[/list]
+[hr][/hr]
+
+
+[b]Command Promotions[/b]
+[list=none][b]-> [/b]Must have shown significant effort with the responsibilities as a member of the Command team
+[b]-> [/b]Must have shown to be capable of completing any task assigned timely and with great quality
+[b]-> [/b]Has shown excellence in all aspects of being an employee and a member of the Supervisor+ team
+[b]-> [/b]Has shown drive and passion for taking on broader projects within LSEMS to improve our department, and has taken action toward achieving these goals
+[b]-> [/b]Assists wherever and whenever there is a need for an extra pair of hands or eyes with any ongoing project
+[b]-> [/b]Assists High-Command with their projects regularly, providing input and acting as an advisor. 
+[b]-> [/b]Must be clean of Internal Affairs report and/or disciplinary actions
+[b]-> [/b]Subject to High-Command discussion, and the needs of the department.
+[b]-> [/b](( Has shown improvement in roleplay standards and is a day-to-day RP Role Model for EMRs, EMTs, as well as Supervisors. )) [/list]
+
+
+
+
+[/divbox]
+[center][LSEMSfooter][/LSEMSfooter][/center]
+
+
+[img]https://i.imgur.com/UdL85hH.png[/img]
+
+
+
+
+[right][size=85][i]Made by Alex Mpache | Edited by Emilia Thalmer[/i][/size][/right]
+
+
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+
+
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white]
+[center][lsemssubtitle][size=120][b]Certifications[/b][/size][/lsemssubtitle][/center]
+[hr][/hr]
+
+
+As a Supervisor, you are eligible and expected to conduct Certifications. This is a difficult task at first, but the more you do them (and field training in general), the more comfortable and easy they become. 
+[spoil]
+[list][*]The Certification process is explained within the [url=https://gov.eclipse-rp.net/viewtopic.php?t=87381#EMRTRAINING]Field Training Division's Handbook[/url], as well as all EMR Student profiles. 
+[*]Make sure to follow the instructions carefully, and to handle the Certification as your only focus during the session.
+[*]Processing paperwork for a successful certification:
+[list=number][*]Let the EMR, now EMT-B, pick their callsign. Tell them they can check which one is available on the [url=https://gov.eclipse-rp.net/viewtopic.php?p=126127#p126127]LSEMS Staff Roster[/url]. 
+[*]Give them their medical license. (( /givemedical ))
+[*]Tell the EMR about Duty Reports, and mention that they are not mandatory but are encouraged to be filled out at least once a pay period.
+[*]Inform the EMR that since they are now an EMT-B they can join divisions.
+[*]Ask them if they have a pager. If not, ask them if they want one. Explain what a pager is and make sure they know how to properly use it! (( Make sure they understand they have to RP pressing it with a simple /me, and check the discord if they have the 'On Call Program' role either way. ))
+[*] (( F4 rank adjustment, Discord, Teamspeak - reference [url=https://gov.eclipse-rp.net/viewtopic.php?t=74487]Section 5[/url] for detailed guidance in the case of them being offline on Teamspeak))
+[*]Fill out and post the certification paperwork in the [url=https://gov.eclipse-rp.net/viewforum.php?f=617]EMR Student Profile[/url].
+[*]Archive the [url=https://gov.eclipse-rp.net/viewforum.php?f=617]EMR Student Profile[/url], and make sure to rename it to [CERTIFIED] instead of [PENDING CERT].
+[*] Update the [url=https://gov.eclipse-rp.net/viewtopic.php?t=9497]General Department Roster[/url] - You only need to adjust the Staff Roster (second post), copy the EMR entry into the appropriate numerical slot in the EMT section, edit the rank from "EMR" to "EMT-B".
+[*]Update the [url=https://gov.eclipse-rp.net/viewtopic.php?p=852847#p852847]EMT 1on1 list[/url], adding them to it (ensure they are placed in the correct numerical order).
+[*]Post the EMT-B promotion format ([url=https://gov.eclipse-rp.net/viewtopic.php?t=104826#PROMOTIONPOST]found here[/url]) into their [url=https://gov.eclipse-rp.net/viewforum.php?f=605]Personnel File[/url] - Post format can be [url=https://gov.eclipse-rp.net/viewtopic.php?p=445130#PROMOTIONPOST]found here.[/url] (Section 9.14)
+[*]Edit the [url=https://gov.eclipse-rp.net/viewforum.php?f=605]Personnel File[/url] top post - Title, Rank, Callsign, and the Promotions section, linking to the Promotion Post you just made in their file.
+[*]Send them the Promotion Email for EMT-B ( found [url=https://gov.eclipse-rp.net/viewtopic.php?p=445130#PROMOTIONEMAIL]here [/url] (( Open the link then CTRL+A and CTRL+C the content)) ).
+[*]Remove them from the EMR usergroup, and add them to the EMT usergroup, making it their primary group (unless they are employed elsewhere and prefer that one).
+[*]Employee Adjustment post - [url=https://gov.eclipse-rp.net/viewtopic.php?p=445130#RANK-ADJUSTMENT]Format here[/url] (Section 9.12), and [url=https://gov.eclipse-rp.net/viewforum.php?f=573]here[/url] is the location to post it.
+Make sure to fill out the format properly;
+The title should read  ->  [b]Rank Adjustment | Fname Lname[/b]
+[*]Go over to the [b]Ribbons & Awards Section [/b]([url=https://gov.eclipse-rp.net/viewforum.php?f=1250]here[/url]), and request an EMT Ribbon for the freshly certified EMT. If you are conducting a Reinstatement Certification, they should already have this ribbon, therefore you don't need to put the request in.
+[*] (( Request an ACP Rank Change in the MD Discord #forum-and-f4-requests channel; instructions found within ))[/list]
+
+
+[/spoil]
+[/divbox]
+[hr][/hr]
+[divbox=white]
+[center][lsemssubtitle][size=120][b]Contracts[/b][/size][/lsemssubtitle][/center]
+[hr][/hr]
+[center][color=transparent]SPACER[/color][/center]
+[list=none][size=105][b]Junior Paramedics (Post P3)+[/b] are able to sign contracts for LSEMS applicants and reinstatements. The checklists found below should be followed strictly to ensure a smooth, error-free contract process:
+
+
+[b]I. Regular Recruitment:[/b][/size]
+
+
+[spoil]
+[list=number]
+[*] Give the applicant the [color=#3CB371]EMR[/color] & [color=#BF0000]Los Santos Emergency Medical Services[/color] role on the government website.
+[spoil]
+[list=1]Click on your name on the top right of the government website, and select the "User Control Panel" option. 
+[img]https://i.imgur.com/EGo0pY9.png[/img]
+[*]Click the "Usergroups" tab, and then "Manage Groups".
+[img]https://i.imgur.com/CerZv37.png[/img]
+[*]Click "Manage Users" next to the usergroup you wish to assign.
+[img]https://i.imgur.com/kLoDU34.png[/img]
+[*]Scroll all the way down on the page, and input the new hire's name. Setting a group as default will change the color of the person's name on their profile and on their posts. The [b][u][color=#BF0000]LSEMS[/color][/u][/b] usergroup [color=firebrick][b][u]is not[/u][/b][/color] set as default. The [color=forestgreen][b][u]EMR[/u][/b][/color] usergroup [color=forestgreen][b][u]is[/u][/b][/color] set as default. Click "Submit".
+[img]https://i.imgur.com/F4yRWlK.png[/img][/list][/spoil]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Use your duty tablet and load in a new [url=https://gov.eclipse-rp.net/viewtopic.php?t=41848]contract[/url] and hand it over to them [ooc]Send the link to the contracts to them directly via a Discord PM.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Go to the meeting room at Pillbox MD and retrieve their new badge. Hand the badge over to the new hire. [ooc]After the RP is done, you can invite them to the faction using the F4 menu, in the "Invites" section. Notify the applicant you've invited them once you do so.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] [ooc]On Discord, add the EMR Trainee & Employee roles and remove their Applicant role.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] [ooc]Teamspeak | They should already have the credentials - if they don't, give them the IP and PW (IP: ts.eclipse-rp.net; Password: ecrpsagov). Instruct them to rename to their IC name, then give them the "Emergency Medical Services" and "[LSEMS] EMR" usergroups. You do this by right clicking them, then hovering over 'Set Server Groups' and clicking the two aforementioned usergroups.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] [ooc]If the applicant needs a government site name change, use the #Forum-request channel in the LSEMS Discord.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Send the EMR the introduction email which is located [url=https://pastebin.com/raw/eV7qxYdF]here[/url], and instruct them to read through the information before seeking out training.
+[color=transparent][size=85]spacer[/size][/color]
+[*] Field Training Program - create a new student profile for the EMR, using the format located [url=https://gov.eclipse-rp.net/viewforum.php?f=617]here[/url].
+[color=transparent][size=85]spacer[/size][/color]
+[*] Create a new personnel file [url=https://gov.eclipse-rp.net/viewforum.php?f=3702]here[/url] using the title: [pre]RANK | Fname Lname[/pre]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Update the [url=https://gov.eclipse-rp.net/viewtopic.php?t=9497]LSEMS Staff Roster[/url] using this format
+[code][b]X[/b] - [url=link to employee profile]#0000[/url] - [b]EMR[/b] - [url=link to employee personnel file]Fname Lname[/url][/code]
+[color=transparent][size=85]spacer[/size][/color]
+[*][ooc]Remove the Admin log from the initial application, moving it to the #Player-Logs channel on Discord (post in the channel first - make sure the Username is not visible, if it is, crop the image)![/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Close the initial application and use the Application Processed format found in Section 9.16 before moving the application to the Accepted Applications section.
+[/list]
+[/spoil]
+[b]II. Reinstatements:[/b]
+[spoil]
+[list=1]Give the applicant the [color=#3CB371]EMR[/color] & [color=#BF0000]Los Santos Emergency Medical Services[/color] usergroups on the government website.
+[spoil]
+[list=1]Click on your name on the top right of the government website, and select the "User Control Panel" option. 
+[img]https://i.imgur.com/EGo0pY9.png[/img]
+[*]Click the "Usergroups" tab, and then "Manage Groups".
+[img]https://i.imgur.com/CerZv37.png[/img]
+[*]Click "Manage Users" next to the usergroup you wish to assign.
+[img]https://i.imgur.com/kLoDU34.png[/img]
+[*]Scroll all the way down on the page, and input the new hire's name. Setting a group as default will change the color of the person's name on their profile and on their posts. The [b][u][color=#BF0000]LSEMS[/color][/u][/b] usergroup [color=firebrick][b][u]is not[/u][/b][/color] set as default. The [color=forestgreen][b][u]EMR[/u][/b][/color] usergroup [color=forestgreen][b][u]is[/u][/b][/color] set as default. Click "Submit".
+[img]https://i.imgur.com/F4yRWlK.png[/img][/list][/spoil]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Use your duty tablet and load in a new [url=https://gov.eclipse-rp.net/viewtopic.php?t=41848]contract[/url] and hand it over to them [ooc]Send the link to the contracts to them directly via a Discord PM.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Go to the meeting room at Pillbox MD and retrieve their new badge. Hand the badge over to the new hire. [ooc]After the RP is done, you can invite them to the faction using the F4 menu, in the "Invites" section. Notify the applicant you've invited them once you do so.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] [ooc]On Discord, add the EMR Trainee & Employee roles.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] [ooc]Teamspeak | They should already have the credentials - if they don't, give them the IP and PW (IP: ts.eclipse-rp.net; Password: ecrpsagov). Instruct them to rename to their IC name, then give them the "Emergency Medical Services" and "[LSEMS] EMR" usergroups. You do this by right clicking them, then hovering over 'Set Server Groups' and clicking the two aforementioned usergroups.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] [ooc]If the EMR needs a government site change, use the #Forum-request channel in the LSEMS Discord.[/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Send the EMR the re-introduction email which is located [url=https://pastebin.com/raw/Dq7vYC7s]here[/url], and instruct them to take a seat and read through the information before seeking out training.
+[color=transparent][size=85]spacer[/size][/color]
+[*]Reinstatement Training Program - create a new student profile for the EMR, using the format located [url=https://gov.eclipse-rp.net/viewtopic.php?t=90535]here[/url].
+[color=transparent][size=85]spacer[/size][/color]
+[*]Search the [url=https://gov.eclipse-rp.net/viewforum.php?f=624]personnel file archive[/url] first for their file, and if they have an up-to-date (format-wise) personnel file, unarchive it and ensure the information within is up-to-date. If the file is outdated, create a new one and make a link to the old one within the new one.
+[color=transparent][size=85]spacer[/size][/color]
+[*] Update the [url=https://gov.eclipse-rp.net/viewtopic.php?t=9497]LSEMS Staff Roster[/url] using this format
+[code][b]X[/b] - [url=link to employee profile]#0000[/url] - [b]EMR[/b] - [url=link to employee personnel file]Fname Lname[/url][/code]
+[color=transparent][size=85]spacer[/size][/color]
+[*][ooc]Remove the Admin log from the initial application, moving it to the #Player-Logs channel on Discord (post in the channel first - make sure the Username is not visible, if it is, crop the image)![/ooc]
+[color=transparent][size=85]spacer[/size][/color]
+[*] Close the initial application and use the [i]Reinstatement Accepted[/i] format found in [url=https://gov.eclipse-rp.net/viewtopic.php?t=104826#REINSTATEMENT]Section 9.17[/url]. Post it and move the application to the Reinstatement Archive.
+[/list]
+[/spoil]
+[/list]
+[center][color=transparent]SPACER[/color][/center]
+[/divbox]
+[hr][/hr]
+[divbox=white]
+[center][lsemssubtitle][size=120][b]Reinstatements[/b][/size][/lsemssubtitle][/center]
+[hr][/hr]
+[center][color=transparent]SPACER[/color][/center]
+[list=none][size=105][b]Junior Paramedics (Post P3)+[/b] are able to and are in charge of handling reinstatements, and are eligible to discuss any complications attached in such cases.[/size] [/list]
+
+
+[list=none][b][font=Arial]Requirements:[/font][/b]
+[list]
+[*]Rank before discharge: [b]EMT-Basic[/b].
+[*]If the applicant recently left the department (within the last 3 weeks), they may be considered for a rank offer of the same rank (greatly depending on position availability, and divisional positions held).
+[*]The applicant must be in good standing with the department (( Applies OOC as well; the Chief of LSEMS reserves a right to deny a player if deemed incompatible or otherwise unsuitable. )).
+[*]Candidates may be issued special offers (i.e. reinstatement to EMR, reinstatement to EMR with skipped portions of training, and similar) depending on their qualifications both past and current.
+[/list][/list]
+
+
+[list=none][b][font=Arial]What will be considered during a reinstatement discussion:[/font][/b]
+[list]
+[*]Length of absence
+[*]Reason for discharge
+[*]Changes in the department during the absence
+[*]Their previous position and role within the department
+[*]Their performance during the time outside the department
+[*][ooc]Their behavior and standing in the community all around.[/ooc]
+[*]Availability in terms of positions in the department
+[/list][/list]
+
+
+[list=none][b][font=Arial]Notes:[/font][/b]
+[list]
+[*][b]Reinstatement formats[/b] can be found in [url=https://gov.eclipse-rp.net/viewtopic.php?p=445130#REINSTATEMENT]Section 9.17[/url].
+[*]LSEMS Supervisory can handle reinstatement requests up to and including the rank of Master EMT. 
+[*]LSEMS Command can handle reinstatement requests up to and including the rank of Lead Paramedic. These reinstatements should be expected to be handled more slowly.
+[*]Reinstatement requests including the rank of Lieutenant and above will be handled together by LSEMS Command and LSEMS High Command. These reinstatements should be expected to be handled more slowly as well.
+[*]Applicants that were previously EMT-I, EMT-A, or Master EMT, should they satisfy the requirements, are to be issued the same rank if they were away for 2 weeks or less, and a rank one lower than their previous one if they were away for more than 2 weeks. 
+[*]If the applicant was previously EMT-B, and more than 2 weeks have passed since their departure, a discussion is mandatory. If it has been less than 2 weeks, they are to be issued an EMT-B rank offer.
+[*]If the applicant was previously [i]dishonorably[/i] discharged, and has held an EMT rank, a discussion is mandatory. 
+[*]Always conduct a [b]full background check[/b] for the applicant.
+[spoiler=Information & Charges]
+[list]
+[*]The Applicant must be clear from any recent criminal charges
+
+
+There are multiple felonies and charges that will automatically set the application status as [color=Firebrick][b]DENIED[/b][/color].
+[list=I]
+[*]Serious Felonies (SF)
+[*]Weapon charges are listed below:
+[list=i]
+[*]WF01 - Assault with a Deadly Weapon
+[*]WF02 - Shooting from a Vehicle (Drive-By)
+[/*][/list]
+[*]Drug charges (DM & DF)
+[*]Child Endangerment, Sexual Assault, Arson, False Impersonation, Tampering with Evidence, Rape, Abuse or Desecration of Dead Human Body, Possession of Human Body Tissue, Perjury, and Prison Break
+[/list]
+
+
+General felonies that are outside the charges mentioned above have a wait time of [color=Firebrick]6 months*[/color]. 
+
+
+Other Misdemeanors that are outside the charges mentioned above have a wait time of [color=Firebrick]2 months*[/color]
+
+
+[i]All charges are taken from the 2023 [url=https://gov.eclipse-rp.net/viewtopic.php?t=105513]San Andreas Penal Code[/url][/i]
+
+
+[b]*[/b]If the applicant has a general felony that is not mentioned above on the record, they may go through the Los Santos Sheriff's Department's Parole Program or the San Andreas Department of Correction's Felon Program before and provide a reference for the recruitment personnel to review. If not, they may go through therapy to ensure they are fit for duty or have past employment with another agency after the felony was charged.
+[/spoiler]
+[/list]
+
+
+
+
+[center][color=transparent]SPACER[/color][/center]
+[/divbox]
+[center][LSEMSfooter][/LSEMSfooter][/center]
+
+
+[img]https://i.imgur.com/dCAwfWM.png[/img]
+
+
+[right][size=85]Made by Alex Mpache, January of 2022.[/size][/right]
+
+
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+
+
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white][center][b]As a [u]Paramedic+[/u] ([i]Junior Paramedic as well under direct supervision or if instructed to by Command+[/i]),  one of your duties is to promote people who have a pending promotion. Please make sure that you reference this guide for the first five or so promotions until it becomes muscle memory. Onwards, you can still reference it as a checklist, but you should be able to do everything out of memory.
+
+
+Commendations are generally issued to EMTs who performed extraordinarily well for their rank, however, they are not restricted to only EMTs. Make sure to take your time when writing the message, receiving a commendation should feel special.[/b][/center]
+[center][color=transparent]SPACER[/color][/center]
+[lsemssubtitle]5.1 Processing Promotions[/lsemssubtitle]
+[divbox=white]
+[hr]
+[divbox=white]
+[spoiler=PROMOTION CHECKLIST]
+
+
+[i][b][u][size=150]IF YOU ARE PROCESSING A CERTIFICATION, [url=https://gov.eclipse-rp.net/viewtopic.php?t=74485]GO HERE![/url][/size][/u][/b][/i]
+
+
+(( [b]OOC Steps: [/b]
+[b]1.[/b] Ingame F4, make sure to change the correct person’s rank
+
+
+[b]2.[/b] Discord & Teamspeak rank change, don’t forget to remove the old Discord rank after you add the new one, the same goes for Teamspeak.
+If they are offline on Teamspeak do the following:
+    A) Connect to the ECRP TS
+    B) Click Permissions then Server Groups
+    C) Navigate to their OLD rank group on the left,  then find the EMT on the right
+    D) Right-click, copy their ID, then remove them from the list
+    E) Navigate to the NEW rank group on the left, then click add on the right & paste
+
+
+[b]3.[/b]  Make a request within the #Forum_Requests channel in Discord for the ACP Rank adjustment, instructions are present in the channel. ))
+
+
+[hr][/hr]
+
+
+[b]1.[/b] Promotion Email ( [url=https://gov.eclipse-rp.net/viewtopic.php?p=445130#PROMOTIONEMAIL]here [/url]) ((copy the appropriate link to your address bar and you’ll get the proper email format to send from there))
+
+
+[b]2.[/b] Roster Adjustment - You only need to adjust the Staff Roster (second post)
+
+
+[b]3.[/b] Personnel file post - [url=https://gov.eclipse-rp.net/viewtopic.php?p=445130#PROMOTIONPOST]found here.[/url] (Section 9.14)
+
+
+[b]4.[/b] Personnel file first post adjustment - Title, rank, and edit the Promotions section, linking to the promotion post.
+(also edit the Callsign if the promotion comes with a Callsign change)
+
+
+[b]5.[/b] Employee Adjustment post - [url=https://gov.eclipse-rp.net/viewtopic.php?p=445130#RANK-ADJUSTMENT]Format here[/url] (Section 9.12), and [url=https://gov.eclipse-rp.net/viewforum.php?f=573]here[/url] is the location to post it.
+Make sure to fill out the format properly;
+The title should read  ->  Rank Adjustment | Fname Lname
+
+
+[b]6.[/b] If it is an EMT-B/I/A to EMT-I/A/Master promotion, navigate over to the [url=https://gov.eclipse-rp.net/viewforum.php?f=1932]Supervisor Meeting Agenda[/url] on which the promotion was approved, and at the bottom note down " - Done " and add your name after 'Done'.
+
+
+[/spoiler]
+
+
+[/divbox]
+
+
+
+
+[center]
+[size=120][b]APPROACHING THE EMT[/b][/size]
+[/center]
+
+
+[b][size=150][/size][/b]
+[list]Ask over the radio for the EMT to go 10-9 and meet with them at the location of your choice.
+[list]Example: [b][color=#0000FF]B-2 to E-69, how copy?[/color][/b] once they answer your radiocall... [b][color=#0000FF]B-2 to E-69[/color][/b] make yourself [b][color=#FF0000]10-9[/color][/b] and meet me at X Location.[/list]
+[*]Wait for the EMT to arrive.
+[*]Once the EMT arrives it's time to do the promotion. You should be creative and do your own thing, but make sure to end the meeting on a good note. [/list]
+
+
+
+
+[/divbox]
+[hr][/hr]
+[lsemssubtitle]5.2 Processing Commendations[/lsemssubtitle]
+[divbox=white]
+[hr][/hr]
+[center]
+[/center]
+[list]
+[*] Locate the Personnel File of the Employee you are giving the Commendation Notice to. Find the Roster [url=https://gov.eclipse-rp.net/viewtopic.php?t=9497]here[/url]
+[*] Post the commendation into their Personnel File, and then [b]Email the commendation to the Employee[/b] ([i]additionally, make a small note in the email version informing them about it being placed in their Personnel File[/i]).
+[*] Grab the Commendation Notice format, found in the spoiler below: 
+[b]PREVIEW:[/b]
+[spoil][img]https://i.imgur.com/xDXKMAi.png[/img]
+[divbox=white]
+
+
+[center][b][size=150][color=#00BF40]Congratulations![/color][/size][/b][/center]
+
+
+
+
+Dear [Employee],
+
+
+[Message, be creative]
+
+
+[hr][/hr]
+
+
+Yours sincerely,
+
+
+[Name]
+[Rank]
+
+
+[/divbox]
+[LSEMSfooter][/LSEMSfooter]
+[/spoil]
+[b]CODE:[/b]
+[spoil][code][img]https://i.imgur.com/xDXKMAi.png[/img]
+[divbox=white]
+
+
+[center][b][size=150][color=#00BF40]Congratulations![/color][/size][/b][/center]
+
+
+
+
+Dear [Employee],
+
+
+[Message, be creative]
+
+
+[hr][/hr]
+
+
+Yours sincerely,
+
+
+[Name]
+[Rank]
+
+
+[/divbox]
+[LSEMSfooter][/LSEMSfooter]
+[/code][/spoil]
+
+
+[/list]
+
+
+
+
+[/divbox][/divbox]
+[center][LSEMSfooter][/LSEMSfooter][/center]
+
+
+[img]https://i.imgur.com/WzFm4cG.png[/img]
+
+
+[right][size=85]Made by Alex Mpache, January of 2022.[/size][/right]
+
+
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+
+
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white]
+[hr][/hr]
+[lsemssubtitle][b][size=135]6.1 - Office of the Chief[/size][/b][/lsemssubtitle]
+[divbox=white]
+[hr]
+
+
+[center]The Office of the Chief consists of the highest-ranking members within the LSEMS starting with the Deputy Chief, Assistant Chief, and Chief of LSEMS.  The Office of the Chief holds the highest authority within the LSEMS and is only awarded to those who have shown consistent dedication, hard work, and reliability throughout their entire career.  Office of the Chief staff can be identified by their distinctive white uniforms.[/center]
+[hr][/hr]
+[list]
+[b]Chief of LSEMS[/b]
+[i]The Chief of LSEMS is the CEO of LSEMS.  They can only be appointed by the San Andreas State Government Governor Board and have full control over the rest of the LSEMS.  They are held accountable for the day-to-day operations and the general welfare of the entire LSEMS by the board.
+Can handle all LSEMS Treasury reimbursement requests, as well as approve any made by the Command team. Is responsible for and able to handle Ribbon Requests. 
+(( Has access to the Admin Control Panel on the Gov Site, and is responsible for maintaining the LSEMS Subforum in full capacity. ))[/i]
+[hr][/hr]
+[*] [b]Assistant Chief[/b]
+[i]The Assistant Chief has the full authority of the Chief of LSEMS to act on their behalf when necessary.  They are responsible for being a point of contact between the rest of the Command team and the Chief of LSEMS as well as liaising with department leadership and the Board of Governors.
+Can handle all LSEMS Treasury reimbursement requests, as well as approve any made by the Command team. Is responsible for and able to handle Ribbon Requests. 
+(( Has access to the Admin Control Panel on the Gov Site, and is responsible for assisting the Chief with maintenance of the LSEMS Subforum in full capacity. ))[/i]
+[hr][/hr]
+[*] [b]Deputy Chief[/b]
+[i]The Deputy Chief has the full authority of the Assistant Chief to act upon their behalf when necessary.  They are responsible for being a point of contact between the rest of the Command team and the (Assistant) Chief as well as liaising with department leadership and the Board of Governors. 
+Can handle all LSEMS Treasury reimbursement requests, as well as approve any made by the Command team. Is responsible for and able to handle Ribbon Requests. 
+[/i]
+[/list]
+[/divbox]
+[center][color=transparent]SPACER[/color][/center]
+
+
+[lsemssubtitle][b][size=135]6.2 - Command[/size][/b][/lsemssubtitle]
+[divbox=white]
+[hr][/hr]
+The Command Staff consists of those ranked as Lieutenant, Captain, and Commander.  All Command ranks usually hold the position of a Divisional Head or a Director.  Command staff are expected to oversee the supervisory staff as well as the rest of the LSEMS and can bring Paramedic promotion recommendations to High Command. Command staff can be recognized by their distinctive Grey shirts. 
+[hr][/hr]
+[list]
+[b]Commanders[/b]
+[i]Commanders are those who have proven themselves as hardworking and trustworthy while being in Command and have earned the highest rank within Command.  They hold a similar position as a Captain however their word should be valued more due to the amount of experience they have. Apart from being able to recommend promotions within the supervisor ranks, Commanders can also discuss Command promotions with the Office of the Chief.
+Can approve and handle all LSEMS Treasury reimbursement requests up to $100,000 without them being approved by High Command.[/i]
+[hr][/hr]
+[*] [b]Captain[/b]
+[i]Captains are those who have proven themselves as hardworking and trustworthy as Lieutenants.  They hold a similar position as a Lieutenant however their general experience is greater when compared to a Lieutenant. 
+Can handle personal LSEMS Treasury reimbursement requests up to $100,000 without them being approved by High Command.[/i]
+[hr][/hr]
+[*] [b]Lieutenant[/b]
+[i]Lieutenant is the initial rank held by those moving into the Command team.  They bolster the Supervisory ranks, providing support to them whenever required. They are expected to oversee the work of the supervisory ranks during day-to-day duties, as well as work in the office.
+Can handle personal LSEMS Treasury reimbursement requests up to $100,000 after they are approved by High Command.[/i]
+[/list]
+[/divbox]
+[center][color=transparent]SPACER[/color][/center]
+
+
+[lsemssubtitle][b][size=135]6.3 - Supervisory[/size][/b][/lsemssubtitle]
+[divbox=white]
+[hr]
+The supervisory staff consists of Paramedics, Senior Paramedics, and Lead Paramedics.  Supervisory staff, or Paramedics, are employees who have proven themselves to be able to take a leadership role in the day-to-day running of the LSEMS and can take on much more responsibility when compared to EMT ranks, both in the field and office. Supervisors can be identified by the Blue uniform worn by all positions.
+[hr][/hr]
+[list]
+[b]Lead Paramedic[/b]
+[i]Lead Paramedics are those who have been identified by the Command Team as being highly reliable and professional throughout their career within LSEMS. A Lead Paramedic should radiate with confidence and experience and should be the coach of Junior Paramedics, Paramedics, and Senior Paramedics through their day-to-day duties. They are accountable for supervising the entire department in a day-to-day capacity and are also expected to help advance ideas staff may come to them with, ensuring these ideas are forwarded to the appropriate Divisional Head or Director.[/i]
+[hr][/hr]
+[*] [b]Senior Paramedic[/b]
+[i]Senior Paramedics are those who have proven themselves as Paramedics through their day-to-day duties and office work. They have committed themselves regularly to providing certifications to staff in need, and have taken leadership roles such as heads of divisions or who have helped in the expansion of the department. (helping with maintaining documents and/or creating documents if and when needed).[/i]
+[hr][/hr]
+[*] [b]Paramedic[/b]
+[i]Paramedic is the first fully-fledged supervisory rank, they are considered a formal supervisor and are responsible for those EMTs and EMRs who are currently on duty and in the field.  Paramedics are also the main driving force behind Field Training Program Certifications, as they are expected to do most of them. Paramedics can provide input into the decisions made regarding promotions and can issue formal disciplinary action if required. [/i]
+[hr][/hr]
+[*] [b]Junior Paramedic[/b]
+[i]Junior Paramedic is the initial rank that a new supervisor starts under, they are a supervisor-in-training and are going through the Supervisor Training Program. They are permitted to do most things a Paramedic can, depending on the stage of STP they are currently in. A Junior Paramedic can provide input into the decisions made regarding promotions during supervisory meetings, as well as be able to issue formal disciplinary action if required, under the supervision of a Paramedic+. [/i]
+[/list]
+[/divbox]
+[center][color=transparent]SPACER[/color][/center]
+
+
+[lsemssubtitle][b][size=135]6.4 - General Staff[/size][/b][/lsemssubtitle]
+[divbox=white]
+[hr]
+The general staff of the LSEMS consists of Emergency Medical Technicians also known as EMTs. EMTs are those who have completed their field training and have received their medical certifications  EMTs are either considered Basic, Intermediate, Advanced or Master, with each role bringing new responsibilities and opportunities.  General Staff EMTs can be identified by the standard Green Uniform worn by all positions (With the exclusion of Fire&Rescue Certified EMTs, who wear a distinctive Red Uniform).
+[hr][/hr]
+[list]
+[*][b]Master Emergency Medical Technician (Master EMT)[/b]
+[i]Master EMTs have further proven themselves as an employee worthy of performing any and all divisional work, and have now been granted the clearance to apply to the Supervisor Training Program. They are the most senior EMT rank and are expected to be a shining example of what an EMT should be.[/i]
+[hr][/hr]
+[*][b]Emergency Medical Technician-Advanced (EMT-A)[/b]
+[i]EMT-As have consistently proven themselves throughout their career as someone who is dependable and willing to take things a bit more seriously. They can explore more divisions and more senior positions in previously accessible divisions. EMT-As are also able to investigate the opportunity of moving into much higher-ranked positions within individual divisions such as Assistant Division Head or Divisional Head.[/i]
+[hr][/hr]
+[*] [b]Emergency Medical Technician-Intermediate (EMT-I)[/b]
+[i]EMT-Is are those who have proven their knowledge working solo as an EMT-B and have shown they are willing to take on additional responsibilities. As EMT-I they are permitted to join substantially more divisions and are also permitted to take Civilians with them on approved Civilian ride-alongs to show them how the department operates and the day-to-day life of an LSEMS professional.[/i]
+[hr][/hr]
+[*] [b]Emergency Medical Technician-Basic (EMT-B)[/b]
+[i]EMT-Bs are those who have recently completed their certifications and are now fully-fledged members of the LSEMS. They are trusted to respond to 911 calls on their own as well as being able to join a handful of divisions.[/i]
+[hr][/hr]
+[*][b]EMT-P (Part-Time)[/b]
+[i]A part-time role for veteran members who don't want to fully retire from the department and its duties. The rank has the access level to divisional positions equal to Master EMT.[/i]
+[/list]
+[/divbox]
+[center][color=transparent]SPACER[/color][/center]
+
+
+[lsemssubtitle][b][size=135]6.5 - Trainee[/size][/b][/lsemssubtitle]
+[divbox=white]
+[hr]
+The trainee staff of LSEMS consists of new employees who are still in the learning phase.  There is only one rank of trainee and this rank is only held whilst they are completing the LSEMS Field Training Program.  Upon successfully completing their Certification, they are promoted and welcomed into the team as a fully-fledged EMT-B. Trainees can be identified by the white nametag they wear on their uniform and are always accompanied by a fully trained EMT+ (the EMT+ must be at least FTO trained).
+[hr][/hr]
+[list]
+[b]Emergency Medical Responder (EMR)[/b]
+[i]EMRs are those who are at the start of their career within the LSEMS and are currently in the process of completing their field training. Depending on what stage they are at, every EMR will be focusing on different areas of their training until they complete their certification.
+[/i]
+[/divbox]
+
+
+[/divbox]
+
+
+
+
+[center][LSEMSfooter][/LSEMSfooter][/center]
+
+
+[img]https://i.imgur.com/8NebJGs.png[/img]
+
+
+[right][size=85]Made by Alex Mpache, January of 2022.[/size][/right]
+
+
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+
+
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white]
+[hr][/hr]
+[center][size=150][b]Disciplinary Actions[/b][/size][/center]
+[center][color=transparent]SPACER[/color][/center]
+[center][b]As a Supervisor+, you also have a not-so-joyful set of activities - issuing Disciplinary Actions. Ideally, you want to use your previous experiences and knowledge to defuse conflicts as quickly and efficiently as possible, to avoid having to issue a warning or suspension, but, sometimes there simply is no other option.
+
+
+Below you will find a list of Disciplinary Actions along with the rank required to issue them.
+
+
+[u]Please read carefully[/u].
+
+
+Whichever Disciplinary Action is issued, information about it must be present within the personnel file of the employee. [/b]
+
+
+[url=https://gov.eclipse-rp.net/viewtopic.php?p=445130][size=150][b]Formats can be found here.[/b][/size][/url]
+
+
+[/center]
+[center][color=transparent]SPACER[/color][/center]
+[center][color=transparent]SPACER[/color][/center]
+[lsemssubtitle][b][size=125]7.1 - Supervisory Note[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorization = Junior Paramedic+ [/b][/color]
+
+
+A [b]Supervisory Note[/b] is the most basic form of noting something down. These are posted [b][u]without telling the employee[/u][/b], to avoid causing unnecessary emotions. A Supervisory Note should be utilized when something negative out of the ordinary happens. For example, an EMT loses their cool, keeps messing up driving, etc. 
+
+
+When issuing one, make sure to be as detailed as possible.
+
+
+The Supervisory Note is different from a [b]Warning [/b]due to its lack of "harm" towards the employee. It is simply a reminder that something noteworthy happened for other Supervisor+ employees to be aware of. 
+
+
+A Junior Paramedic should consult a Paramedic+ before posting a note for the best result.
+
+
+[b]*Don't use this for literally every single thing. People make mistakes, you are there to coach them into not repeating them.[/b]
+[/divbox]
+
+
+[lsemssubtitle][b][size=125]7.2 - Warning[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorization = Junior Paramedic+ [/b][/color]
+
+
+[b]Warnings [/b]are the first actually serious step when addressing the behavior of an employee. They are mostly a stronger slap on the wrist and usually do not affect an employee's progress too much unless they are a repeat offender. When issuing one, make sure to make it as detailed as possible for future reference. 
+
+
+Warnings are usually issued as a result of a discussion either within the Supervisor Discussion Board or during a Supervisor+ Meeting, and the employee is always informed of them (versus a Supervisory Note, where an employee isn't informed about it directly).
+
+
+A [b]Junior Paramedic should not be issuing Warnings on their[/b] own, rather they must [b]consult [/b]a Paramedic+ first.
+[/divbox]
+
+
+[lsemssubtitle][b][size=125]7.3 - Performance Management Meeting[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorization = Senior Paramedic+[/b] [/color]
+
+
+A [b]Performance Management Meeting[/b] (referred to as a [b]PMM [/b]effectively always) is a scheduled formal meeting with an employee, relating to poor performance or conduct of an employee. Performance management meetings are not considered negative disciplinary actions by default but rather a fully formal way to educate, inform, and re-train employees, depending on the situation. The PMM is to always be very well documented (what was asked, what was said), and used to evaluate if the employee understands the issue(s) at hand.
+It specifically sets out the issue discussed and the agreed actions by the employee, but is open to extended discussion once the core of the meeting is cleared up.
+
+
+Performance Management Meetings can be a stepping stone (or directly lead) to disciplinary action such as formal warning, suspension, or termination.
+
+
+A Performance Management Meeting is usually the result of a discussion after presenting a problem regarding an employee on the Supervisor Discussion Board or during a Supervisor+ Meeting.
+
+
+[/divbox]
+
+
+[lsemssubtitle][b][size=125]7.4 - Driving Evaluation[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorization = Paramedic+[/b][/color]
+
+
+A [b]Driving Evaluation[/b] is typically issued once the reported employee has committed a driving-related offense. A Paramedic+ must sit in the ambulance with the employee and evaluate their driving. Once the employee passes their evaluation they are able to drive an ambulance again. Usually, a one to two hour session with the employee, taking at least 4 calls. Depending on the severity, 
+[/divbox]
+
+
+[lsemssubtitle][b][size=125]7.5 - Flying Evaluation[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorization = High Command / Director of Operations / Head of Air & Rescue[/b][/color]
+
+
+A [b]Flying Evaluation[/b] is typically issued once the reported employee has committed a flying-related offense. The employee must conduct pilot recertification with an instructor before being allowed to fly again. 
+
+
+The employee's internal Flight License is effectively removed until they do an evaluation.
+[/divbox]
+
+
+[lsemssubtitle][b][size=125]7.6 - Flying License Removal[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorization = High Command / Director of Operations / Head of Air & Rescue [/b][/color]
+
+
+Removing a pilot's license is not a decision taken lightly. it is typically done once an employee has done a major flight offense.
+
+
+The removal can be temporary if a supervisor on duty witnesses a breach of flying protocols bad enough to cause severe damage to vehicles and/or risk to human life, after which, it is to be immediately brought up to the Head of Air & Rescue for further review.  A suspension can be issued when a supervisor on duty witnesses an employee either abusing their privileges or committing a serious infraction that goes against protocol. The license will be considered suspended until the Head of Air & Rescue formally resolves the situation. 
+[/divbox]
+
+
+[lsemssubtitle][b][size=125]7.7 - Suspension[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorizations:[/b][/color]
+
+
+A [b]Paramedic [/b]can suspend someone for [b]1 day[/b]. [b]*[/b]
+A [b]Senior Paramedic[/b] can suspend someone for [b]2 days[/b].
+A [b]Lead Paramedic[/b] can suspend someone for [b]3 days[/b]
+[b]Command [/b]members can suspend someone for [b]5 days[/b]
+[b]High Command[/b] can suspend someone indefinitely.
+
+
+A [b]Junior Paramedic[/b] may only issue a suspension while directly (in person) supervised by a [b]Paramedic+[/b] and can issue a suspension in lengths of up to what the supervising [b]Paramedic+[/b] is allowed to.
+
+
+
+
+*[b]A fresh Paramedic should avoid suspending people without a Senior Paramedic+ present, due to lack of experience[/b], but is given the authorization to do so in the case of an employee making a serious enough offense that they shouldn't be allowed on shift. 
+This however does not apply to a [b][i]VM03[/i][/b]; if a [b]Paramedic[/b] is verbally or in writing informed of this charge by an employee, they can process the suspension (24 hours from the moment of being informed) on the spot. If the Paramedic cannot process it due to time constraints, they must let the Employee know they need to submit the information to the Leadership Team Inbox or forward them to another Paramedic+.
+
+
+A [b]Junior Paramedic[/b] supervised by a [b]Paramedic+[/b] may also issue the aforementioned [b]VM03[/b] related suspension.
+
+
+[hr][/hr]
+
+
+[b]When a suspension is issued, the supervisor handling the suspension must contact the leadership team alerting them of the details of the suspension via email, and link the suspension post within the Employee's Personnel File.[/b] In case of a VM03, just bring it to the next Supervisory Meeting.
+Additionally, when bringing a matter to the Supervisor Discussion Board, it is expected of you to collect information on it beforehand, unless it is urgent and assistance or intervention is required as soon as possible. 
+
+
+[b][u](( Note: We don't utilize the "Suspended" rank in F4 unless the suspension is 4 days or longer. If you do issue one that is 4 or more days, notify LSEMS High Command as their pay will get scuffed due to how F4 works. ))[/u][/b]
+
+
+[b]What to do in situations that require a Suspension:[/b]
+[list][*]VM03 (Reckless Operation of a Road or Marine Vehicle) - 24-hour suspension from the moment of being informed. If it is a repeat offense in the past three months, to be brought to the next Supervisor+ Meeting.
+[*]Other License suspension - the duration of the license suspension + inquire about how the license was suspended. To be brought to the Supervisor Discussion Board upon collecting information.
+[*]Misconduct on duty - to be brought to the Supervisor Discussion Board and/or Supervisor+ Meeting; issued after discussing it.
+[*]Gross misconduct on duty - when an employee severely steps out of line, suspend them on the spot and bring it to the Supervisor Discussion Board. This can be a severe argument on duty, yelling at a patient/employee, a severe argument with a member of another department, or severe misuse of LSEMS Equipment/Vehicles. Keep in mind that these are on the [b]extreme end[/b], and should be issued by the highest-ranking supervisor on shift.
+[*]Breaching other Departmental rules and regulations - to be brought to the Supervisor Discussion Board. Suspend on the spot in more severe or extreme cases.
+[*]Breaching Divisional rules and regulations - inform the Divisional Command about it, and bring it to the Supervisor Discussion Board. Suspend on the spot in more severe or extreme cases.
+[*]Other - If it cannot be categorized into the above 4, bring it to the Supervisor Discussion Board, or contact an on-shift higher ranking (than you) supervisor.
+[/list]
+[/divbox]
+
+
+[lsemssubtitle][b][size=125]7.8 - Termination[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorization = High Command[/b][/color]
+
+
+Termination as a form of punishment is very rarely used. Other attempts of reformation must be attempted first, apart from extreme cases.
+
+
+The Leadership Team is permitted to suggest a Termination to High Command, but it is always a discussion ultimately private to High Command, the results of which are publicized to the Leadership Team.
+
+
+Terminated individuals are usually placed on a list that bans them from rejoining the LSEMS. LSEMS Command+ has full access to this list and is to intervene when an individual who is banned from the LSEMS attempts to join via regular recruitment or reinstatement.
+
+
+(( A termination may be based on OOC factors and account-wide at the discretion of the Chief of EMS. 
+A player may be faction banned based on IC actions on a character that deem them unfit to be a member of the faction, at the discretion of the Chief of EMS. 
+A faction ban may be suggested by the Leadership Team as well. 
+
+
+LSEMS Command+ has insight into a list of Faction Banned individuals, and is to intervene when a faction banned individual attempts to join the faction by contacting High Command or the Chief directly. ))
+[/divbox]
+
+
+[lsemssubtitle][b][size=125]7.9 - Hour Warning(s)[/size][/b][/lsemssubtitle]
+[divbox=White]
+[color=#FF0000][b]Authorization = Junior Paramedic+, upon approval & assignment during a Supervisor Meeting or within a topic within the Supervisory Discussion Board section. [/b][/color]
+
+
+An hour warning is issued when an employee does not make their hours, most commonly in instances when there was no communication as to why they could not or are not going to be making the weekly minimum (5) hours. 
+
+
+Hour warnings exist in two layers, a simple First Hour Warning and Second Hour Warning. When an employee is not reacting to these actions, they are issued a Termination of contract due to AWOL. 
+
+
+When issuing an hour warning, you email the employee receiving it and post it within their personnel file. Additionally, update the top post, linking the hour warning. 
+
+
+Hour warnings lower by one every 4 consecutive weeks of hours being made.
+[/divbox][/divbox]
+[center][LSEMSfooter][/LSEMSfooter][/center]
+
+
+[img]https://i.imgur.com/jJUTN0V.png[/img]
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white]
+[hr][/hr]
+[center][size=150][b]Processing LOAs and Resignations[/b][/size][/center]
+[center][color=transparent]SPACER[/color][/center]
+As a supervisor, a bigger portion of the tasks and responsibilities contain paperwork, and it is important to follow the correct guides and formats when executing the task. Here you will find guides and information pertaining to LOAs, as well as processing Resignations/Terminations from the department. If you have a hiccup or question, don't be afraid to ask a higher-ranking Supervisor+, as we all were once where you stand now. 
+
+
+[/divbox]
+
+
+[lsemssubtitle]8.1 - Leave of Absence[/lsemssubtitle]
+[divbox=white]
+Any employee of the LSEMS is permitted to request a leave of absence during their time in the department. 
+
+
+[b]Additional Information:[/b]
+[list]
+[*]EMRs get 4 weeks TOTAL during training.
+[*]No LOA shall be more than 30 days without High Command approval.
+[*]Employees are allowed to file an LOA if they are worried they are not going to meet their minimum hours and can work during their LOA. Special circumstances will be considered, but an administratively present minimum is expected even in those situations.
+[*]Employees are allowed to fill LOAs that allow them to focus on another job as long as they do not hold major positions within the department. Cannot be longer than 30 days. 
+[*](( Employees also may file an LOA to focus on an alt. Cannot be longer than 30 days. ))
+[*]LOAs cannot be backdated.
+[*]For extenuating circumstances, please contact a member of the Command Team.
+[*]LOA should ideally be filled two days in advance to allow ample time for the leadership team to process the request (with consideration to special cases).
+[*][i][b]If the LOA is posted by a Junior Paramedic+, it can only be handled by Command+ due to Personnel File Elevation.
+[/b][/i][/list]
+
+
+
+
+[b]Process:[/b]
+[list=number]
+[*] Go to the [url=https://gov.eclipse-rp.net/viewforum.php?f=613]Leave of Absence[/url] area
+[*] Open the initial request and see if all requirements are hit
+[*] Respond to the request with the format reflecting the decision
+[*] Move the request to "Active" or "Archive" depending on the decision and/or if the LOA is expired
+[*] Update their [url=https://gov.eclipse-rp.net/viewforum.php?f=605]personnel file[/url], updating the spoiler tagged "LOA/ROH" and link to the initial request.
+[spoiler=Preview][img]https://i.imgur.com/UQVG94E.png[/img][/spoiler]
+[/list]
+
+
+[b]TEMPLATES:[/b]
+
+
+[spoiler=Request Template][code][img]https://i.imgur.com/dy2QppU.png[/img]
+[divbox=white][b]Employee Name:[/b] First Last
+[b]Rank:[/b] Rank
+[b]Leave of Absence beginning date:[/b] DD/MMM/YYYY
+[b]Leave of Absence return date:[/b] DD/MMM/YYYY
+[b]Reason:[/b] Reason Here [b](([/b] Does not have to be too specific, but please leave both an IC and OOC reason. [b]))[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter]
+[/code][/spoiler]
+
+
+[spoiler=Approved LOA Request format][code][img]https://i.imgur.com/0meM9T1.png[/img]
+
+
+[divbox=darkgreen][center][b][size=160][color=white]LEAVE OF ABSENCE APPROVED[/color][/size][/b][/center][/divbox]
+[divbox=white]
+Dear Mr./Ms. NAME,
+ 
+We are pleased to inform you that your request for leave of absence has been approved for the duration of [b]NUMBER[/b] day(s), from DD/MMM/YYYY to DD/MMM/YYYY.
+
+
+
+
+Sincerely,
+ 
+[img]SIGNATURE LINK[/img]
+[size=130][b]Fname Lname[/b][/size]
+[size=110][b]Operational Rank[/b][/size]
+[i][b]Los Santos Emergency Medical Services[/b][/i]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[spoiler=Expired LOA Request Format][code][img]https://i.imgur.com/fcCdBSU.png[/img]
+
+
+[divbox=black][center][b][size=160][color=white]LEAVE OF ABSENCE EXPIRED[/color][/size][/b][/center][/divbox]
+[divbox=white]
+Dear Mr./Ms. NAME,
+ 
+Your LOA has expired, please resume your duties starting tomorrow on DD/MMM/YYYY.
+
+
+Sincerely,
+ 
+[img]SIGNATURE LINK[/img]
+[size=130][b]Fname Lname[/b][/size]
+[size=110][b]Operational Rank[/b][/size]
+[i][b]Los Santos Emergency Medical Services[/b][/i]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[spoiler=Denied LOA Request Format][code][img]https://i.imgur.com/yS0ucUE.png[/img]
+
+
+[divbox=darkred][center][b][size=160][color=white]LEAVE OF ABSENCE DENIED[/color][/size][/b][/center][/divbox]
+[divbox=white]
+Dear Mr./Ms. NAME,
+ 
+We regret to inform you that your request for leave of absence has been denied due to the following reasons:
+
+
+[list=]
+[*] Reason 1
+[*] Reason 2
+[/list]
+
+
+Sincerely,
+ 
+[img]SIGNATURE LINK[/img]
+[size=130][b]Fname Lname[/b][/size]
+[size=110][b]Operational Rank[/b][/size]
+[i][b]Los Santos Emergency Medical Services[/b][/i]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter]
+[/code][/spoiler]
+
+
+[spoiler=Extended LOA Request Format][code][img]https://i.imgur.com/FQc3DVG.png[/img]
+
+
+[divbox=darkorange][center][b][size=160][color=white]LEAVE OF ABSENCE EXTENDED[/color][/size][/b][/center][/divbox]
+[divbox=white]
+Dear Mr./Ms. NAME,
+ 
+We are pleased to inform you that your request for an extension on your leave of absence has been approved for the duration of [b]NUMBER[/b] day(s), from DD/MMM/YYYY to DD/MMM/YYYY.
+
+
+
+
+Sincerely,
+ 
+[img]SIGNATURE LINK[/img]
+[size=130][b]Fname Lname[/b][/size]
+[size=110][b]Operational Rank[/b][/size]
+[i][b]Los Santos Emergency Medical Services[/b][/i]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+[/divbox]
+[hr][/hr]
+
+
+
+
+[lsemssubtitle]8.2 - Resignations/Terminations[/lsemssubtitle]
+[divbox=white]
+Most of the time, an employee of the LSEMS will resign from their duties and leave the department. As a supervisor, you are responsible for processing the resignation and archiving it. The process of processing a resignation is referred to as a Termination, but the term itself can also be used when a contract is ended (terminated) by the leadership team for one reason or another.
+
+
+
+
+[lsemssubtitle]RESIGNATION/TERMINATION CHECKLIST[/lsemssubtitle]
+When Processing a resignation/termination, it is important to follow this list of tasks and requirements for the type of discharge. 
+[list=number]
+[*]First and foremost, give the post a thorough read and see if there are clear signs the employee is resigning for valid reasons.
+[*]If you notice ample details and reasoning, go to Step 4 of this checklist.
+[*]If you notice that there aren't sufficient details or reasons present on the post, check if the resignation is marked as 'reached out to'. If it isn't, you are to reach out to the employee like so:
+[list][*]Mark the topic with the following prefix: "[Reached out to, YOURNAME]"
+[*]Following that, reach out to the employee with a regular email, and ask about the resignation (Additionally, BCC LSEMS Command on the email). If they state they have trouble making hours, make them aware of the fact that we are very happy to approve LOAs, as well as the option of going to a Reduction of Hours. If the employee qualifies for EMT-P (Master EMT+), remind them of it as well.
+(( Note: Feel free to reach out to them on Discord as well, as a lot of people leave due to OOC time constraints. ))
+[*]After 24 hours pass from you reaching out, go ahead and process the resignation. [/list]
+[*]If the resignation was posted 24 hours ago or more, you may proceed with the steps below.
+[*]Go to the [url=https://gov.eclipse-rp.net/viewforum.php?f=605]Employee's Personnel File[/url], update the Discharge Section in the top post of the file, and link it directly to the resignation post they made - then archive the personnel file. If there is no resignation posted, link the Employee Adjustments post. Alternatively, you can also post the Employee Adjustment format as a reply to the Personnel File topic should you wish to include additional information that was not posted on the public Adjustment. If doing so, link this more elaborate post in the discharge section.
+[*]Update the [url=https://gov.eclipse-rp.net/viewtopic.php?f=570&t=9497]General Department Roster[/url], removing them from it (utilize CTRL+F and search for both their name and callsign). If they were a division head, remove them from the [url=https://gov.eclipse-rp.net/viewtopic.php?p=647937#p647937]Points of Contact[/url] as well.
+[*]Update the [url=https://gov.eclipse-rp.net/viewtopic.php?p=852847#p852847]EMT 1on1 list[/url], removing them from it (click edit then CTRL+F and search for their name).
+[*]Revoke access cards, keys, and all other employment-issued access ((Roleplay revoking access and save a screenshot of the roleplay with "/time" - [url=https://i.imgur.com/49dUPy3.png]example here[/url]))
+[code]/me logs into the LSEMS database and revokes all department-issued keys and access cards of Fname Lname.[/code]
+[*]Remove them from the usergroups they are a member of (( You are strongly encouraged to make a request for usergroup removal in the #forum-and-f4-requests channel, as doing it that way is easier on you and your time! )).
+[*](( Create a request within the #forum-and-f4-requests channel for F4 removal. If there is Command+ around at the time of you doing it, ask them to process pay. If you are Command+, process the pay yourself and remove from F4. ))
+[*]((Remove TS roles, Remove Discord Roles, and issue them the Guest role if it is an Honorable discharge. In case of a Dishonorable discharge, kick them from the Discord. ))
+[*](( Update player-logs in the LSEMS Discord - "[DD/MM/YY] Fname Lname has been removed from the faction. Reason: " and attach the proof of roleplay for revoking their access to the message ))
+[*]Archive their training profile in the [url=https://gov.eclipse-rp.net/viewforum.php?f=617]EMR Profile[/url] or [url=https://gov.eclipse-rp.net/viewforum.php?f=601]Reinstatement Training Program [/url] sections (If they were an EMR at the time of removal)
+[*]Archive their [url=https://gov.eclipse-rp.net/viewforum.php?f=755]Duty Reports topic[/url], training tracking topics, as well as any other session report topics. 
+[*][i]Ensure there was no notice of an active IA case involving them within the [url=https://gov.eclipse-rp.net/viewforum.php?f=1933]Supervisor Discussion Board[/url].[/i]
+[*][i]Ensure they are not currently suspended by looking over recent [url=https://gov.eclipse-rp.net/viewforum.php?f=573]Employee Adjustments[/url].[/i]
+[*][i]Ensure they have finished training & have successfully passed the FTP/RTP Certification[/i]
+[b][i][color=#FF8040](Note: Failure to meet points 14., 15. and 16. on the checklist is subject to a Dishonorable Discharge)[/COLOR][/i][/b]
+[*]Post the [url=https://gov.eclipse-rp.net/viewtopic.php?t=104826#DISCHARGE]Discharge Notice[/url] into the [url=https://gov.eclipse-rp.net/viewforum.php?f=573]Employee Adjustment [/url] section, correctly marking it as Honorable or Dishonorable.
+[*]Finally, if you are processing a Resignation, fill out the Resignation Remarks format found below, post it in the resignation topic, and then archive the topic itself.
+[/list]
+
+
+[spoiler=Resignation Remarks Format][code][lsemssubtitle]RESIGNATION REMARKS[/lsemssubtitle]
+[divbox=white]
+[b]Please put a check ( ✓ ) mark on the type of discharge issued[/b]
+[] Honorable Discharge
+[] Dishonorable Discharge
+[b]Discharge Justification:[/b]
+
+
+
+
+Processed by:
+
+
+[img]SIGNATURE[/img]
+NAME
+RANK
+[b]Los Santos Emergency Medical Services[/b]
+
+
+
+
+Signed & approved by:
+
+
+[img]https://i.imgur.com/HY0eLsY.png[/img]
+[i]River Paige[/i]
+[b]Interim Chief of LSEMS[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter]
+[/code][/spoiler]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter]
+
+
+[img]https://i.imgur.com/Ruk0qrm.png[/img]
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white]
+[center][img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+[list=none][color=black][goto=NOTE][b]9.1 - SUPERVISORY NOTE[/b][/goto]
+[goto=WARNINGS][b]9.2 - WARNINGS[/b][/goto]
+[goto=HOURWAR][b]9.3 - FIRST HOUR WARNINGS[/b][/goto]
+[goto=HOURWAR][b]9.4 - SECOND HOUR WARNING[/b][/goto]
+[goto=SUSPENSION][b]9.5 - SUSPENSION[/b][/goto] 
+[goto=DISCHARGE][b]9.6 - DISCHARGE NOTICE[/b][/goto] 
+[goto=MEDLEAVE][b]9.7 - MEDICAL LEAVE[/b][/goto] 
+[goto=ADMLEAVE][b]9.8 - ADMINISTRATIVE LEAVE[/b][/goto]
+[goto=NAMECHANGE][b]9.9 - NAME CHANGE[/b][/goto] 
+[goto=PMM][b]9.10 - PERFORMANCE MANAGEMENT MEETING[/b][/goto]
+[goto=COMMENDATION][b]9.11 - COMMENDATION[/b][/goto]
+[goto=RANK-ADJUSTMENT][b]9.12 - RANK ADJUSTMENT (Operational)[/b][/goto]
+[goto=POS-ADJUSTMENT][b]9.13 - POSITION ADJUSTMENT (Divisional Command+ Adjustment)[/b][/goto]
+[goto=PROMOTIONPOST][b]9.14 - PROMOTION POSTS (Personnel file)[/b][/goto]
+[goto=PROMOTIONEMAIL][b]9.15 - EMT PROMOTION EMAILS[/b][/goto]
+[goto=REGULARAPP][b]9.16 - APPLICATION PROCESSED FORMAT[/b][/goto]
+[goto=REINSTATEMENT][b]9.17 - REINSTATEMENT FORMATS[/b][/goto]
+[goto=ROH][b]9.18 - REDUCTION OF HOURS[/b][/goto]
+[goto=REACHOUT][b]9.19 - REACH OUT LOG[/b][/goto]
+[goto=EOTM][b]9.20 - EOTM EMAIL[/b][/goto]
+[goto=DUTYREPORTDRAW][b]9.21 - DUTY REPORT RAFFLE DRAW EMAIL[/b][/goto]
+*[i]See titles used at the respective format[/i][color=transparent]ඞ[/color]
+[/color][/list]
+[center][img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+
+
+[lsemssubtitle]9.1 - SUPERVISORY NOTE [anchor]NOTE[/anchor][/lsemssubtitle]
+[spoil][code][img]https://i.imgur.com/2sBXRRV.png[/img]
+[divbox=white]
+[center][size=150][b]EMPLOYEE INFORMATION[/b][/size][/center]
+[img]https://i.imgur.com/F7kU3dh.png[/img]
+[b]Employee Name & Rank:[/b] Rank Fname Lname
+[b]Date: [/b] ANSWER
+[b]Information about the situation:[/b] ANSWER
+
+
+
+
+[center][size=150][b]SUPERVISOR INFORMATION[/b][/size][/center]
+[img]https://i.imgur.com/F7kU3dh.png[/img]
+[b]Supervisor Name:[/b] ANSWER
+[b]Supervisor Rank:[/b] ANSWER
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.2 - WARNING [anchor]WARNINGS[/anchor][/lsemssubtitle]
+[spoil][code][img]https://i.imgur.com/80n3dZj.png[/img]
+[lsemssubtitle]EMPLOYEE INFORMATION[/lsemssubtitle]
+[divbox=white]
+[b]Employee Name:[/b] ANSWER
+[b]Employee Rank:[/b] ANSWER
+[b]Date of reprimand:[/b] ANSWER
+[b]Reason:[/b] ANSWER
+[/divbox]
+[lsemssubtitle]SUPERVISOR INFORMATION[/lsemssubtitle]
+[divbox=white]
+[b]Supervisor Name:[/b] ANSWER
+[b]Supervisor Rank:[/b] ANSWER
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.3 - FIRST HOUR WARNING [anchor]HOURWAR[/anchor][/lsemssubtitle]
+[spoil][code][img]https://i.imgur.com/rLIJtNZ.png[/img]
+[divbox=white]
+[fpimg=25]https://i.imgur.com/4MaDTqz.png[/fpimg][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
+[size=150]Los Santos Emergency Medical Services[/size][/b]
+[size=115]Hour Minimum - First Warning[/size]
+[size=95]01/MMM/2024[/size][/font][/right][/aligntable]
+[hr]
+
+
+Hello EMPLOYEE NAME,
+
+
+You're receiving this email because we have noticed that you did not meet the minimum amount of 5 hours last pay period.
+
+
+As you were made aware during your interview, on-boarding and contract signing, we require each employee to meet the minimum amount of hours weekly to ensure we're providing the best possible service to the community. 
+
+
+We understand that there are situations that come up that require you to take time away from work, and we've set up our LOA system for you to use should that happen. Please make sure you're taking the time you need and plan it in advance to prevent future warnings.
+
+
+Consider this email the [b]first[/b] warning. You will receive one more warning should you fall behind in hours. Should you require a third warning, it would lead directly to a discharge with or without notice.
+[hr][/hr]
+Kind regards,
+
+
+[img]SIGNATURE[/img]
+[I]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.4 - SECOND HOUR WARNING[/lsemssubtitle]
+[spoil][code][img]https://i.imgur.com/rLIJtNZ.png[/img]
+[divbox=white]
+[fpimg=25]https://i.imgur.com/4MaDTqz.png[/fpimg][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
+[size=150]Los Santos Emergency Medical Services[/size][/b]
+[size=115]Hour Minimum - Second Warning[/size]
+[size=95]01/MMM/2024[/size][/font][/right][/aligntable]
+[hr]
+
+
+Hello EMPLOYEE NAME,
+
+
+You're receiving this email because we have noticed that you did not meet the minimum amount of 5 hours last pay period.
+
+
+As you were made aware during your interview, on-boarding and contract signing, we require each employee to meet the minimum amount of hours weekly to ensure we're providing the best possible service to the community. 
+
+
+We understand that there are situations that come up that require you to take time away from work, and we've set up our LOA system for you to use should that happen. Please make sure you're taking the time you need and plan it in advance to prevent future warnings.
+
+
+Consider this email a [b]second[/b] warning. In the event of you not meeting the minimum hours again without an LOA in place, you may face a discharge from the LSEMS. Please do reach out if you have any concerns.
+[hr][/hr]
+Kind regards,
+
+
+[img]SIGNATURE[/img]
+[I]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.5 - SUSPENSION [anchor]SUSPENSION[/anchor][/lsemssubtitle]
+[pre]Suspension | Fname Lname[/pre]
+[spoil][code][img]https://i.imgur.com/1sBOeJM.png[/img]
+[lsemssubtitle]DETAILS[/lsemssubtitle]
+[divbox=white]
+
+
+[b]Employee Rank and Name:[/b] Rank Fname Lname
+[b]Issuing Supervisor:[/b] Rank Fname Lname
+[b]Suspension Start:[/b] DD/MM/YYYY - 00:00 am/pm
+[b]Suspension End:[/b] DD/MM/YYYY - 00:00 am/pm
+
+
+[b]Reason:[/b] Reason
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.6 - DISCHARGE NOTICE [anchor]DISCHARGE[/anchor][/lsemssubtitle]
+[pre]Honorable/Dishonorable Discharge | Fname Lname[/pre]
+[spoil][code][img]https://i.imgur.com/XCcuaus.png[/img]
+[lsemssubtitle]DISCHARGE DETAILS[/lsemssubtitle]
+[divbox=white]
+
+
+[b]Employee Rank and Name:[/b] Rank Fname Lname
+[b]Date of Discharge:[/b] DD/MM/YYYY
+[b]Type of Discharge:[/b] [ ] Honorable | [ ] Dishonorable
+[b]Discharge Reason:[/b] Reason
+
+
+[b]Processed by:[/b] Rank Fname Lname
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.7 - MEDICAL LEAVE [anchor]MEDLEAVE[/anchor][/lsemssubtitle]
+[pre]Medical Leave | Fname Lname[/pre]
+[spoil][code][img]https://i.imgur.com/kxOrxPp.png[/img]
+[lsemssubtitle]DETAILS[/lsemssubtitle]
+[divbox=white]
+[b]Employee Rank and Name:[/b] Rank Fname Lname
+[b]Issuing Medic:[/b] Rank Fname Lname
+[b]Leave Start:[/b] DD/MM/YYYY - 00:00 am/pm
+[b]Leave End:[/b] DD/MM/YYYY - 00:00 am/pm
+[b]Relevant File Link:[/b] [url=linkhere]File here[/url]
+
+
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.8 - ADMINISTRATIVE LEAVE [anchor]ADMLEAVE[/anchor][/lsemssubtitle]
+[pre]Administrative Leave | Fname Lname[/pre]
+[spoil][code][img]https://i.imgur.com/pRRRxYR.png[/img]
+[lsemssubtitle]DETAILS[/lsemssubtitle]
+[divbox=white]
+[b]Employee Rank and Name:[/b] Rank Fname Lname
+[b]Issuing Supervisor:[/b] Rank Fname Lname
+[b]Leave Start:[/b] DD/MM/YYYY - 00:00 am/pm
+[b]Leave End:[/b] DD/MM/YYYY - 00:00 am/pm
+
+
+[b]Reason:[/b] Reason
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.9 - NAME CHANGE [anchor]NAMECHANGE[/anchor][/lsemssubtitle]
+
+
+[spoil][code][img]https://i.imgur.com/vXW1ifp.png[/img]
+[lsemssubtitle]DETAILS:[/lsemssubtitle]
+[divbox=white]
+
+
+[b]Old Name:[/b] Fname Lname
+[b]New Name:[/b] Fname Lname
+[b]Date:[/b] 
+[b]Reason:[/b] 
+
+
+[b]Processed by:[/b] Rank Fname Lname
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.10 - PERFORMANCE MANAGEMENT MEETING [anchor]PMM[/anchor][/lsemssubtitle]
+[spoil][code][img]https://i.imgur.com/Q07dNfh.png[/img]
+[lsemssubtitle]SUPERVISOR INFORMATION[/lsemssubtitle]
+[divbox=white]
+[b]Name:[/b] ANSWER
+[b]Position:[/b] ANSWER
+[b]Date:[/b] ANSWER
+[/divbox]
+
+
+[lsemssubtitle]EMPLOYEE INFORMATION[/lsemssubtitle]
+[divbox=white]
+[b]Employee Name:[/b] ANSWER
+[b]Employee Position:[/b] ANSWER
+[/divbox]
+
+
+[lsemssubtitle]MEETING DETAILS[/lsemssubtitle]
+[divbox=white]
+[b]What was the cause of this issue?:[/b] ANSWER
+[b]What was the reasoning given by the employee?:[/b] ANSWER
+[b]What was the agreed-upon decision?: [/b] ANSWER
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.11 - EMPLOYEE COMMENDATION [anchor]COMMENDATION[/anchor][/lsemssubtitle]
+[spoil][code][img]https://i.imgur.com/1WHzyXG.png[/img]
+[divbox=white]
+
+
+[center][b][size=150][color=#00BF40]Congratulations![/color][/size][/b][/center]
+
+
+
+
+Dear [Employee],
+
+
+[Message, be creative]
+
+
+[hr][/hr]
+
+
+Yours sincerely,
+
+
+[img]SIGNATURE[/img]
+[I]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency MedicalServices[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.12 - RANK ADJUSTMENT (Operational) [anchor]RANK-ADJUSTMENT[/anchor][/lsemssubtitle]
+[pre]Rank Adjustment | Fname Lname[/pre]
+[spoil][code][img]https://i.imgur.com/FimCeol.png[/img]
+[divbox=white]
+
+
+[b]NAME:[/b] 
+[b]PREVIOUS RANK:[/b] 
+
+
+[b]ASSUMING RANK:[/b] 
+[b]DATE OF ADJUSTMENT:[/b] 
+[hr][/hr]
+
+
+[ooc]SIGNATURE LINK[/ooc]
+[i]Fname Lname[/i]
+[b]RANK[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[lsemsfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.13 - POSITION ADJUSTMENT (Divisional Command+ Adjustment) [anchor]POS-ADJUSTMENT[/anchor][/lsemssubtitle]
+[pre]Adjustment | Fname Lname[/pre]
+[spoil][code][img]https://i.imgur.com/3R1UbLK.png[/img]
+[divbox=white]
+
+
+[b]NAME:[/b] 
+[b]PREVIOUS POSITION:[/b] 
+
+
+[b]ASSUMING POSITION:[/b] 
+[b]DATE OF ADJUSTMENT:[/b] 
+[hr][/hr]
+
+
+[ooc]SIGNATURE LINK[/ooc]
+[i]Fname Lname[/i]
+[b]RANK[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[lsemsfooter][/code][/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.14 - PROMOTION POSTS (Personnel file) [anchor]PROMOTIONPOST[/anchor][/lsemssubtitle]
+[spoil]
+[list][*]EMT-B
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/GkqftMR.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to EMT-Basic![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]EMT-I
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/tSAH1lA.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to EMT-Intermediate![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]EMT-A
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/Dquo0MQ.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to EMT-Advanced![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]EMT-P
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/uOdEASX.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has swapped to a part-time contract and is now an EMT-P (from EMT-A/Master EMT/reinstatement)![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Master EMT
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/z3k86ji.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Master EMT![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Junior Paramedic
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/z3k86ji.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Junior Paramedic![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Paramedic
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/yJZHaKg.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Paramedic![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Senior Paramedic
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/Yra8DDl.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Senior Paramedic![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Lead Paramedic
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/I9A66xq.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Lead Paramedic![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Lieutenant
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/nzCBN57.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Lieutenant![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Captain
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/KVQAsB8.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Captain![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Commander
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/dQEQ620.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Commander![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Deputy Chief
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/7tgPuo5.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Deputy Chief![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Assistant Chief
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/ePr6kgC.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Assistant Chief![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[*]Chief
+[spoil][code][center][img]https://i.imgur.com/GReHLvT.pngp[/img][/center]
+[divbox=white]
+[color=transparent]spacer[/color]
+[center][img]https://i.imgur.com/oXLXC5Z.png[/img][/center]
+
+
+[color=transparent]spacer[/color]
+[center][b][size=150]Fname Lname has been promoted to Chief![/size][/b][/center]
+[color=transparent]spacer[/color]
+[center][b][u][size=110]DD/MMM/2024[/size][/u][/b][/center]
+[center][b][size=110]Promoted by: Rank Fname Lname[/size][/b][/center]
+[color=transparent]spacer[/color]
+[/divbox]
+[center][img]https://i.imgur.com/7aQSsNs.png[/img][/center][/code][/spoil]
+[/list]
+[/spoil]
+[hr][/hr]
+
+
+[lsemssubtitle]9.15 - EMT PROMOTION EMAILS [anchor]PROMOTIONEMAIL[/anchor][/lsemssubtitle]
+[spoil]
+[b]EMT-B[/b] - [url=https://pastebin.com/raw/CU8NPJ5X]here.[/url]
+
+
+[b]EMT-I[/b] - [url=https://pastebin.com/raw/Bxm4iJM8]here.[/url]
+
+
+[b]EMT-A[/b] - [url=https://pastebin.com/raw/JqkDcRAk]here.[/url]
+
+
+[b]Master EMT[/b] - [url=https://pastebin.com/raw/9DJAHAaP]here.[/url]
+
+
+
+
+[/spoil]
+[hr][/hr]
+
+
+[lsemssubtitle]9.16 - APPLICATION PROCESSED FORMAT [anchor]REGULARAPP[/anchor][/lsemssubtitle]
+[spoil]
+[pre][Accepted] LSEMS Application - Fname Lname[/pre]
+[code][img]https://i.imgur.com/HUIBiac.png[/img]
+[divbox=white]
+[right][color=black]Pillbox Hill Medical Center[/color] [/right]
+[right][color=black]Elgin Avenue, Pillbox Hill[/color] [/right]
+[right][color=black]Los Santos, San Andreas[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[center][b][size=160][color=Seagreen]APPLICATION ACCEPTED[/color][/size][/b]
+[img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+ 
+Dear Mr./Ms. NAME,
+ 
+We are glad to inform you that upon passing our screening process and signing the employment contract, your application has been [color=Seagreen][b]ACCEPTED[/b][/color] and you are now an [b]Emergency Medical Responder[/b] with the Los Santos Emergency Medical Services.
+
+
+
+
+We look forward to seeing you on duty soon. Congratulations!
+
+
+
+
+[hr][/hr]
+Sincerely,
+ 
+[img]SIGNATURE[/img]
+[i]Fname Lname[/i]
+Rank
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code]
+[/spoil]
+
+
+[hr][/hr]
+
+
+[lsemssubtitle]9.17 - REINSTATEMENT FORMATS [anchor]REINSTATEMENT[/anchor][/lsemssubtitle]
+[spoil]
+[b][font=Arial]Reinstatement Received[/font][/b]
+[spoiler=Reinstatement Received Code][code][img]https://i.imgur.com/fXst1fH.png[/img]
+[divbox=white]
+[right][color=black]Pillbox Hill Medical Center[/color] [/right]
+[right][color=black]Elgin Avenue, Pillbox Hill[/color] [/right]
+[right][color=black]Los Santos, San Andreas[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[center][b][size=160][color=Forestgreen]REINSTATEMENT RECEIVED[/color][/size][/b]
+[img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+ 
+Dear Mr./Ms. LName,
+
+
+We have [color=Forestgreen][b]received[/b][/color] your reinstatement application. We will review your application, evaluate your qualifications, and perform the appropriate background checks.
+
+
+After this, we will get back to you with an answer.
+ 
+[hr][/hr]
+Sincerely,
+ 
+[img]SIGNATURE[/img]
+[i]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[b][font=Arial]Offer of Employment[/font][/b]
+[spoiler=Offer of Employment Code][code][img]https://i.imgur.com/T6cDo05.png[/img]
+[divbox=white]
+[right][color=black]Pillbox Hill Medical Center[/color] [/right]
+[right][color=black]Elgin Avenue, Pillbox Hill[/color] [/right]
+[right][color=black]Los Santos, San Andreas[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[center][b][size=160][color=Darksalmon]OFFER OF EMPLOYMENT[/color][/size][/b]
+[img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+ 
+Dear Mr./ Ms. LName,
+ 
+We are pleased to offer you employment in the position of [b]Decided Rank[/b] in the Los Santos Emergency Medical Services. 
+
+
+[b]Terms of Reinstatement Employment[/b]
+
+
+[list]
+[*]You must go through the Los Santos Emergency Medical Services Manual and sign the Employment Contract before going on duty.
+[*]You must successfully complete reinstatement training
+[*]Do the minimum required hours per pay cycle (5 hours/ week)
+[/list] 
+Please confirm your acceptance of this offer within 48 hours by replying to this thread. Please let us know if you have any questions before accepting the offer.
+
+
+We look forward to seeing you again soon.
+
+
+[hr][/hr]
+Sincerely,
+ 
+[img]SIGNATURE[/img]
+[i]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox][LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[b][font=Arial]Reinstatement On-Hold[/font][/b]
+[spoiler=Reinstatement On-Hold Code][code][img]https://i.imgur.com/t99Kigs.png[/img]
+[divbox=white]
+[right][color=black]Pillbox Hill Medical Center[/color] [/right]
+[right][color=black]Elgin Avenue, Pillbox Hill[/color] [/right]
+[right][color=black]Los Santos, San Andreas[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[center][b][size=160][color=Coral]ON-HOLD[/color][/size][/b]
+[img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+ 
+Dear Mr./ Ms. LName,
+ 
+We would first like to thank you for your interest in reinstating into the Los Santos Emergency Medical Services. However, we have some concerns regarding your reinstatement application. As such, your reinstatement application has been placed [color=Coral][b]ON-HOLD[/b] [/color]until these issues are resolved.
+
+
+[list]
+[*]
+[/list] 
+You have 2 days to correct your reinstatement application. When ALL of the above issues have been resolved, reply to this thread to notify us.
+
+
+We look forward to hearing from you again soon.
+
+
+[hr][/hr]
+Sincerely,
+ 
+[img]SIGNATURE[/img]
+[i]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox][LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[b][font=Arial]Offer of Employment Contract[/font][/b]
+[spoiler=Offer of Employment Contract][code][img]https://i.imgur.com/rcifZuQ.png[/img]
+[divbox=white]
+[right][color=black]Pillbox Hill Medical Center[/color] [/right]
+[right][color=black]Elgin Avenue, Pillbox Hill[/color] [/right]
+[right][color=black]Los Santos, San Andreas[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[center][b][size=160][color=Darksalmon]OFFER OF EMPLOYMENT CONTRACT[/color][/size][/b]
+[img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+ 
+Dear Mr./Ms. LName,
+ 
+We are pleased to receive your acceptance of our offer of employment. At your earliest convenience, please make your way to the Pillbox Medical Center to read through and sign our personalized employment contract and receive your badge.
+
+
+(( You will be sent the LSEMS Discord Invite via the gov site email shortly. Join the server, and rename yourself to your IC name. Contact someone ICly to sign your contract. ))
+
+
+We look forward to seeing you again soon.
+
+
+[hr][/hr]
+Sincerely,
+ 
+[img]SIGNATURE[/img]
+[i]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[b][font=Arial](( DISCORD INVITATION ))[/font][/b]
+[spoiler][code][lsemssubtitle][ooc]DISCORD INVITATION[/ooc][/lsemssubtitle]
+[divbox=white][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
+[size=150]Los Santos Emergency Medical Services[/size][/b]
+[size=115]((LSEMS Discord Invite))[/size][/font][/right][/aligntable]
+[hr]
+[b](([/b]Dear Applicant,
+
+
+Kindly find linked below an invitation link to the LSEMS Discord. Once you join, change your nickname to your In Character name. You will still be required to either contact or find someone In Character to sign your contract.
+
+
+Discord Link: [url]https://discord.gg/3nysTssuMw[/url][b]))[/b]
+
+
+[hr]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[b][font=Arial]Reinstatement Accepted[/font][/b]
+[spoiler=Reinstatement Accepted Code][code][img]https://i.imgur.com/y5fPs5V.png[/img]
+[divbox=white]
+[right][color=black]Pillbox Hill Medical Center[/color] [/right]
+[right][color=black]Elgin Avenue, Pillbox Hill[/color] [/right]
+[right][color=black]Los Santos, San Andreas[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[center][b][size=160][color=Forestgreen]REINSTATEMENT ACCEPTED[/color][/size][/b]
+[img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+ 
+Dear Mr./Ms. LName,
+ 
+We are pleased to inform you that, with the signing of your employment contract, you will be reinstated as an [b]EMR[/b] until you complete and pass your training. Make sure to give our [url=https://gov.eclipse-rp.net/viewforum.php?f=804]handbook[/url] a full review. We are looking forward to working with you again!
+
+
+[hr][/hr]
+Sincerely,
+ 
+[img]SIGNATURE[/img]
+[i]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[b][font=Arial]Reinstatement Denied[/font][/b]
+[spoiler=Reinstatement Denied Code][code][img]https://i.imgur.com/t49uJPW.png[/img]
+[divbox=white]
+[right][color=black]Pillbox Hill Medical Center[/color] [/right]
+[right][color=black]Elgin Avenue, Pillbox Hill[/color] [/right]
+[right][color=black]Los Santos, San Andreas[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[right][color=transparent].[/color] [/right]
+[center][b][size=160][color=Firebrick]REINSTATEMENT DENIED[/color][/size][/b]
+[img]https://i.imgur.com/7x0vy1x.png[/img][/center]
+ 
+Dear Mr./Ms. LName,
+ 
+We regret to inform you that we will not be moving forward with your application for reinstatement for the reason(s) listed below. 
+ 
+[list]
+[*] REASON
+[/list]
+
+
+We'd like to wish you a lot of luck with your future endeavors.
+
+
+[hr][/hr]
+Sincerely,
+ 
+[img]SIGNATURE[/img]
+[i]Fname Lname[/i]
+[b]Rank[/b]
+[b]Los Santos Emergency Medical Services[/b]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoiler]
+
+
+[b][font=Arial]Reinstatement (Reintroduction) Email[/font][/b]
+[spoiler=Reinstatement (Reintroduction) Email]
+[url=https://pastebin.com/raw/Dq7vYC7s]Found here![/url][/spoiler][/spoil]
+
+
+
+
+[lsemssubtitle]9.18 - REDUCTION OF HOURS [anchor]ROH[/anchor][/lsemssubtitle]
+[spoil][code][img]https://i.imgur.com/ZoAgbkw.png[/img]
+
+
+[divbox=darkgreen][center][b][size=160][color=white]APPROVED[/color][/size][/b][/center][/divbox]
+[divbox=white]
+Dear Mr./Ms. Lname,
+ 
+We are pleased to inform you that your request for a [b]Reduction of Hours[/b] has been [b][color=#008040]approved[/color][/b] up until the [b]DATE/INDEFINITE[/b], effective immediately.
+
+
+
+
+Sincerely,
+ 
+Signature 
+Full Rank
+[/divbox]
+[LSEMSfooter][/LSEMSfooter][/code][/spoil]
+
+
+[lsemssubtitle]9.19 - REACH OUT LOG [anchor]REACHOUT[/anchor][/lsemssubtitle]
+[spoil]
+[code]
+[img]https://i.imgur.com/FS1saL1.png[/img]
+[lsemssubtitle]SUPERVISOR INFORMATION[/lsemssubtitle]
+[divbox=white]
+[b]Name:[/b]
+[b]Rank:[/b]
+[/divbox]
+[lsemssubtitle]GENERAL INFORMATION[/lsemssubtitle]
+[divbox=white]
+[b]Date of Reaching Out:[/b] DD/MMM/YYYY
+[b]Date of Response:[/b] DD/MMM/YYYY
+[b]Reason for Reaching Out:[/b] 
+[/divbox]
+[lsemssubtitle]DOCUMENTATION[/lsemssubtitle]
+[divbox=white]
+[spoiler=Email TO Employee]
+[/spoiler]
+
+
+[spoiler=Response FROM Employee]
+[/spoiler]
+[/divbox]
+[/code]
+[/spoil]
+
+
+[lsemssubtitle]9.20 - EOTM EMAIL [anchor]EOTM[/anchor][/lsemssubtitle]
+[pre]Suspension | Fname Lname[/pre]
+[spoil]
+[code]
+[LSEMSfooter][/LSEMSfooter]
+[divbox=white]
+[img]https://i.imgur.com/9uGiPqF.png[/img][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
+[size=150]Los Santos Emergency Medical Services[/size][/b]
+[size=115]LSEMS EOTM [/size]
+[size=95]DD/MMM/YYYY[/size][/font][/right][/aligntable]
+[hr]
+
+
+Greetings Fname!
+
+
+Congratulations! You have been voted as the [b]Employee of the Month[/b] for the month of [b]MONTH YEAR[/b]. This comes with three perks:
+[list][*]You get a $100,000 bonus on the first Sunday of the month!
+[*]You can park on the 4th spot (rightmost) in the Pillbox Garage, next to the High Command spots
+[*]Big time bragging rights & the EOTM Ribbon! [/list]
+
+
+We thank you for your amazing services, and we are excited to see what more you have in store for us!
+
+
+[hr][/hr]
+
+
+Signature here 
+
+
+[/divbox]
+[LSEMSfooter][/LSEMSfooter]
+[/code]
+[/spoil]
+
+
+[lsemssubtitle]9.21 - DUTY REPORT RAFFLE DRAW EMAIL[anchor]DUTYREPORTDRAW[/anchor][/lsemssubtitle]
+[pre]LSEMS Duty Report Raffle[/pre]
+[spoil]
+[code]
+[LSEMSfooter][/LSEMSfooter]
+[divbox=white]
+[img]https://i.imgur.com/9uGiPqF.png[/img][aligntable=right,0,0,0,0,0,0][right][font=Arial][b]
+[size=150]Los Santos Emergency Medical Services[/size][/b]
+[size=115]LSEMS Duty Report Raffle[/size]
+[size=95]DD/MMM/YYYY[/size][/font][/right][/aligntable]
+[hr]
+
+
+Greetings Fname!
+
+
+Congratulations! You have been drawn in the Duty Report raffle for the month of MONTH YEAR!
+
+
+This comes with a $35,000 salary bonus on the next pay cycle.
+
+
+
+
+We would like to thank you for your contributions, and we look forward to seeing more from you!
+
+
+[hr][/hr]
+
+
+Signature here
+
+
+[/code]
+[/spoil]
+
+
+
+
+[hr][/hr]
+
+
+[hr][/hr]
+[center][goto=TOP][color=#CCC][u]Back to Top[/u][/color][/goto][/center]
+[/divbox]
+[LSEMSfooter][/LSEMSfooter]
+
+
+[img]https://i.imgur.com/A7zdLKc.png[/img]
+[right][size=85]Made by Alex Mpache, May of 2022.[/size][/right]
+[color=transparent]ඞ[/color]
+[center][url=https://gov.eclipse-rp.net/viewtopic.php?f=1690&t=74455]Table of Contents[/url][/center]
+
+
+[center][LSEMSfooter][/LSEMSfooter][/center]
+[divbox=white]
+[hr][/hr]
+[lsemssubtitle][b][size=135]10.1 - Introduction to Publications[/size][/b][/lsemssubtitle]
+[divbox=white]
+[hr]
+
+
+Creating a publication can be an intimidating task, but it is something that is very much doable. It does not need to be a masterpiece every time but do put some thought into it. If you are experiencing writer's block or feel like you don't know what to put inside the Newsletter, please do reach out to others for assistance.
+
+
+
+
+
+
+[i]PS: This was previously the Newsletter section. This has been moved to be a PR Duty.[/i]
+
+
+[/divbox]
+
+
+
+
+[lsemssubtitle][b][size=135]10.2 - Rank Insignia[/size][/b][/lsemssubtitle]
+[divbox=white]
+[hr]
+[b][u]RANK A to RANK-B PREMADES:[/u][/b]
+
+
+[spoil][fimg=24,6]https://i.imgur.com/vIKbZLW.png[/fimg] [b]EMR[/b] [b]->[/b] [fimg=24,24]https://i.imgur.com/GkqftMR.png[/fimg] [b]EMT-B[/b] | Fname Lname
+
+
+[code][fimg=24,6]https://i.imgur.com/vIKbZLW.png[/fimg] [b]EMR[/b] [b]->[/b] [fimg=24,24]https://i.imgur.com/GkqftMR.png[/fimg] [b]EMT-B[/b] | Fname Lname[/code]
+
+
+[hr][/hr]
+
+
+[fimg=24,24]https://i.imgur.com/GkqftMR.png[/fimg] [b]EMT-B[/b] [b]->[/b] [fimg=28,40]https://i.imgur.com/tSAH1lA.png[/fimg] [b]EMT-I[/b] | Fname Lname
+
+
+[code][fimg=24,24]https://i.imgur.com/GkqftMR.png[/fimg] [b]EMT-B[/b] [b]->[/b] [fimg=28,40]https://i.imgur.com/tSAH1lA.png[/fimg] [b]EMT-I[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=28,40]https://i.imgur.com/tSAH1lA.png[/fimg] [b]EMT-I[/b] [b]->[/b] [fimg=28,36]https://i.imgur.com/Dquo0MQ.png[/fimg] [b]EMT-A[/b] | Fname Lname
+
+
+[code][fimg=28,40]https://i.imgur.com/tSAH1lA.png[/fimg] [b]EMT-I[/b] [b]->[/b] [fimg=28,36]https://i.imgur.com/Dquo0MQ.png[/fimg] [b]EMT-A[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=28,36]https://i.imgur.com/Dquo0MQ.png[/fimg] [b]EMT-A[/b] [b]->[/b] [fimg=28,39]https://i.imgur.com/hqWF5S9.png[/fimg] [b]Master EMT[/b] | Fname Lname
+
+
+[code] [fimg=28,36]https://i.imgur.com/Dquo0MQ.png[/fimg] [b]EMT-A[/b] [b]->[/b] [fimg=28,39]https://i.imgur.com/hqWF5S9.png[/fimg] [b]Master EMT[/b] | Fname Lname
+[/code]
+
+
+
+
+[hr][/hr]
+
+
+[fimg=28,36]https://i.imgur.com/Dquo0MQ.png[/fimg] [b]EMT-A[/b] [b]->[/b] [fimg=26,35]https://i.imgur.com/kxzu1Vs.png[/fimg] [b]Junior Paramedic[/b] | Fname Lname
+
+
+[code][fimg=28,36]https://i.imgur.com/Dquo0MQ.png[/fimg] [b]EMT-A[/b] [b]->[/b] [fimg=26,35]https://i.imgur.com/kxzu1Vs.png[/fimg] [b]Junior Paramedic[/b] | Fname Lname
+[/code]
+
+
+[hr][/hr]
+
+
+[fimg=28,39]https://i.imgur.com/hqWF5S9.png[/fimg] [b]Master EMT[/b] [b]->[/b] [fimg=26,35]https://i.imgur.com/z3k86ji.png[/fimg] [b]Junior Paramedic[/b] | Fname Lname
+
+
+[code][fimg=28,39]https://i.imgur.com/hqWF5S9.png[/fimg] [b]Master EMT[/b] [b]->[/b] [fimg=26,35]https://i.imgur.com/z3k86ji.png[/fimg] [b]Junior Paramedic[/b] | Fname Lname[/code]
+
+
+[hr][/hr]
+
+
+[fimg=26,35]https://i.imgur.com/z3k86ji.png[/fimg] [b]Junior Paramedic[/b] [b]->[/b] [fimg=27,35]https://i.imgur.com/yJZHaKg.png[/fimg] [b]Paramedic[/b] | Fname Lname
+
+
+[code][fimg=26,35]https://i.imgur.com/z3k86ji.png[/fimg] [b]Junior Paramedic[/b] [b]->[/b] [fimg=27,35]https://i.imgur.com/yJZHaKg.png[/fimg] [b]Paramedic[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=27,35]https://i.imgur.com/yJZHaKg.png[/fimg] [b]Paramedic[/b] [b]->[/b] [fimg=27,38]https://i.imgur.com/Yra8DDl.png[/fimg] [b]Senior Paramedic[/b] | Fname Lname
+
+
+[code][fimg=27,35]https://i.imgur.com/yJZHaKg.png[/fimg] [b]Paramedic[/b] [b]->[/b] [fimg=27,38]https://i.imgur.com/Yra8DDl.png[/fimg] [b]Senior Paramedic[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=27,35]https://i.imgur.com/Yra8DDl.png[/fimg] [b]Senior Paramedic[/b] [b]->[/b] [fimg=26,44]https://i.imgur.com/I9A66xq.png[/fimg] [b]Lead Paramedic[/b] | Fname Lname
+
+
+[code][fimg=27,35]https://i.imgur.com/Yra8DDl.png[/fimg] [b]Senior Paramedic[/b] [b]->[/b] [fimg=26,44]https://i.imgur.com/I9A66xq.png[/fimg] [b]Lead Paramedic[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=26,44]https://i.imgur.com/I9A66xq.png[/fimg] [b]Lead Paramedic[/b] [b]->[/b] [fimg=17,44]https://i.imgur.com/nzCBN57.png[/fimg] [b]Lieutenant[/b] | Fname Lname
+
+
+[code][fimg=26,44]https://i.imgur.com/I9A66xq.png[/fimg] [b]Lead Paramedic[/b] [b]->[/b] [fimg=17,44]https://i.imgur.com/nzCBN57.png[/fimg] [b]Lieutenant[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=17,44]https://i.imgur.com/nzCBN57.png[/fimg] [b]Lieutenant[/b] [b]->[/b] [fimg=41,44]https://i.imgur.com/KVQAsB8.png[/fimg] [b]Captain[/b] | Fname Lname
+
+
+[code][fimg=17,44]https://i.imgur.com/nzCBN57.png[/fimg] [b]Lieutenant[/b] [b]->[/b] [fimg=41,44]https://i.imgur.com/KVQAsB8.png[/fimg] [b]Captain[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=41,44]https://i.imgur.com/KVQAsB8.png[/fimg] [b]Captain[/b] [b]->[/b] [fimg=44,47]https://i.imgur.com/dQEQ620.png[/fimg] [b]Commander[/b] | Fname Lname
+
+
+[code][fimg=41,44]https://i.imgur.com/KVQAsB8.png[/fimg] [b]Captain[/b] [b]->[/b] [fimg=44,46]https://i.imgur.com/dQEQ620.png[/fimg] [b]Commander[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=44,46]https://i.imgur.com/dQEQ620.png[/fimg] [b]Commander[/b] [b]->[/b] [fimg=126,44]https://i.imgur.com/7tgPuo5.png[/fimg] [b]Deputy Chief[/b] | Fname Lname
+
+
+[code][fimg=44,47]https://i.imgur.com/dQEQ620.png[/fimg] [b]Commander[/b] [b]->[/b] [fimg=126,44]https://i.imgur.com/7tgPuo5.png[/fimg] [b]Deputy Chief[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=126,44]https://i.imgur.com/7tgPuo5.png[/fimg] [b]Deputy Chief[/b] [b]->[/b] [fimg=126,84]https://i.imgur.com/ePr6kgC.png[/fimg] [b]Assistant Chief[/b] | Fname Lname
+
+
+[code][fimg=44,47]https://i.imgur.com/7tgPuo5.png[/fimg] [b]Deputy Chief[/b] [b]->[/b] [fimg=126,84]https://i.imgur.com/ePr6kgC.png[/fimg] [b]Assistant Chief[/b] | Fname Lname [/code]
+
+
+[hr][/hr]
+
+
+[fimg=126,84]https://i.imgur.com/ePr6kgC.png[/fimg] [b]Assistant Chief[/b] [b]->[/b] [fimg=126,124]https://i.imgur.com/oXLXC5Z.png[/fimg] [b]Chief of LSEMS[/b] | Fname Lname
+
+
+[code][fimg=126,84]https://i.imgur.com/ePr6kgC.png[/fimg] [b]Assistant Chief[/b] [b]->[/b] [fimg=126,124]https://i.imgur.com/oXLXC5Z.png[/fimg] [b]Chief of LSEMS[/b] | Fname Lname [/code]
+[/spoil]
+
+
+
+
+[b][u]INDIVIDUAL RANKS:[/u][/b]
+[spoil]
+The in-between arrow:
+[b]->[/b] 
+[code] [b]->[/b] [/code]
+[hr][/hr]
+[fimg=24,6]https://i.imgur.com/vIKbZLW.png[/fimg] [b]EMR[/b]
+[code][fimg=24,6]https://i.imgur.com/vIKbZLW.png[/fimg] [b]EMR[/b][/code]
+[hr][/hr]
+[fimg=24,24]https://i.imgur.com/GkqftMR.png[/fimg] [b]EMT-B[/b]
+[code][fimg=24,24]https://i.imgur.com/GkqftMR.png[/fimg] [b]EMT-B[/b][/code]
+[hr][/hr]
+[fimg=28,40]https://i.imgur.com/tSAH1lA.png[/fimg] [b]EMT-I[/b]
+[code][fimg=28,40]https://i.imgur.com/tSAH1lA.png[/fimg] [b]EMT-I[/b][/code]
+[hr][/hr]
+[fimg=28,36]https://i.imgur.com/Dquo0MQ.png[/fimg] [b]EMT-A[/b]
+[code][fimg=28,36]https://i.imgur.com/Dquo0MQ.png[/fimg] [b]EMT-A[/b][/code]
+[hr][/hr]
+[fimg=28,39]https://i.imgur.com/uOdEASX.png[/fimg] [b]EMT-P[/b]
+[code][fimg=28,39]https://i.imgur.com/uOdEASX.png[/fimg] [b]EMT-P[/b][/code]
+[hr][/hr]
+[fimg=28,39]https://i.imgur.com/hqWF5S9.png[/fimg] [b]Master EMT[/b]
+[code][fimg=28,39]https://i.imgur.com/hqWF5S9.png[/fimg] [b]Master EMT[/b][/code]
+[hr][/hr]
+[fimg=26,35]https://i.imgur.com/z3k86ji.png[/fimg] [b]Junior Paramedic[/b]
+[code][fimg=26,35]https://i.imgur.com/z3k86ji.png[/fimg] [b]Junior Paramedic[/b][/code]
+[hr][/hr]
+[fimg=27,35]https://i.imgur.com/yJZHaKg.png[/fimg] [b]Paramedic[/b]
+[code][fimg=27,35]https://i.imgur.com/yJZHaKg.png[/fimg] [b]Paramedic[/b][/code]
+[hr][/hr]
+[fimg=27,38]https://i.imgur.com/Yra8DDl.png[/fimg] [b]Senior Paramedic[/b]
+[code][fimg=27,38]https://i.imgur.com/Yra8DDl.png[/fimg] [b]Senior Paramedic[/b][/code]
+[hr][/hr]
+[fimg=26,44]https://i.imgur.com/I9A66xq.png[/fimg] [b]Lead Paramedic[/b]
+[code][fimg=26,44]https://i.imgur.com/I9A66xq.png[/fimg] [b]Lead Paramedic[/b][/code]
+[hr][/hr]
+[fimg=17,44]https://i.imgur.com/nzCBN57.png[/fimg] [b]Lieutenant[/b]
+[code][fimg=17,44]https://i.imgur.com/nzCBN57.png[/fimg] [b]Lieutenant[/b][/code]
+[hr][/hr]
+[fimg=41,44]https://i.imgur.com/KVQAsB8.png[/fimg] [b]Captain[/b]
+[code][fimg=41,44]https://i.imgur.com/KVQAsB8.png[/fimg] [b]Captain[/b][/code]
+[hr][/hr]
+[fimg=44,47]https://i.imgur.com/dQEQ620.png[/fimg] [b]Commander[/b]
+[code][fimg=44,47]https://i.imgur.com/dQEQ620.png[/fimg] [b]Commander[/b][/code]
+[hr][/hr]
+[fimg=126,44]https://i.imgur.com/7tgPuo5.png[/fimg] [b]Deputy Chief[/b]
+[code][fimg=126,44]https://i.imgur.com/7tgPuo5.png[/fimg] [b]Deputy Chief[/b][/code]
+[hr][/hr]
+[fimg=126,84]https://i.imgur.com/ePr6kgC.png[/fimg] [b]Assistant Chief[/b]
+[code][fimg=126,84]https://i.imgur.com/ePr6kgC.png[/fimg] [b]Assistant Chief[/b][/code]
+[hr][/hr]
+[fimg=126,124]https://i.imgur.com/oXLXC5Z.png[/fimg] [b]Chief of LSEMS[/b]
+[code][fimg=126,124]https://i.imgur.com/oXLXC5Z.png[/fimg] [b]Chief of LSEMS[/b][/code]
+[/spoil]
+[/divbox]
+
+
+[lsemssubtitle][b][size=135]10.3 - Logos[/size][/b][/lsemssubtitle]
+[divbox=white]
+[spoil]
+[b]LSEMS[/b]
+[fimg=150,150]https://i.imgur.com/OA8dOlP.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/OA8dOlP.png[/fimg][/code]
+[hr][/hr]
+[b]RED[/b]
+[fimg=150,150]https://i.imgur.com/6gM4XOl.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/6gM4XOl.png[/fimg][/code]
+[hr][/hr]
+[b]PR[/b]
+[fimg=150,150]https://i.imgur.com/0Yw1ykW.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/0Yw1ykW.png[/fimg][/code]
+[hr][/hr]
+[b]BLS[/b]
+[fimg=150,150]https://i.imgur.com/OJgqQWY.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/OJgqQWY.png[/fimg][/code]
+[hr][/hr]
+[b]F&R[/b]
+[fimg=150,150]https://i.imgur.com/pqzChDg.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/pqzChDg.png[/fimg][/code]
+[hr][/hr]
+[b]Fire Safety[/b]
+[fimg=150,150]https://i.imgur.com/BkYqUmd.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/BkYqUmd.png[/fimg][/code]
+[hr][/hr]
+[b]Lifeguard[/b]
+[fimg=150,150]https://i.imgur.com/iOVtXnI.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/iOVtXnI.png[/fimg][/code]
+[hr][/hr]
+[b]AMU[/b]
+[fimg=150,150]https://i.imgur.com/8Pn1bAG.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/8Pn1bAG.png[/fimg][/code]
+[hr][/hr]
+[b]Forensics[/b]
+[fimg=150,150]https://i.imgur.com/ZrbXj3i.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/ZrbXj3i.png[/fimg][/code]
+[hr][/hr]
+[b]CRU[/b]
+[fimg=150,150]https://i.imgur.com/IJN82Yd.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/IJN82Yd.png[/fimg][/code]
+[hr][/hr]
+[b]A&R[/b]
+[fimg=235,150]https://i.imgur.com/6EvtIgR.png[/fimg]
+[code][fimg=235,150]https://i.imgur.com/6EvtIgR.png[/fimg][/code]
+[hr][/hr]
+[b]FTD[/b]
+[fimg=150,150]https://i.imgur.com/9f9h6N3.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/9f9h6N3.png[/fimg][/code]
+[hr][/hr]
+[b]IA[/b]
+[fimg=150,150]https://i.imgur.com/AUL0fIU.png[/fimg]
+[code][fimg=150,150]https://i.imgur.com/AUL0fIU.png[/fimg][/code]
+[/spoil]
+
+
+[/divbox]
+[center][/divbox][LSEMSfooter][/LSEMSfooter]
