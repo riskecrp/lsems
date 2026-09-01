@@ -28,28 +28,39 @@ export async function GET(req) {
       console.error('[Auth] getDiscordUser failed:', JSON.stringify(user));
       return NextResponse.redirect(new URL('/login?error=server', SITE_URL));
     }
-    const member = await getGuildMember(user.id);
-    console.log('[Auth] user:', user?.id, user?.username);
-    console.log('[Auth] member code:', member?.code, 'roles:', member?.roles?.length);
+    // Site owners (env, comma-separated Discord IDs) get full access without
+    // being in the guild at all — skip the member/role checks entirely.
+    const ownerIds = (process.env.OWNER_DISCORD_IDS || '')
+      .split(',').map(s => s.trim()).filter(Boolean);
 
-    if (!member || member.code === 10004 || !member.roles) {
-      console.error('[Auth] guild fail:', JSON.stringify(member));
-      return NextResponse.redirect(new URL('/login?error=guild', SITE_URL));
-    }
+    let level;
+    if (ownerIds.includes(user.id)) {
+      level = 5;
+      console.log('[Auth] owner login:', user.id, user.username);
+    } else {
+      const member = await getGuildMember(user.id);
+      console.log('[Auth] user:', user?.id, user?.username);
+      console.log('[Auth] member code:', member?.code, 'roles:', member?.roles?.length);
 
-    // Read permission_roles from DB so Admin-configured levels are respected
-    let effectiveRoles = { ...ROLE_LEVELS };
-    try {
-      const db2 = new Database(DB_PATH);
-      const row = db2.prepare("SELECT value FROM app_settings WHERE key = 'permission_roles'").get();
-      if (row) effectiveRoles = { ...effectiveRoles, ...JSON.parse(row.value) };
-      db2.close();
-    } catch {}
+      if (!member || member.code === 10004 || !member.roles) {
+        console.error('[Auth] guild fail:', JSON.stringify(member));
+        return NextResponse.redirect(new URL('/login?error=guild', SITE_URL));
+      }
 
-    const level = resolveLevel(member.roles, effectiveRoles);
-    console.log('[Auth] resolved level:', level, 'from roles:', member.roles);
-    if (level === 0) {
-      return NextResponse.redirect(new URL('/login?error=role', SITE_URL));
+      // Read permission_roles from DB so Admin-configured levels are respected
+      let effectiveRoles = { ...ROLE_LEVELS };
+      try {
+        const db2 = new Database(DB_PATH);
+        const row = db2.prepare("SELECT value FROM app_settings WHERE key = 'permission_roles'").get();
+        if (row) effectiveRoles = { ...effectiveRoles, ...JSON.parse(row.value) };
+        db2.close();
+      } catch {}
+
+      level = resolveLevel(member.roles, effectiveRoles);
+      console.log('[Auth] resolved level:', level, 'from roles:', member.roles);
+      if (level === 0) {
+        return NextResponse.redirect(new URL('/login?error=role', SITE_URL));
+      }
     }
 
     const displayName = user.global_name || user.username;
