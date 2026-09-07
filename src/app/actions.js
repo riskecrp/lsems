@@ -590,15 +590,36 @@ export async function renameEmployee({ oldName, newName }) {
     const exists = queryOne('SELECT id FROM employees WHERE name = ? AND name != ?', [newTrimmed, oldName]);
     if (exists) return { ok: false, error: `${newTrimmed} already exists.` };
 
+    // Hours may already exist under the new name — e.g. a separated employee
+    // re-added with a typo and then corrected. Merge those weeks instead of
+    // tripping UNIQUE(employee_name, week_ending). A case-only rename hits the
+    // same rows (the column is COLLATE NOCASE), so no merge is needed then.
+    const caseOnly = newTrimmed.toLowerCase() === oldName.toLowerCase();
+    const overlap = caseOnly ? [] : query(
+      `SELECT a.week_ending FROM employee_hours a
+         JOIN employee_hours b ON b.week_ending = a.week_ending AND b.employee_name = ?
+        WHERE a.employee_name = ?`, [newTrimmed, oldName]).map(r => r.week_ending);
+
     transaction(() => {
       run('UPDATE employees SET name = ? WHERE name = ?', [newTrimmed, oldName]);
+      if (overlap.length) {
+        const ph = overlap.map(() => '?').join(',');
+        run(`UPDATE employee_hours SET hours = hours + COALESCE((
+               SELECT h.hours FROM employee_hours h
+                WHERE h.employee_name = ? AND h.week_ending = employee_hours.week_ending), 0)
+              WHERE employee_name = ? AND week_ending IN (${ph})`,
+          [oldName, newTrimmed, ...overlap]);
+        run(`DELETE FROM employee_hours WHERE employee_name = ? AND week_ending IN (${ph})`,
+          [oldName, ...overlap]);
+      }
       run('UPDATE employee_hours SET employee_name = ? WHERE employee_name = ?', [newTrimmed, oldName]);
       run('UPDATE rank_history SET name = ? WHERE name = ?', [newTrimmed, oldName]);
       run('UPDATE supervisors SET name = ? WHERE name = ?', [newTrimmed, oldName]);
     });
 
     const { username, user_id } = await getActor();
-    logAudit(username, user_id, `Rename — ${oldName}`, `→ ${newTrimmed}`);
+    const merged = overlap.length ? ` · merged ${overlap.length} week(s) of existing hours` : '';
+    logAudit(username, user_id, `Rename — ${oldName}`, `→ ${newTrimmed}${merged}`);
     revalidatePath('/'); revalidatePath('/history');
     revalidatePath('/supervisors'); revalidatePath('/tasks');
     return { ok: true };
