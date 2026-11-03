@@ -480,7 +480,10 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
                     <SectionTitle title={group.title} sub={group.sub} />
                     {group.kinds.map(kind => {
                       const tpl     = group.value[kind.key] || '';
-                      const missing = ['{start_full}', '{start_relative}'].filter(p => !tpl.includes(p));
+                      // Either timestamp is fine; warn only if the message has no start time at all
+                      const noTime   = !tpl.includes('{start_full}') && !tpl.includes('{start_relative}');
+                      // Discord already writes "in 23 hours", so "in {start_relative}" reads "in in 23 hours"
+                      const doubleIn = /\bin\s+\{(start|end)_relative\}/i.test(tpl);
                       return (
                         <div key={kind.key} style={{ marginBottom:18 }}>
                           <div style={{ fontSize:10, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.12em', color:'var(--c-accent)', marginBottom:6 }}>{kind.label}</div>
@@ -490,9 +493,14 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
                             onChange={e => group.set(v => ({ ...v, [kind.key]: e.target.value }))}
                             onFocus={fr} onBlur={fb}
                           />
-                          {missing.length > 0 && (
+                          {noTime && (
                             <div style={{ marginTop:6, padding:'6px 10px', borderRadius:6, background:'var(--c-warn-bg)', border:'1px solid var(--c-warn-glow)', fontSize:11, color:'var(--c-warning)' }}>
-                              Missing {missing.join(' and ')} — the timestamp won’t appear in this message.
+                              No start time — add {'{start_full}'} or {'{start_relative}'} if this message should say when the event starts.
+                            </div>
+                          )}
+                          {doubleIn && (
+                            <div style={{ marginTop:6, padding:'6px 10px', borderRadius:6, background:'var(--c-warn-bg)', border:'1px solid var(--c-warn-glow)', fontSize:11, color:'var(--c-warning)' }}>
+                              Discord already includes “in” (e.g. “in 23 hours”), so “in {'{start_relative}'}” will read “in in 23 hours”. Drop the “in” before it.
                             </div>
                           )}
                           <div style={{ marginTop:6, padding:'8px 12px', borderRadius:6, background:'var(--bg-sub)', border:'1px solid var(--border)', fontSize:12, color:'var(--text-2)', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>
