@@ -145,6 +145,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
   });
   const [bbTab, setBbTab] = useState(BBCODE_CONFIGS[0].key);
   const [reminders, setReminders] = useState(initial.calendar_reminders || { day:'', hour:'' });
+  const [allHandsMsgs, setAllHandsMsgs] = useState(initial.allhands_messages || { created:'', day:'', hour:'' });
   const [newRoleId,  setNewRoleId]  = useState('');
   const [newRoleLvl, setNewRoleLvl] = useState(1);
   const [saving,     setSaving]     = useState({});
@@ -436,68 +437,85 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
               { key:'{end_full}',       desc:'End — full date & time (<t:…:F>); blank if the event has no end time' },
               { key:'{end_relative}',   desc:'End — relative (<t:…:R>); blank if the event has no end time' },
               { key:'{role}',           desc:'@Supervisor role mention' },
+              { key:'{everyone}',       desc:'@everyone mention' },
             ];
-            const KINDS = [
-              { key:'day',  label:'24 Hours Before', rel:'in a day'   },
-              { key:'hour', label:'1 Hour Before',   rel:'in an hour' },
+            const GROUPS = [
+              { id:'calendar_reminders', title:'Supervisor Events', sub:'Posted in the Supervisor channel for events marked For Supervisors',
+                sample:'Supervisor Meeting', value:reminders, set:setReminders, kinds:[
+                  { key:'day',  label:'24 Hours Before', ahead:864e5 },
+                  { key:'hour', label:'1 Hour Before',   ahead:36e5  },
+                ]},
+              { id:'allhands_messages', title:'All-Hands Meetings', sub:'Posted in #announcements for events marked All-Hands Meeting',
+                sample:'All-Hands Meeting', value:allHandsMsgs, set:setAllHandsMsgs, kinds:[
+                  { key:'created', label:'When Created',    ahead:7*864e5 },
+                  { key:'day',     label:'24 Hours Before', ahead:864e5   },
+                  { key:'hour',    label:'1 Hour Before',   ahead:36e5    },
+                ]},
             ];
-            // Rough preview with a sample event 24h / 1h from now
-            const preview = (tpl, kind) => {
-              const start = new Date(Date.now() + (kind.key === 'day' ? 864e5 : 36e5));
+            const relative = ms => ms >= 2*864e5 ? `in ${Math.round(ms/864e5)} days` : ms >= 864e5 ? 'in a day' : 'in an hour';
+            // Rough preview with a sample event the right distance from now
+            const preview = (tpl, group, kind) => {
+              const start = new Date(Date.now() + kind.ahead);
               const end   = new Date(start.getTime() + 36e5);
               const full  = d => d.toLocaleString(undefined, { weekday:'long', month:'long', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' });
               return (tpl || '')
-                .replaceAll('{title}', 'Supervisor Meeting')
+                .replaceAll('{title}', group.sample)
                 .replaceAll('{link}', 'https://example.com/meeting')
                 .replaceAll('{start_full}', full(start))
-                .replaceAll('{start_relative}', kind.rel)
+                .replaceAll('{start_relative}', relative(kind.ahead))
                 .replaceAll('{end_full}', full(end))
-                .replaceAll('{end_relative}', kind.key === 'day' ? 'in a day' : 'in 2 hours')
-                .replaceAll('{role}', '@Supervisor');
+                .replaceAll('{end_relative}', relative(kind.ahead + 36e5))
+                .replaceAll('{role}', '@Supervisor')
+                .replaceAll('{everyone}', '@everyone');
             };
             return (
-              <div className="surface" style={{ padding:'18px 20px' }}>
-                <SectionTitle title="Discord Reminders" sub="Messages the bot posts for calendar events marked For Supervisors" />
-                <div style={{ fontSize:11, color:'var(--text-3)', marginBottom:14, lineHeight:1.5 }}>
+              <div className="space-y-3">
+                <div className="surface" style={{ padding:'14px 20px', fontSize:11, color:'var(--text-3)', lineHeight:1.5 }}>
                   Discord shows <code>{'{start_relative}'}</code> as e.g. <em>“in 23 hours”</em> — so write <code>which is {'{start_relative}'}</code>, not <code>which is in {'{start_relative}'}</code>.
-                  Changes apply to the next reminder sent.
+                  Only mentions written here can ping (<code>{'{role}'}</code>, <code>{'{everyone}'}</code>, or a role pasted as <code>{'<@&ROLE_ID>'}</code>) — never anything typed into an event title.
+                  Changes apply to the next message sent.
                 </div>
-                {KINDS.map(kind => {
-                  const tpl     = reminders[kind.key] || '';
-                  const missing = ['{start_full}', '{start_relative}'].filter(p => !tpl.includes(p));
-                  return (
-                    <div key={kind.key} style={{ marginBottom:18 }}>
-                      <div style={{ fontSize:10, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.12em', color:'var(--c-accent)', marginBottom:6 }}>{kind.label}</div>
-                      <textarea
-                        style={{ ...inp, width:'100%', minHeight:90, fontFamily:'monospace', fontSize:12, padding:'10px 12px', boxSizing:'border-box', display:'block', resize:'vertical' }}
-                        value={tpl}
-                        onChange={e => setReminders(r => ({ ...r, [kind.key]: e.target.value }))}
-                        onFocus={fr} onBlur={fb}
-                      />
-                      {missing.length > 0 && (
-                        <div style={{ marginTop:6, padding:'6px 10px', borderRadius:6, background:'var(--c-warn-bg)', border:'1px solid var(--c-warn-glow)', fontSize:11, color:'var(--c-warning)' }}>
-                          Missing {missing.join(' and ')} — the timestamp won’t appear in this reminder.
+                {GROUPS.map(group => (
+                  <div key={group.id} className="surface" style={{ padding:'18px 20px' }}>
+                    <SectionTitle title={group.title} sub={group.sub} />
+                    {group.kinds.map(kind => {
+                      const tpl     = group.value[kind.key] || '';
+                      const missing = ['{start_full}', '{start_relative}'].filter(p => !tpl.includes(p));
+                      return (
+                        <div key={kind.key} style={{ marginBottom:18 }}>
+                          <div style={{ fontSize:10, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.12em', color:'var(--c-accent)', marginBottom:6 }}>{kind.label}</div>
+                          <textarea
+                            style={{ ...inp, width:'100%', minHeight:90, fontFamily:'monospace', fontSize:12, padding:'10px 12px', boxSizing:'border-box', display:'block', resize:'vertical' }}
+                            value={tpl}
+                            onChange={e => group.set(v => ({ ...v, [kind.key]: e.target.value }))}
+                            onFocus={fr} onBlur={fb}
+                          />
+                          {missing.length > 0 && (
+                            <div style={{ marginTop:6, padding:'6px 10px', borderRadius:6, background:'var(--c-warn-bg)', border:'1px solid var(--c-warn-glow)', fontSize:11, color:'var(--c-warning)' }}>
+                              Missing {missing.join(' and ')} — the timestamp won’t appear in this message.
+                            </div>
+                          )}
+                          <div style={{ marginTop:6, padding:'8px 12px', borderRadius:6, background:'var(--bg-sub)', border:'1px solid var(--border)', fontSize:12, color:'var(--text-2)', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>
+                            <div style={{ fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.09em', color:'var(--text-4)', marginBottom:4 }}>Preview (approximate)</div>
+                            {preview(tpl, group, kind)}
+                          </div>
                         </div>
-                      )}
-                      <div style={{ marginTop:6, padding:'8px 12px', borderRadius:6, background:'var(--bg-sub)', border:'1px solid var(--border)', fontSize:12, color:'var(--text-2)', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>
-                        <div style={{ fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.09em', color:'var(--text-4)', marginBottom:4 }}>Preview (approximate)</div>
-                        {preview(tpl, kind)}
+                      );
+                    })}
+                    <div style={{ marginBottom:16 }}>
+                      <div style={{ fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.09em', color:'var(--text-4)', marginBottom:8 }}>Available Placeholders</div>
+                      <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+                        {PLACEHOLDERS.map(p => (
+                          <span key={p.key} title={p.desc}
+                            style={{ padding:'2px 9px', borderRadius:4, cursor:'default', background:'var(--bg-sub)', border:'1px solid var(--border)', fontFamily:'monospace', fontSize:10, color:'var(--c-accent)' }}>
+                            {p.key}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                  );
-                })}
-                <div style={{ marginBottom:16 }}>
-                  <div style={{ fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.09em', color:'var(--text-4)', marginBottom:8 }}>Available Placeholders</div>
-                  <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
-                    {PLACEHOLDERS.map(p => (
-                      <span key={p.key} title={p.desc}
-                        style={{ padding:'2px 9px', borderRadius:4, cursor:'default', background:'var(--bg-sub)', border:'1px solid var(--border)', fontFamily:'monospace', fontSize:10, color:'var(--c-accent)' }}>
-                        {p.key}
-                      </span>
-                    ))}
+                    <SaveBtn saving={saving[group.id]} saved={saved[group.id]} onClick={() => save(group.id, group.value)} />
                   </div>
-                </div>
-                <SaveBtn saving={saving.calendar_reminders} saved={saved.calendar_reminders} onClick={() => save('calendar_reminders', reminders)} />
+                ))}
               </div>
             );
           })()}

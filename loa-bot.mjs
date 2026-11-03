@@ -465,14 +465,33 @@ async function pollRibbonChannel(client, limit = 20) {
 }
 
 // ── Calendar reminders ──────────────────────────────────────────
-// Supervisor events get a reminder 24h and 1h before they start. Wording comes
-// from the Admin page (app_settings.calendar_reminders); these are the fallbacks
-// and should match SETTING_DEFAULTS in src/app/actions.js.
-const REMINDER_DEFAULTS = {
-  day:  '{role} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
-  hour: '{role} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
-};
+// Events can be for Supervisors and/or an All-Hands Meeting. Each has its own
+// channel, its own messages (editable on the Admin page, stored in
+// app_settings) and its own "sent" columns. Supervisors get reminders 24h and
+// 1h before the start; All-Hands also gets an announcement when created.
+// Defaults should match SETTING_DEFAULTS in src/app/actions.js.
+const ANNOUNCEMENTS_CHANNEL = '459438937635553291';
 const DAY = 24 * 60 * 60, HOUR = 60 * 60;
+
+const AUDIENCES = [
+  {
+    name: 'Supervisors', flag: 'for_supervisors', channel: NOTIFY_CHANNEL, setting: 'calendar_reminders',
+    timing: 'timing_set_at', day: 'reminded_24h_at', hour: 'reminded_1h_at', created: null,
+    defaults: {
+      day:  '{role} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+      hour: '{role} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+    },
+  },
+  {
+    name: 'All-Hands', flag: 'all_hands', channel: ANNOUNCEMENTS_CHANNEL, setting: 'allhands_messages',
+    timing: 'ah_timing_set_at', day: 'ah_reminded_24h_at', hour: 'ah_reminded_1h_at', created: 'ah_announced_at',
+    defaults: {
+      created: '**All-Hands Meeting Scheduled — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+      day:     '**All-Hands Meeting Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+      hour:    '**All-Hands Meeting Starting Soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+    },
+  },
+];
 
 function fillReminder(tpl, ev) {
   return tpl
@@ -483,8 +502,42 @@ function fillReminder(tpl, ev) {
     .replaceAll('{end_full}',       ev.end_ts ? `<t:${ev.end_ts}:F>` : '')   // end time is optional
     .replaceAll('{end_relative}',   ev.end_ts ? `<t:${ev.end_ts}:R>` : '')
     .replaceAll('{role}',           `<@&${SUPERVISOR_ROLE}>`)
+    .replaceAll('{everyone}',       '@everyone')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+}
+
+// Only mentions written into the template itself may ping — never anything
+// typed into an event title (e.g. "@everyone").
+function allowedMentionsFor(tpl) {
+  const roles = new Set([...tpl.matchAll(/<@&(\d+)>/g)].map(m => m[1]));
+  if (tpl.includes('{role}')) roles.add(SUPERVISOR_ROLE);
+  const users = [...new Set([...tpl.matchAll(/<@!?(\d+)>/g)].map(m => m[1]))];
+  const parse = (tpl.includes('{everyone}') || /@(everyone|here)/.test(tpl)) ? ['everyone'] : [];
+  return { parse, roles: [...roles], users };
+}
+
+function ensureCalendarTable(db) {
+  db.exec(`CREATE TABLE IF NOT EXISTS calendar_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, link TEXT,
+    start_ts INTEGER NOT NULL, end_ts INTEGER, for_supervisors INTEGER NOT NULL DEFAULT 0,
+    created_by TEXT, created_at INTEGER NOT NULL, timing_set_at INTEGER NOT NULL,
+    reminded_24h_at INTEGER, reminded_1h_at INTEGER)`);
+  const have = new Set(db.prepare('PRAGMA table_info(calendar_events)').all().map(c => c.name));
+  const add = { all_hands: 'INTEGER NOT NULL DEFAULT 0', ah_timing_set_at: 'INTEGER', ah_announced_at: 'INTEGER', ah_reminded_24h_at: 'INTEGER', ah_reminded_1h_at: 'INTEGER' };
+  for (const [col, type] of Object.entries(add)) {
+    if (have.has(col)) continue;
+    try { db.exec(`ALTER TABLE calendar_events ADD COLUMN ${col} ${type}`); }
+    catch (e) { if (!/duplicate column/i.test(e.message)) throw e; } // the website got there first
+  }
+}
+
+async function postToDiscord(channel, content, allowed_mentions) {
+  return fetch(`https://discord.com/api/v10/channels/${channel}/messages`, {
+    method: 'POST',
+    headers: { Authorization: `Bot ${BOT_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content: content.slice(0, 2000), allowed_mentions }),
+  }).catch(e => ({ ok: false, status: e.message }));
 }
 
 async function sendCalendarReminders() {
@@ -492,51 +545,62 @@ async function sendCalendarReminders() {
   try {
     db = new Database(DB_PATH);
     db.pragma('busy_timeout = 5000');
-    db.exec(`CREATE TABLE IF NOT EXISTS calendar_events (
-      id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, link TEXT,
-      start_ts INTEGER NOT NULL, end_ts INTEGER, for_supervisors INTEGER NOT NULL DEFAULT 0,
-      created_by TEXT, created_at INTEGER NOT NULL, timing_set_at INTEGER NOT NULL,
-      reminded_24h_at INTEGER, reminded_1h_at INTEGER)`);
-
+    ensureCalendarTable(db);
     const now = Math.floor(Date.now() / 1000);
-    const due = db.prepare(
-      'SELECT * FROM calendar_events WHERE for_supervisors = 1 AND reminded_1h_at IS NULL AND start_ts > ? AND start_ts <= ?'
-    ).all(now, now + DAY);
-    if (!due.length) return;
 
-    let templates = REMINDER_DEFAULTS;
-    const row = db.prepare("SELECT value FROM app_settings WHERE key = 'calendar_reminders'").get();
-    if (row) { try { templates = { ...REMINDER_DEFAULTS, ...JSON.parse(row.value) }; } catch {} }
+    for (const a of AUDIENCES) {
+      // Upcoming events still owed something: an announcement (any time before
+      // the start) or a reminder within the next 24h
+      const due = db.prepare(
+        `SELECT * FROM calendar_events WHERE ${a.flag} = 1 AND start_ts > ?
+         AND (${a.created ? `${a.created} IS NULL OR ` : ''}(${a.hour} IS NULL AND start_ts <= ?))`
+      ).all(now, now + DAY);
+      if (!due.length) continue;
 
-    for (const ev of due) {
-      let kind;
-      if (now >= ev.start_ts - HOUR) kind = 'hour';
-      // 24h reminder only if the event was on the calendar before the 24h mark;
-      // short-notice events just get the 1h one
-      else if (ev.reminded_24h_at == null && ev.timing_set_at <= ev.start_ts - DAY) kind = 'day';
-      else continue;
+      let templates = a.defaults;
+      const row = db.prepare('SELECT value FROM app_settings WHERE key = ?').get(a.setting);
+      if (row) { try { templates = { ...a.defaults, ...JSON.parse(row.value) }; } catch {} }
 
-      // Claim the reminder first so an overlapping run can't double-send
-      const claim = kind === 'hour'
-        ? db.prepare('UPDATE calendar_events SET reminded_1h_at = ?, reminded_24h_at = COALESCE(reminded_24h_at, ?) WHERE id = ? AND reminded_1h_at IS NULL AND start_ts = ?').run(now, now, ev.id, ev.start_ts)
-        : db.prepare('UPDATE calendar_events SET reminded_24h_at = ? WHERE id = ? AND reminded_24h_at IS NULL AND start_ts = ?').run(now, ev.id, ev.start_ts);
-      if (!claim.changes) continue;
+      for (const ev of due) {
+        // Pick what to send: the announcement always goes first; a reminder
+        // that's already due when it goes out is marked sent so people don't
+        // get two messages back to back.
+        let kind, set;
+        if (a.created && ev[a.created] == null) {
+          kind = 'created';
+          set  = { [a.created]: now };
+          if (now >= ev.start_ts - DAY)  set[a.day]  = now;
+          if (now >= ev.start_ts - HOUR) set[a.hour] = now;
+        } else if (now >= ev.start_ts - HOUR) {
+          kind = 'hour';
+          set  = { [a.hour]: now, ...(ev[a.day] == null ? { [a.day]: now } : {}) };
+        } else if (ev[a.day] == null && (ev[a.timing] ?? 0) <= ev.start_ts - DAY) {
+          // 24h reminder only if the event was on the calendar before the 24h
+          // mark; short-notice events just get the 1h one
+          kind = 'day';
+          set  = { [a.day]: now };
+        } else continue;
 
-      const content = fillReminder(templates[kind] || REMINDER_DEFAULTS[kind], ev).slice(0, 2000);
-      const res = await fetch(`https://discord.com/api/v10/channels/${NOTIFY_CHANNEL}/messages`, {
-        method: 'POST',
-        headers: { Authorization: `Bot ${BOT_TOKEN}`, 'Content-Type': 'application/json' },
-        // Only the Supervisor role may be pinged — never @everyone from an event title
-        body: JSON.stringify({ content, allowed_mentions: { parse: [], roles: [SUPERVISOR_ROLE] } }),
-      }).catch(e => ({ ok: false, status: e.message }));
+        // Claim first so an overlapping run can't double-send; the start_ts
+        // check stops a reminder for a time that was just edited
+        const cols  = Object.keys(set);
+        const claim = db.prepare(
+          `UPDATE calendar_events SET ${cols.map(c => `${c} = ?`).join(', ')}
+           WHERE id = ? AND start_ts = ? AND ${a.flag} = 1 AND ${kind === 'created' ? a.created : a[kind]} IS NULL`
+        ).run(...cols.map(c => set[c]), ev.id, ev.start_ts);
+        if (!claim.changes) continue;
 
-      if (res.ok) {
-        console.log(`[Calendar] Sent ${kind === 'day' ? '24h' : '1h'} reminder for "${ev.title}" (#${ev.id}).`);
-      } else {
-        // Release the claim so the next run retries
-        if (kind === 'hour') db.prepare('UPDATE calendar_events SET reminded_1h_at = NULL, reminded_24h_at = ? WHERE id = ?').run(ev.reminded_24h_at, ev.id);
-        else                 db.prepare('UPDATE calendar_events SET reminded_24h_at = NULL WHERE id = ?').run(ev.id);
-        console.error(`[Calendar] Failed to send reminder for "${ev.title}" (#${ev.id}): ${res.status}`);
+        const tpl = templates[kind] || a.defaults[kind];
+        const res = await postToDiscord(a.channel, fillReminder(tpl, ev), allowedMentionsFor(tpl));
+        const label = { created: 'announcement', day: '24h reminder', hour: '1h reminder' }[kind];
+        if (res.ok) {
+          console.log(`[Calendar] Sent ${a.name} ${label} for "${ev.title}" (#${ev.id}).`);
+        } else {
+          // Put the columns back so the next run retries
+          db.prepare(`UPDATE calendar_events SET ${cols.map(c => `${c} = ?`).join(', ')} WHERE id = ?`)
+            .run(...cols.map(c => ev[c] ?? null), ev.id);
+          console.error(`[Calendar] Failed to send ${a.name} ${label} for "${ev.title}" (#${ev.id}): ${res.status}`);
+        }
       }
     }
   } catch (e) {

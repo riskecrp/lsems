@@ -56,6 +56,16 @@ function Modal({ title, subtitle, onClose, children }) {
 function SupBadge() {
   return <span style={{fontSize:9,fontWeight:800,textTransform:'uppercase',letterSpacing:'0.06em',padding:'1px 6px',borderRadius:4,color:'var(--c-warning)',background:'var(--c-warn-bg)',border:'1px solid var(--c-warn-glow)'}}>Supervisors</span>;
 }
+function AllHandsBadge() {
+  return <span style={{fontSize:9,fontWeight:800,textTransform:'uppercase',letterSpacing:'0.06em',padding:'1px 6px',borderRadius:4,color:'var(--c-success)',background:'var(--c-succ-bg)',border:'1px solid var(--c-succ-glow)'}}>All-Hands</span>;
+}
+// Chip colours: All-Hands green, Supervisors amber, everything else blue
+function chipColors(ev) {
+  if (ev.all_hands)       return { border:'var(--c-succ-glow)',   bg:'var(--c-succ-bg)',   fg:'var(--c-success)' };
+  if (ev.for_supervisors) return { border:'var(--c-warn-glow)',   bg:'var(--c-warn-bg)',   fg:'var(--c-warning)' };
+  return                         { border:'var(--c-accent-glow)', bg:'var(--c-accent-bg)', fg:'var(--c-accent)'  };
+}
+const sentLabel = ts => ts ? '✓ sent' : 'pending';
 function TimeRow({ label, ts }) {
   return (
     <div style={{padding:'8px 10px',borderRadius:8,background:'var(--bg-sub)',border:'1px solid var(--border)'}}>
@@ -123,12 +133,12 @@ export default function CalendarClient({ events = [], perms = {} }) {
   // ── Form ────────────────────────────────────────────────────
   const openAdd = (date) => {
     setError('');
-    setForm({ id: null, title: '', link: '', startDate: date, startTime: '18:00', endDate: '', endTime: '', forSupervisors: false });
+    setForm({ id: null, title: '', link: '', startDate: date, startTime: '18:00', endDate: '', endTime: '', forSupervisors: false, allHands: false });
   };
   const openEdit = (ev) => {
     const s = toUtcParts(ev.start_ts), e = ev.end_ts ? toUtcParts(ev.end_ts) : { date: '', time: '' };
     setError(''); setViewId(null);
-    setForm({ id: ev.id, title: ev.title, link: ev.link || '', startDate: s.date, startTime: s.time, endDate: e.date, endTime: e.time, forSupervisors: !!ev.for_supervisors });
+    setForm({ id: ev.id, title: ev.title, link: ev.link || '', startDate: s.date, startTime: s.time, endDate: e.date, endTime: e.time, forSupervisors: !!ev.for_supervisors, allHands: !!ev.all_hands });
   };
   const setStart = (patch) => setForm(f => ({ ...f, ...patch }));
   const setEnd   = (patch) => setForm(f => ({ ...f, ...patch }));
@@ -144,7 +154,7 @@ export default function CalendarClient({ events = [], perms = {} }) {
     if (hasEnd && formEnd == null)           { setError('Enter an end time (UTC), or clear the end fields.'); return; }
     if (hasEnd && formEnd <= formStart)      { setError('End time must be after the start time.'); return; }
     setProcessing(true); setError('');
-    const payload = { title: form.title, link: form.link, startTs: formStart, endTs: formEnd, forSupervisors: form.forSupervisors };
+    const payload = { title: form.title, link: form.link, startTs: formStart, endTs: formEnd, forSupervisors: form.forSupervisors, allHands: form.allHands };
     const res = form.id ? await updateEvent({ id: form.id, ...payload }) : await addEvent(payload);
     setProcessing(false);
     if (!res.ok) { setError(res.error); return; }
@@ -206,7 +216,7 @@ export default function CalendarClient({ events = [], perms = {} }) {
                 <div style={{fontSize:11,fontWeight:isToday?800:600,color:isToday?'var(--c-accent)':inMonth?'var(--text-2)':'var(--text-4)',padding:'0 4px 3px'}}>{d.getDate()}</div>
                 <div style={{display:'flex',flexDirection:'column',gap:2}}>
                   {dayEvs.map(ev => {
-                    const sup = !!ev.for_supervisors;
+                    const c = chipColors(ev);
                     return (
                       <button key={ev.id} onClick={e => { e.stopPropagation(); setViewId(ev.id); }}
                         title={`${ev.title} — ${fmtLocal(ev.start_ts)}`}
@@ -214,9 +224,7 @@ export default function CalendarClient({ events = [], perms = {} }) {
                           display:'block', width:'100%', textAlign:'left', cursor:'pointer',
                           padding:'2px 5px', borderRadius:4, fontSize:10, lineHeight:1.35,
                           whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
-                          border:'1px solid', borderColor: sup ? 'var(--c-warn-glow)' : 'var(--c-accent-glow)',
-                          background: sup ? 'var(--c-warn-bg)' : 'var(--c-accent-bg)',
-                          color: sup ? 'var(--c-warning)' : 'var(--c-accent)',
+                          border:'1px solid', borderColor: c.border, background: c.bg, color: c.fg,
                           opacity: (ev.end_ts ?? ev.start_ts) < nowTs ? 0.55 : 1,
                         }}>
                         <span style={{fontWeight:700}}>{fmtLocalTime(ev.start_ts)}</span> {ev.title}
@@ -241,6 +249,7 @@ export default function CalendarClient({ events = [], perms = {} }) {
               <button key={ev.id} onClick={() => setViewId(ev.id)}
                 style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',textAlign:'left',cursor:'pointer',padding:'8px 10px',borderRadius:8,background:'var(--bg-sub)',border:'1px solid var(--border)',color:'inherit'}}>
                 <span style={{fontSize:12,fontWeight:700,color:'var(--text-1)',minWidth:0,wordBreak:'break-word'}}>{ev.title}</span>
+                {!!ev.all_hands && <AllHandsBadge />}
                 {!!ev.for_supervisors && <SupBadge />}
                 <span style={{fontSize:11,color:'var(--text-3)',marginLeft:'auto'}}>{fmtLocal(ev.start_ts)}</span>
                 <span style={{fontSize:10,fontFamily:'monospace',color:'var(--text-4)'}}>{fmtUtc(ev.start_ts)}</span>
@@ -254,16 +263,23 @@ export default function CalendarClient({ events = [], perms = {} }) {
       {viewing && (
         <Modal title={viewing.title} onClose={() => setViewId(null)}>
           <div style={{display:'flex',flexDirection:'column',gap:8,marginTop:10}}>
-            {!!viewing.for_supervisors && <div><SupBadge /></div>}
+            {(!!viewing.all_hands || !!viewing.for_supervisors) && (
+              <div style={{display:'flex',gap:6}}>{!!viewing.all_hands && <AllHandsBadge />}{!!viewing.for_supervisors && <SupBadge />}</div>
+            )}
             <TimeRow label="Start" ts={viewing.start_ts} />
             {viewing.end_ts && <TimeRow label="End" ts={viewing.end_ts} />}
             {viewing.link && (
               <a href={viewing.link} target="_blank" rel="noopener noreferrer"
                 style={{fontSize:12,color:'var(--c-accent)',wordBreak:'break-all',textDecoration:'underline'}}>{viewing.link}</a>
             )}
+            {!!viewing.all_hands && viewing.start_ts > nowTs && (
+              <div style={{fontSize:11,color:'var(--text-3)'}}>
+                All-Hands messages: announcement {sentLabel(viewing.ah_announced_at)} · 24h {sentLabel(viewing.ah_reminded_24h_at)} · 1h {sentLabel(viewing.ah_reminded_1h_at)}
+              </div>
+            )}
             {!!viewing.for_supervisors && viewing.start_ts > nowTs && (
               <div style={{fontSize:11,color:'var(--text-3)'}}>
-                Discord reminders: 24h {viewing.reminded_24h_at ? '✓ sent' : 'pending'} · 1h {viewing.reminded_1h_at ? '✓ sent' : 'pending'}
+                Supervisor reminders: 24h {sentLabel(viewing.reminded_24h_at)} · 1h {sentLabel(viewing.reminded_1h_at)}
               </div>
             )}
             {viewing.created_by && <div style={{fontSize:10,color:'var(--text-4)'}}>Added by {viewing.created_by}</div>}
@@ -305,6 +321,14 @@ export default function CalendarClient({ events = [], perms = {} }) {
               <span>
                 <strong style={{color:'var(--text-1)'}}>For Supervisors</strong>
                 <span style={{display:'block',fontSize:10,color:'var(--text-4)',marginTop:2}}>Posts a Discord reminder to Supervisors 24 hours and 1 hour before it starts.</span>
+              </span>
+            </label>
+            <label style={{display:'flex',alignItems:'flex-start',gap:8,cursor:'pointer',fontSize:12,color:'var(--text-2)'}}>
+              <input type="checkbox" checked={form.allHands} onChange={e => setForm(f => ({ ...f, allHands: e.target.checked }))}
+                style={{marginTop:2,accentColor:'var(--c-success)'}} />
+              <span>
+                <strong style={{color:'var(--text-1)'}}>All-Hands Meeting</strong>
+                <span style={{display:'block',fontSize:10,color:'var(--text-4)',marginTop:2}}>Posts in #announcements when saved, then 24 hours and 1 hour before it starts.</span>
               </span>
             </label>
             {error && <p style={{fontSize:12,padding:'8px 10px',borderRadius:8,background:'var(--c-danger-bg)',border:'1px solid rgba(248,113,113,0.3)',color:'var(--c-danger)'}}>{error}</p>}

@@ -1019,6 +1019,13 @@ const SETTING_DEFAULTS = {
     day:  '{role} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
     hour: '{role} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
   },
+  // All-Hands Meeting messages (posted in #announcements). No ping by default —
+  // add {everyone} or a role mention on the Admin page.
+  allhands_messages: {
+    created: '**All-Hands Meeting Scheduled — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+    day:     '**All-Hands Meeting Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+    hour:    '**All-Hands Meeting Starting Soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+  },
   hour_requirements: {
     'Chief':           { type:'weekly',  hours:5,   goal:10 },
     'Assistant Chief': { type:'weekly',  hours:5,   goal:10 },
@@ -1134,6 +1141,7 @@ const SETTING_PERMS = {
   bonus_cycle:        'edit_config',
   bbcode_templates:   'edit_bbcode',
   calendar_reminders: 'edit_bbcode',
+  allhands_messages:  'edit_bbcode',
   page_permissions:   'access_control',
   permission_roles:   'access_control',
   level_names:        'access_control',
@@ -1156,10 +1164,12 @@ export async function updateAppSetting(key, value) {
 }
 
 // ── Calendar ──────────────────────────────────────────────────────
-// Times are unix seconds (UTC). timing_set_at records when the start time (or
-// the supervisor flag) was last set — the bot only sends the 24h reminder if
-// that was at least 24h before the start, so short-notice events get just the
-// 1h reminder. reminded_*_at are set by the bot once a reminder has gone out.
+// Times are unix seconds (UTC). An event can be for Supervisors and/or an
+// All-Hands Meeting; each has its own Discord messages, sent by loa-bot.mjs.
+// *timing_set_at records when the start time (or that flag) was last set — the
+// bot only sends the 24h reminder if that was at least 24h before the start, so
+// short-notice events get just the 1h reminder. *_at columns are set by the bot
+// once a message has gone out.
 
 const EVENTS_DDL = `CREATE TABLE IF NOT EXISTS calendar_events (
   id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1174,11 +1184,25 @@ const EVENTS_DDL = `CREATE TABLE IF NOT EXISTS calendar_events (
   reminded_24h_at INTEGER,
   reminded_1h_at  INTEGER
 )`;
+// Columns added after the table was first created (also added by loa-bot.mjs)
+const EVENT_COLUMNS = {
+  all_hands:          'INTEGER NOT NULL DEFAULT 0',
+  ah_timing_set_at:   'INTEGER',
+  ah_announced_at:    'INTEGER',
+  ah_reminded_24h_at: 'INTEGER',
+  ah_reminded_1h_at:  'INTEGER',
+};
 let _eventsReady = false;
 function ensureEventsTable() {
   if (_eventsReady) return;
   run(EVENTS_DDL);
   run('CREATE INDEX IF NOT EXISTS idx_calendar_events_start ON calendar_events(start_ts)');
+  const have = new Set(query('PRAGMA table_info(calendar_events)').map(c => c.name));
+  for (const [col, type] of Object.entries(EVENT_COLUMNS)) {
+    if (have.has(col)) continue;
+    try { run(`ALTER TABLE calendar_events ADD COLUMN ${col} ${type}`); }
+    catch (e) { if (!/duplicate column/i.test(e.message)) throw e; } // the bot got there first
+  }
   _eventsReady = true;
 }
 
@@ -1192,14 +1216,19 @@ function validateEvent({ title, link, startTs, endTs }) {
   return null;
 }
 
+const eventTags = (forSupervisors, allHands) =>
+  `${forSupervisors ? ' · Supervisors' : ''}${allHands ? ' · All-Hands' : ''}`;
+
 export async function getEvents() {
   try {
     ensureEventsTable();
-    return query('SELECT id, title, link, start_ts, end_ts, for_supervisors, created_by, reminded_24h_at, reminded_1h_at FROM calendar_events ORDER BY start_ts ASC');
+    return query(`SELECT id, title, link, start_ts, end_ts, for_supervisors, all_hands, created_by,
+      reminded_24h_at, reminded_1h_at, ah_announced_at, ah_reminded_24h_at, ah_reminded_1h_at
+      FROM calendar_events ORDER BY start_ts ASC`);
   } catch (e) { console.error('getEvents:', e); return []; }
 }
 
-export async function addEvent({ title, link, startTs, endTs, forSupervisors }) {
+export async function addEvent({ title, link, startTs, endTs, forSupervisors, allHands }) {
   try {
     await requirePerm('calendar', 'add');
     ensureEventsTable();
@@ -1208,33 +1237,39 @@ export async function addEvent({ title, link, startTs, endTs, forSupervisors }) 
     const { username, user_id } = await getActor();
     const now = Math.floor(Date.now() / 1000);
     run(
-      'INSERT INTO calendar_events (title, link, start_ts, end_ts, for_supervisors, created_by, created_at, timing_set_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [title.trim(), link?.trim() || null, startTs, endTs ?? null, forSupervisors ? 1 : 0, username, now, now]
+      `INSERT INTO calendar_events (title, link, start_ts, end_ts, for_supervisors, all_hands, created_by, created_at, timing_set_at, ah_timing_set_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [title.trim(), link?.trim() || null, startTs, endTs ?? null, forSupervisors ? 1 : 0, allHands ? 1 : 0, username, now, now, now]
     );
-    logAudit(username, user_id, 'Calendar Event Added', `${title.trim()} · ${new Date(startTs * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC${forSupervisors ? ' · Supervisors' : ''}`);
+    logAudit(username, user_id, 'Calendar Event Added', `${title.trim()} · ${new Date(startTs * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC${eventTags(forSupervisors, allHands)}`);
     revalidatePath('/calendar');
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 }
 
-export async function updateEvent({ id, title, link, startTs, endTs, forSupervisors }) {
+export async function updateEvent({ id, title, link, startTs, endTs, forSupervisors, allHands }) {
   try {
     await requirePerm('calendar', 'edit');
     ensureEventsTable();
-    const ev = queryOne('SELECT start_ts, for_supervisors FROM calendar_events WHERE id = ?', [id]);
+    const ev = queryOne('SELECT start_ts, for_supervisors, all_hands FROM calendar_events WHERE id = ?', [id]);
     if (!ev) return { ok: false, error: 'Event not found.' };
     const err = validateEvent({ title, link, startTs, endTs });
     if (err) return { ok: false, error: err };
-    // A new start time, or newly flagging it for supervisors, re-arms the reminders
-    const rearm = ev.start_ts !== startTs || (!ev.for_supervisors && forSupervisors);
-    const now   = Math.floor(Date.now() / 1000);
-    run(
-      `UPDATE calendar_events SET title = ?, link = ?, start_ts = ?, end_ts = ?, for_supervisors = ?
-       ${rearm ? ', timing_set_at = ?, reminded_24h_at = NULL, reminded_1h_at = NULL' : ''} WHERE id = ?`,
-      [title.trim(), link?.trim() || null, startTs, endTs ?? null, forSupervisors ? 1 : 0, ...(rearm ? [now] : []), id]
-    );
+    // A new start time re-arms both sets of reminders; newly ticking a box
+    // re-arms that one's. Newly ticking All-Hands also re-sends its "created"
+    // announcement — moving the start time doesn't.
+    const now      = Math.floor(Date.now() / 1000);
+    const moved    = ev.start_ts !== startTs;
+    const supOn    = !ev.for_supervisors && !!forSupervisors;
+    const ahOn     = !ev.all_hands && !!allHands;
+    const sets     = ['title = ?', 'link = ?', 'start_ts = ?', 'end_ts = ?', 'for_supervisors = ?', 'all_hands = ?'];
+    const params   = [title.trim(), link?.trim() || null, startTs, endTs ?? null, forSupervisors ? 1 : 0, allHands ? 1 : 0];
+    if (moved || supOn) { sets.push('timing_set_at = ?', 'reminded_24h_at = NULL', 'reminded_1h_at = NULL'); params.push(now); }
+    if (moved || ahOn)  { sets.push('ah_timing_set_at = ?', 'ah_reminded_24h_at = NULL', 'ah_reminded_1h_at = NULL'); params.push(now); }
+    if (ahOn)           { sets.push('ah_announced_at = NULL'); }
+    run(`UPDATE calendar_events SET ${sets.join(', ')} WHERE id = ?`, [...params, id]);
     const { username, user_id } = await getActor();
-    logAudit(username, user_id, 'Calendar Event Edited', title.trim());
+    logAudit(username, user_id, 'Calendar Event Edited', `${title.trim()}${eventTags(forSupervisors, allHands)}`);
     revalidatePath('/calendar');
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
