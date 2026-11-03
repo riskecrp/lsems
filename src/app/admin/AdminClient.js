@@ -433,8 +433,8 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
               { key:'{link}',           desc:'Event link (blank if none)' },
               { key:'{start_full}',     desc:'Start — full date & time in each reader\'s local time (<t:…:F>)' },
               { key:'{start_relative}', desc:'Start — relative, e.g. "in 23 hours" (<t:…:R>)' },
-              { key:'{end_full}',       desc:'End — full date & time (<t:…:F>)' },
-              { key:'{end_relative}',   desc:'End — relative (<t:…:R>)' },
+              { key:'{end_full}',       desc:'End — full date & time (<t:…:F>); blank if the event has no end time' },
+              { key:'{end_relative}',   desc:'End — relative (<t:…:R>); blank if the event has no end time' },
               { key:'{role}',           desc:'@Supervisor role mention' },
             ];
             const KINDS = [

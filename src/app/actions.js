@@ -1166,7 +1166,7 @@ const EVENTS_DDL = `CREATE TABLE IF NOT EXISTS calendar_events (
   title           TEXT    NOT NULL,
   link            TEXT,
   start_ts        INTEGER NOT NULL,
-  end_ts          INTEGER NOT NULL,
+  end_ts          INTEGER,
   for_supervisors INTEGER NOT NULL DEFAULT 0,
   created_by      TEXT,
   created_at      INTEGER NOT NULL,
@@ -1186,8 +1186,9 @@ function validateEvent({ title, link, startTs, endTs }) {
   if (!title?.trim())             return 'Title required.';
   if (title.trim().length > 200)  return 'Title is too long (200 characters max).';
   if (link?.trim() && !/^https?:\/\/\S+$/i.test(link.trim())) return 'Link must start with http:// or https://';
-  if (!Number.isInteger(startTs) || !Number.isInteger(endTs)) return 'Start and end times are required.';
-  if (endTs <= startTs)           return 'End time must be after the start time.';
+  if (!Number.isInteger(startTs)) return 'Start date and time are required.';
+  if (endTs != null && !Number.isInteger(endTs)) return 'Invalid end time.';
+  if (endTs != null && endTs <= startTs) return 'End time must be after the start time.';
   return null;
 }
 
@@ -1208,7 +1209,7 @@ export async function addEvent({ title, link, startTs, endTs, forSupervisors }) 
     const now = Math.floor(Date.now() / 1000);
     run(
       'INSERT INTO calendar_events (title, link, start_ts, end_ts, for_supervisors, created_by, created_at, timing_set_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [title.trim(), link?.trim() || null, startTs, endTs, forSupervisors ? 1 : 0, username, now, now]
+      [title.trim(), link?.trim() || null, startTs, endTs ?? null, forSupervisors ? 1 : 0, username, now, now]
     );
     logAudit(username, user_id, 'Calendar Event Added', `${title.trim()} · ${new Date(startTs * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC${forSupervisors ? ' · Supervisors' : ''}`);
     revalidatePath('/calendar');
@@ -1230,7 +1231,7 @@ export async function updateEvent({ id, title, link, startTs, endTs, forSupervis
     run(
       `UPDATE calendar_events SET title = ?, link = ?, start_ts = ?, end_ts = ?, for_supervisors = ?
        ${rearm ? ', timing_set_at = ?, reminded_24h_at = NULL, reminded_1h_at = NULL' : ''} WHERE id = ?`,
-      [title.trim(), link?.trim() || null, startTs, endTs, forSupervisors ? 1 : 0, ...(rearm ? [now] : []), id]
+      [title.trim(), link?.trim() || null, startTs, endTs ?? null, forSupervisors ? 1 : 0, ...(rearm ? [now] : []), id]
     );
     const { username, user_id } = await getActor();
     logAudit(username, user_id, 'Calendar Event Edited', title.trim());

@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS calendar_events (
   title           TEXT    NOT NULL,
   link            TEXT,
   start_ts        INTEGER NOT NULL,
-  end_ts          INTEGER NOT NULL,
+  end_ts          INTEGER,            -- optional
   for_supervisors INTEGER NOT NULL DEFAULT 0,
   created_by      TEXT,
   created_at      INTEGER NOT NULL,

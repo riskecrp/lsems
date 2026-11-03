@@ -88,7 +88,7 @@ export default function CalendarClient({ events = [], perms = {} }) {
     const map = {};
     for (const ev of events) {
       const d   = new Date(ev.start_ts * 1000);
-      const end = new Date((ev.end_ts - 1) * 1000);
+      const end = new Date(((ev.end_ts ?? ev.start_ts + 1) - 1) * 1000);
       const cur = new Date(d.getFullYear(), d.getMonth(), d.getDate());
       for (let i = 0; i < 31 && cur <= end; i++) {
         (map[dayKey(cur)] ||= []).push(ev);
@@ -110,7 +110,7 @@ export default function CalendarClient({ events = [], perms = {} }) {
   const upcoming = useMemo(() => {
     if (!now) return [];
     const nowTs = now.getTime() / 1000;
-    return events.filter(e => e.end_ts > nowTs).slice(0, 10);
+    return events.filter(e => (e.end_ts ?? e.start_ts) > nowTs).slice(0, 10);
   }, [events, now]);
 
   if (!now || !month) {
@@ -123,31 +123,26 @@ export default function CalendarClient({ events = [], perms = {} }) {
   // ── Form ────────────────────────────────────────────────────
   const openAdd = (date) => {
     setError('');
-    setForm({ id: null, title: '', link: '', startDate: date, startTime: '18:00', endDate: date, endTime: '19:00', forSupervisors: false, endTouched: false });
+    setForm({ id: null, title: '', link: '', startDate: date, startTime: '18:00', endDate: '', endTime: '', forSupervisors: false });
   };
   const openEdit = (ev) => {
-    const s = toUtcParts(ev.start_ts), e = toUtcParts(ev.end_ts);
+    const s = toUtcParts(ev.start_ts), e = ev.end_ts ? toUtcParts(ev.end_ts) : { date: '', time: '' };
     setError(''); setViewId(null);
-    setForm({ id: ev.id, title: ev.title, link: ev.link || '', startDate: s.date, startTime: s.time, endDate: e.date, endTime: e.time, forSupervisors: !!ev.for_supervisors, endTouched: true });
+    setForm({ id: ev.id, title: ev.title, link: ev.link || '', startDate: s.date, startTime: s.time, endDate: e.date, endTime: e.time, forSupervisors: !!ev.for_supervisors });
   };
-  // Until the end is edited by hand, keep it one hour after the start
-  const setStart = (patch) => setForm(f => {
-    const next = { ...f, ...patch };
-    if (!f.endTouched) {
-      const st = fromUtcParts(next.startDate, next.startTime);
-      if (st != null) { const p = toUtcParts(st + 3600); next.endDate = p.date; next.endTime = p.time; }
-    }
-    return next;
-  });
-  const setEnd = (patch) => setForm(f => ({ ...f, ...patch, endTouched: true }));
+  const setStart = (patch) => setForm(f => ({ ...f, ...patch }));
+  const setEnd   = (patch) => setForm(f => ({ ...f, ...patch }));
 
-  const formStart = form ? fromUtcParts(form.startDate, form.startTime) : null;
-  const formEnd   = form ? fromUtcParts(form.endDate,   form.endTime)   : null;
+  // End is optional: blank means no end time; a time with no date uses the start date
+  const formStart  = form ? fromUtcParts(form.startDate, form.startTime) : null;
+  const hasEnd     = !!(form && (form.endDate || form.endTime));
+  const formEnd    = hasEnd ? fromUtcParts(form.endDate || form.startDate, form.endTime) : null;
 
   const handleSave = async () => {
     if (!form.title.trim())                  { setError('Title required.'); return; }
-    if (formStart == null || formEnd == null) { setError('Enter a start and end date and time (UTC).'); return; }
-    if (formEnd <= formStart)                { setError('End time must be after the start time.'); return; }
+    if (formStart == null)                   { setError('Enter a start date and time (UTC).'); return; }
+    if (hasEnd && formEnd == null)           { setError('Enter an end time (UTC), or clear the end fields.'); return; }
+    if (hasEnd && formEnd <= formStart)      { setError('End time must be after the start time.'); return; }
     setProcessing(true); setError('');
     const payload = { title: form.title, link: form.link, startTs: formStart, endTs: formEnd, forSupervisors: form.forSupervisors };
     const res = form.id ? await updateEvent({ id: form.id, ...payload }) : await addEvent(payload);
@@ -222,7 +217,7 @@ export default function CalendarClient({ events = [], perms = {} }) {
                           border:'1px solid', borderColor: sup ? 'var(--c-warn-glow)' : 'var(--c-accent-glow)',
                           background: sup ? 'var(--c-warn-bg)' : 'var(--c-accent-bg)',
                           color: sup ? 'var(--c-warning)' : 'var(--c-accent)',
-                          opacity: ev.end_ts < nowTs ? 0.55 : 1,
+                          opacity: (ev.end_ts ?? ev.start_ts) < nowTs ? 0.55 : 1,
                         }}>
                         <span style={{fontWeight:700}}>{fmtLocalTime(ev.start_ts)}</span> {ev.title}
                       </button>
@@ -261,7 +256,7 @@ export default function CalendarClient({ events = [], perms = {} }) {
           <div style={{display:'flex',flexDirection:'column',gap:8,marginTop:10}}>
             {!!viewing.for_supervisors && <div><SupBadge /></div>}
             <TimeRow label="Start" ts={viewing.start_ts} />
-            <TimeRow label="End"   ts={viewing.end_ts} />
+            {viewing.end_ts && <TimeRow label="End" ts={viewing.end_ts} />}
             {viewing.link && (
               <a href={viewing.link} target="_blank" rel="noopener noreferrer"
                 style={{fontSize:12,color:'var(--c-accent)',wordBreak:'break-all',textDecoration:'underline'}}>{viewing.link}</a>
@@ -297,10 +292,11 @@ export default function CalendarClient({ events = [], perms = {} }) {
                 <input type="time" style={{...inp,maxWidth:130}} value={form.startTime} onChange={e => setStart({ startTime: e.target.value })} onFocus={fr} onBlur={fb} />
               </div>
             </Fl>
-            <Fl label="End (UTC)" hint={formEnd != null ? `Your time: ${fmtLocal(formEnd)}` : null}>
+            <Fl label="End (UTC, optional)" hint={formEnd != null ? `Your time: ${fmtLocal(formEnd)}` : 'Leave blank for no end time. A time with no date uses the start date.'}>
               <div style={{display:'flex',gap:8}}>
                 <input type="date" style={inp} value={form.endDate} onChange={e => setEnd({ endDate: e.target.value })} onFocus={fr} onBlur={fb} />
                 <input type="time" style={{...inp,maxWidth:130}} value={form.endTime} onChange={e => setEnd({ endTime: e.target.value })} onFocus={fr} onBlur={fb} />
+                {hasEnd && <button type="button" onClick={() => setEnd({ endDate: '', endTime: '' })} className="btn-ghost" title="Remove the end time">Clear</button>}
               </div>
             </Fl>
             <label style={{display:'flex',alignItems:'flex-start',gap:8,cursor:'pointer',fontSize:12,color:'var(--text-2)'}}>

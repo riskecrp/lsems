@@ -480,8 +480,8 @@ function fillReminder(tpl, ev) {
     .replaceAll('{link}',           ev.link || '')
     .replaceAll('{start_full}',     `<t:${ev.start_ts}:F>`)
     .replaceAll('{start_relative}', `<t:${ev.start_ts}:R>`)
-    .replaceAll('{end_full}',       `<t:${ev.end_ts}:F>`)
-    .replaceAll('{end_relative}',   `<t:${ev.end_ts}:R>`)
+    .replaceAll('{end_full}',       ev.end_ts ? `<t:${ev.end_ts}:F>` : '')   // end time is optional
+    .replaceAll('{end_relative}',   ev.end_ts ? `<t:${ev.end_ts}:R>` : '')
     .replaceAll('{role}',           `<@&${SUPERVISOR_ROLE}>`)
     .replace(/\n{3,}/g, '\n\n')
     .trim();
@@ -494,7 +494,7 @@ async function sendCalendarReminders() {
     db.pragma('busy_timeout = 5000');
     db.exec(`CREATE TABLE IF NOT EXISTS calendar_events (
       id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, link TEXT,
-      start_ts INTEGER NOT NULL, end_ts INTEGER NOT NULL, for_supervisors INTEGER NOT NULL DEFAULT 0,
+      start_ts INTEGER NOT NULL, end_ts INTEGER, for_supervisors INTEGER NOT NULL DEFAULT 0,
       created_by TEXT, created_at INTEGER NOT NULL, timing_set_at INTEGER NOT NULL,
       reminded_24h_at INTEGER, reminded_1h_at INTEGER)`);
 
