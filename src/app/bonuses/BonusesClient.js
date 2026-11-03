@@ -631,7 +631,7 @@ ${notRecBB}${recExcBB}Please let me know if you have any follow up questions!
               <div style={{ display:'flex', justifyContent:'space-between' }}><span style={{ color:'var(--text-3)' }}>Milestone</span><span className="pill pill-muted">{payModal.months}-month</span></div>
               <div style={{ display:'flex', justifyContent:'space-between' }}><span style={{ color:'var(--text-3)' }}>Amount</span><strong className="stat-success">{fmtCurrency(payModal.amount)}</strong></div>
             </div>
-            <p style={{ fontSize:11, color:'var(--text-3)', marginBottom:14 }}>{fmtCurrency(payModal.amount)} will be deducted from the treasury.</p>
+            <p style={{ fontSize:11, color:'var(--text-3)', marginBottom:14 }}>This records a {fmtCurrency(payModal.amount)} retention bonus payout.</p>
             {error && <p style={{ fontSize:11, color:'var(--c-danger)', marginBottom:10 }}>{error}</p>}
             <div style={{ display:'flex', gap:10 }}>
               <button onClick={() => setPayModal(null)} className="btn-ghost" style={{ flex:1, textAlign:'center' }}>Cancel</button>

@@ -5,6 +5,10 @@ import { fmtCurrency, getNextBonus, buildLastPaymentMap, daysEmployed, RANK_ORDE
 
 const JP_INDEX = RANK_ORDER.indexOf('Junior Paramedic');
 
+// Pay amounts and the treasury ledger are no longer tracked. Flip to true to
+// bring back the balance, pay columns, Treasury Log and entry/balance modals.
+const SHOW_TREASURY = false;
+
 const _MON = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
 function parseWeekDate(s) {
   if (!s) return null;
@@ -211,19 +215,19 @@ export default function PayrollClient({ transactions, currentBalance, employees,
 
       <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
         <div>
-          <h1 style={{fontSize:18,fontWeight:800,color:'var(--text-1)',lineHeight:1}}>Payroll & Treasury</h1>
+          <h1 style={{fontSize:18,fontWeight:800,color:'var(--text-1)',lineHeight:1}}>{SHOW_TREASURY ? 'Payroll & Treasury' : 'Payroll'}</h1>
           <p style={{fontSize:11,color:'var(--text-3)',marginTop:3}}>
-            {allEmployees.length} active · balance <span className="stat-success" style={{fontWeight:700,fontFamily:'monospace'}}>{fmtCurrency(currentBalance)}</span>
+            {allEmployees.length} active{SHOW_TREASURY && <> · balance <span className="stat-success" style={{fontWeight:700,fontFamily:'monospace'}}>{fmtCurrency(currentBalance)}</span></>}
           </p>
         </div>
         <div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
-          {can('add_entry')  && <button onClick={() => setShowEntryModal(true)} className="btn-ghost">+ Add Entry</button>}
-          {can('set_balance') && <button onClick={() => setShowBalModal(true)} className="btn-ghost">Set Balance</button>}
+          {SHOW_TREASURY && can('add_entry')  && <button onClick={() => setShowEntryModal(true)} className="btn-ghost">+ Add Entry</button>}
+          {SHOW_TREASURY && can('set_balance') && <button onClick={() => setShowBalModal(true)} className="btn-ghost">Set Balance</button>}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        <div className="xl:col-span-2 space-y-3">
+      <div className={`grid grid-cols-1 gap-4 ${SHOW_TREASURY ? 'xl:grid-cols-3' : ''}`}>
+        <div className={`space-y-3 ${SHOW_TREASURY ? 'xl:col-span-2' : ''}`}>
 
           {!parsed ? (
             /* ── Step 1: Paste ── */
@@ -236,7 +240,7 @@ export default function PayrollClient({ transactions, currentBalance, employees,
                 <textarea
                   className="w-full px-3 py-2.5 rounded-lg border text-[11px] font-mono outline-none transition-colors placeholder:opacity-40 resize-y custom-scrollbar"
                   style={{ ...T.input, minHeight: 200 }}
-                  placeholder={"Name,Branch,Group,On Duty Hours,Pay Amount\nChelsea Sawyer,New Branch,Circle,3.30,26400\n..."}
+                  placeholder={"Name,Branch,Group,On Duty Hours (2026-10-25 to 2026-10-31 UTC)\nCarter_Bulfinch,Medical Services,Senior Paramedic,5.13\n..."}
                   value={csvText} onChange={e => setCsvText(e.target.value)}
                   onFocus={focusOn} onBlur={focusOff}
                 />
@@ -262,9 +266,9 @@ export default function PayrollClient({ transactions, currentBalance, employees,
                 <Stat label="Recorded"    value={allMatched.length}       color="var(--c-accent)" />
                 <Stat label="With Hours"  value={worked.length}           color="var(--text-1)" />
                 <Stat label="Total Hours" value={totalHrs.toFixed(2)}     color="var(--text-1)" />
-                <Stat label="Payroll"     value={fmtCurrency(totalPay)}   color="var(--c-danger)" />
+                {SHOW_TREASURY && <Stat label="Payroll"     value={fmtCurrency(totalPay)}   color="var(--c-danger)" />}
                 {totalBonus > 0 && <Stat label="Bonuses" value={fmtCurrency(totalBonus)} color="var(--c-warning)" />}
-                <Stat label="New Balance" value={fmtCurrency(newBal)}     color={newBal >= 0 ? 'var(--c-success)' : 'var(--c-danger)'} />
+                {SHOW_TREASURY && <Stat label="New Balance" value={fmtCurrency(newBal)}     color={newBal >= 0 ? 'var(--c-success)' : 'var(--c-danger)'} />}
                 {unmatched.length > 0 && (
                   <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg border ml-auto"
                     style={{ background: 'var(--c-warn-bg)', borderColor: 'rgba(251,191,36,0.3)', color: 'var(--c-warning)' }}>
@@ -301,14 +305,14 @@ export default function PayrollClient({ transactions, currentBalance, employees,
                       <tr className="text-[10px] uppercase tracking-wider font-semibold" style={T.t3}>
                         <th className="px-4 py-2.5">Name</th>
                         <th className="px-4 py-2.5 text-right">Hours</th>
-                        <th className="px-4 py-2.5 text-right">Pay</th>
+                        {SHOW_TREASURY && <th className="px-4 py-2.5 text-right">Pay</th>}
                         <th className="px-4 py-2.5 text-center w-24">Status</th>
                         <th className="px-4 py-2.5 text-right">Retention Bonus</th>
                       </tr>
                     </thead>
                     <tbody>
                       {matched.filter(r => r.matched).length === 0 ? (
-                        <tr><td colSpan={5} className="px-4 py-8 text-center italic text-sm" style={T.t3}>No matched employees in CSV.</td></tr>
+                        <tr><td colSpan={SHOW_TREASURY ? 5 : 4} className="px-4 py-8 text-center italic text-sm" style={T.t3}>No matched employees in CSV.</td></tr>
                       ) : matched.filter(r => r.matched).map((row, i) => {
                         const hasHours = row.hours > 0;
                         const isEven   = i % 2 === 0;
@@ -323,10 +327,12 @@ export default function PayrollClient({ transactions, currentBalance, employees,
                             <td className="px-4 py-2.5 text-right font-mono text-[12px]" style={hasHours ? T.t2 : T.t3}>
                               {row.hours.toFixed(2)}
                             </td>
-                            <td className="px-4 py-2.5 text-right font-mono text-[12px] font-semibold"
-                              style={{ color: hasHours ? 'var(--c-success)' : 'var(--text-4)' }}>
-                              {hasHours ? fmtCurrency(row.amount) : '—'}
-                            </td>
+                            {SHOW_TREASURY && (
+                              <td className="px-4 py-2.5 text-right font-mono text-[12px] font-semibold"
+                                style={{ color: hasHours ? 'var(--c-success)' : 'var(--text-4)' }}>
+                                {hasHours ? fmtCurrency(row.amount) : '—'}
+                              </td>
+                            )}
                             <td className="px-4 py-2.5 text-center">
                               {hasHours
                                 ? <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border" style={{ color: 'var(--c-success)', background: 'var(--c-succ-bg)', borderColor: 'rgba(74,222,128,0.3)' }}>✓ Hours</span>
@@ -426,10 +432,12 @@ export default function PayrollClient({ transactions, currentBalance, employees,
               {error && <p className="text-sm px-3 py-2 rounded-lg border" style={{ background: 'var(--c-danger-bg)', borderColor: 'rgba(248,113,113,0.3)', color: 'var(--c-danger)' }}>{error}</p>}
               {result && (
                 <div className="border rounded-xl px-4 py-3 text-sm space-y-0.5" style={{ background: 'var(--c-succ-bg)', borderColor: 'rgba(74,222,128,0.3)', color: 'var(--c-success)' }}>
-                  <div className="font-bold uppercase tracking-wide">Pay run submitted!</div>
+                  <div className="font-bold uppercase tracking-wide">{SHOW_TREASURY ? 'Pay run submitted!' : 'Hours submitted!'}</div>
                   <div>
-                    {result.updatedCount} employees recorded ({result.workedCount} with hours) · {result.totalHours?.toFixed(2)} hrs · {fmtCurrency(result.totalPay)} payroll
-                    {result.totalBonus > 0 ? ` + ${fmtCurrency(result.totalBonus)} bonuses` : ''} · balance {fmtCurrency(result.finalBalance)}
+                    {result.updatedCount} employees recorded ({result.workedCount} with hours) · {result.totalHours?.toFixed(2)} hrs
+                    {SHOW_TREASURY && ` · ${fmtCurrency(result.totalPay)} payroll`}
+                    {result.totalBonus > 0 ? ` · ${fmtCurrency(result.totalBonus)} retention bonuses` : ''}
+                    {SHOW_TREASURY && ` · balance ${fmtCurrency(result.finalBalance)}`}
                   </div>
                   {result.skippedBonuses?.length > 0 && (
                     <div style={{ color:'var(--c-warning)' }}>
@@ -442,14 +450,16 @@ export default function PayrollClient({ transactions, currentBalance, employees,
               <button disabled={!can('submit') || processing || !allMatched.length || !!result} onClick={handleSubmit}
                 className="w-full py-2.5 rounded-xl text-[11px] font-bold text-white uppercase tracking-wide bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed border border-blue-500/40 transition-colors"
                 title={!can('submit') ? 'You do not have permission to submit payroll' : undefined}>
-                {processing ? 'Submitting…' : result ? 'Submitted ✓' : !can('submit') ? 'View Only' : `Submit Pay Run — ${allMatched.length} employees (${worked.length} with hours) · ${fmtCurrency(totalPay + totalBonus)}`}
+                {processing ? 'Submitting…' : result ? 'Submitted ✓' : !can('submit') ? 'View Only' : SHOW_TREASURY
+                  ? `Submit Pay Run — ${allMatched.length} employees (${worked.length} with hours) · ${fmtCurrency(totalPay + totalBonus)}`
+                  : `Submit Hours — ${allMatched.length} employees (${worked.length} with hours)${totalBonus > 0 ? ` · ${fmtCurrency(totalBonus)} retention bonuses` : ''}`}
               </button>
             </>
           )}
         </div>
 
         {/* Treasury log */}
-        <div>
+        {SHOW_TREASURY && <div>
           <section className="border rounded-2xl p-4 glass" style={T.card}>
             <div className="text-[10px] font-bold uppercase tracking-widest mb-3 pb-2 border-b" style={{ color: 'var(--text-3)', borderColor: 'var(--border)' }}>Treasury Log</div>
             <div className="overflow-y-auto custom-scrollbar space-y-2 pr-0.5" style={{ maxHeight: 600 }}>
@@ -491,7 +501,7 @@ export default function PayrollClient({ transactions, currentBalance, employees,
               })}
             </div>
           </section>
-        </div>
+        </div>}
       </div>
 
       {/* Add Treasury Entry modal */}
