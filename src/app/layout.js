@@ -25,6 +25,7 @@ export default async function RootLayout({ children }) {
     '/payroll':        pp.payroll?.view ?? 2,
     '/bonuses':        pp.bonuses?.view ?? 2,
     '/tasks':          pp.tasks?.view   ?? 1,
+    '/calendar':       pp.calendar?.view ?? 1,
     '/history':        pp.history?.view ?? 1,
     '/past-employees': pp.history?.view ?? 1,
     '/admin':          pp.admin?.view   ?? 2,

@@ -144,6 +144,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
     return out;
   });
   const [bbTab, setBbTab] = useState(BBCODE_CONFIGS[0].key);
+  const [reminders, setReminders] = useState(initial.calendar_reminders || { day:'', hour:'' });
   const [newRoleId,  setNewRoleId]  = useState('');
   const [newRoleLvl, setNewRoleLvl] = useState(1);
   const [saving,     setSaving]     = useState({});
@@ -151,8 +152,9 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
 
   const save = async (key, value) => {
     setSaving(s => ({ ...s, [key]: true }));
-    await updateAppSetting(key, value);
+    const res = await updateAppSetting(key, value);
     setSaving(s => ({ ...s, [key]: false }));
+    if (!res?.ok) { alert(res?.error || 'Save failed.'); return; }
     setSaved(s => ({ ...s, [key]: true }));
     setTimeout(() => setSaved(s => ({ ...s, [key]: false })), 2500);
   };
@@ -177,6 +179,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
     { id:'salaries', label:'Salaries'          },
     { id:'bonuses',  label:'Bonus Cycle'       },
     { id:'bbcode',   label:'BBCode Templates'  },
+    { id:'reminders', label:'Discord Reminders' },
     ...(realLevel >= 3 ? [
       { id:'access',      label:'Access Control'  },
       { id:'permissions', label:'Discord Roles'   },
@@ -423,6 +426,82 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
             );
           })()}
 
+          {/* ── Discord Reminders ── */}
+          {section === 'reminders' && (() => {
+            const PLACEHOLDERS = [
+              { key:'{title}',          desc:'Event title' },
+              { key:'{link}',           desc:'Event link (blank if none)' },
+              { key:'{start_full}',     desc:'Start — full date & time in each reader\'s local time (<t:…:F>)' },
+              { key:'{start_relative}', desc:'Start — relative, e.g. "in 23 hours" (<t:…:R>)' },
+              { key:'{end_full}',       desc:'End — full date & time (<t:…:F>)' },
+              { key:'{end_relative}',   desc:'End — relative (<t:…:R>)' },
+              { key:'{role}',           desc:'@Supervisor role mention' },
+            ];
+            const KINDS = [
+              { key:'day',  label:'24 Hours Before', rel:'in a day'   },
+              { key:'hour', label:'1 Hour Before',   rel:'in an hour' },
+            ];
+            // Rough preview with a sample event 24h / 1h from now
+            const preview = (tpl, kind) => {
+              const start = new Date(Date.now() + (kind.key === 'day' ? 864e5 : 36e5));
+              const end   = new Date(start.getTime() + 36e5);
+              const full  = d => d.toLocaleString(undefined, { weekday:'long', month:'long', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' });
+              return (tpl || '')
+                .replaceAll('{title}', 'Supervisor Meeting')
+                .replaceAll('{link}', 'https://example.com/meeting')
+                .replaceAll('{start_full}', full(start))
+                .replaceAll('{start_relative}', kind.rel)
+                .replaceAll('{end_full}', full(end))
+                .replaceAll('{end_relative}', kind.key === 'day' ? 'in a day' : 'in 2 hours')
+                .replaceAll('{role}', '@Supervisor');
+            };
+            return (
+              <div className="surface" style={{ padding:'18px 20px' }}>
+                <SectionTitle title="Discord Reminders" sub="Messages the bot posts for calendar events marked For Supervisors" />
+                <div style={{ fontSize:11, color:'var(--text-3)', marginBottom:14, lineHeight:1.5 }}>
+                  Discord shows <code>{'{start_relative}'}</code> as e.g. <em>“in 23 hours”</em> — so write <code>which is {'{start_relative}'}</code>, not <code>which is in {'{start_relative}'}</code>.
+                  Changes apply to the next reminder sent.
+                </div>
+                {KINDS.map(kind => {
+                  const tpl     = reminders[kind.key] || '';
+                  const missing = ['{start_full}', '{start_relative}'].filter(p => !tpl.includes(p));
+                  return (
+                    <div key={kind.key} style={{ marginBottom:18 }}>
+                      <div style={{ fontSize:10, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.12em', color:'var(--c-accent)', marginBottom:6 }}>{kind.label}</div>
+                      <textarea
+                        style={{ ...inp, width:'100%', minHeight:90, fontFamily:'monospace', fontSize:12, padding:'10px 12px', boxSizing:'border-box', display:'block', resize:'vertical' }}
+                        value={tpl}
+                        onChange={e => setReminders(r => ({ ...r, [kind.key]: e.target.value }))}
+                        onFocus={fr} onBlur={fb}
+                      />
+                      {missing.length > 0 && (
+                        <div style={{ marginTop:6, padding:'6px 10px', borderRadius:6, background:'var(--c-warn-bg)', border:'1px solid var(--c-warn-glow)', fontSize:11, color:'var(--c-warning)' }}>
+                          Missing {missing.join(' and ')} — the timestamp won’t appear in this reminder.
+                        </div>
+                      )}
+                      <div style={{ marginTop:6, padding:'8px 12px', borderRadius:6, background:'var(--bg-sub)', border:'1px solid var(--border)', fontSize:12, color:'var(--text-2)', whiteSpace:'pre-wrap', wordBreak:'break-word' }}>
+                        <div style={{ fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.09em', color:'var(--text-4)', marginBottom:4 }}>Preview (approximate)</div>
+                        {preview(tpl, kind)}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div style={{ marginBottom:16 }}>
+                  <div style={{ fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.09em', color:'var(--text-4)', marginBottom:8 }}>Available Placeholders</div>
+                  <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+                    {PLACEHOLDERS.map(p => (
+                      <span key={p.key} title={p.desc}
+                        style={{ padding:'2px 9px', borderRadius:4, cursor:'default', background:'var(--bg-sub)', border:'1px solid var(--border)', fontFamily:'monospace', fontSize:10, color:'var(--c-accent)' }}>
+                        {p.key}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <SaveBtn saving={saving.calendar_reminders} saved={saved.calendar_reminders} onClick={() => save('calendar_reminders', reminders)} />
+              </div>
+            );
+          })()}
+
           {/* ── Access Control (L3 only) ── */}
           {section === 'access' && realLevel >= 3 && (() => {
             const PAGE_ACTIONS = [
@@ -470,6 +549,12 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
                 { key:'add',            label:'Post Discussion'              },
                 { key:'delete',         label:'Delete Discussion'            },
                 { key:'respond',        label:'Mark Response'                },
+              ]},
+              { page:'calendar',    label:'Calendar',     actions:[
+                { key:'view',           label:'View Calendar'                },
+                { key:'add',            label:'Add Event'                    },
+                { key:'edit',           label:'Edit Event'                   },
+                { key:'delete',         label:'Delete Event'                 },
               ]},
               { page:'admin',       label:'Admin',        actions:[
                 { key:'view',           label:'Access Admin Page'            },

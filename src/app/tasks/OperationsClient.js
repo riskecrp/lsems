@@ -375,7 +375,7 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
                       {done ? `✓ ${rc}/${allSups.length}` : `${rc}/${allSups.length}`}
                     </span>
 
-                    {disc.link && (
+                    {/^https?:\/\//i.test(disc.link || '') && (
                       <a href={disc.link} target="_blank" rel="noreferrer"
                         className="pill pill-accent" style={{cursor:'pointer',textDecoration:'none'}}
                         onClick={e=>e.stopPropagation()}>

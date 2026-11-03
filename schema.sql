@@ -118,3 +118,19 @@ CREATE INDEX IF NOT EXISTS idx_emp_hours_name  ON employee_hours (employee_name)
 CREATE INDEX IF NOT EXISTS idx_emp_hours_week  ON employee_hours (week_ending);
 CREATE INDEX IF NOT EXISTS idx_rank_hist_name  ON rank_history   (name);
 CREATE INDEX IF NOT EXISTS idx_treasury_ts     ON treasury       (created_at DESC);
+
+-- Calendar events (times are unix seconds, UTC)
+CREATE TABLE IF NOT EXISTS calendar_events (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  title           TEXT    NOT NULL,
+  link            TEXT,
+  start_ts        INTEGER NOT NULL,
+  end_ts          INTEGER NOT NULL,
+  for_supervisors INTEGER NOT NULL DEFAULT 0,
+  created_by      TEXT,
+  created_at      INTEGER NOT NULL,
+  timing_set_at   INTEGER NOT NULL,   -- when the start time was last set (decides if the 24h reminder is owed)
+  reminded_24h_at INTEGER,            -- set by loa-bot once the reminder is sent
+  reminded_1h_at  INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_calendar_events_start ON calendar_events(start_ts);

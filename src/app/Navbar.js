@@ -12,6 +12,7 @@ const ALL_NAV = [
   { href: '/payroll',        label: 'Payroll'          },
   { href: '/bonuses',        label: 'Bonuses'          },
   { href: '/tasks',          label: 'Operations'       },
+  { href: '/calendar',       label: 'Calendar'         },
   { href: '/history',        label: 'Employee History' },
   { href: '/past-employees', label: 'Past Employees'   },
   { href: '/admin',          label: 'Admin'            },

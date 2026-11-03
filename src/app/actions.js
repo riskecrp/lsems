@@ -17,7 +17,8 @@ async function discordNotify(content) {
     await fetch(`https://discord.com/api/v10/channels/${NOTIFY_CHANNEL}/messages`, {
       method: 'POST',
       headers: { Authorization: `Bot ${BOT_TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
+      // Only the Supervisor role may be pinged — user-entered text can't trigger @everyone/@here
+      body: JSON.stringify({ content, allowed_mentions: { parse: [], roles: [SUPERVISOR_ROLE] } }),
     });
   } catch {}
 }
@@ -92,6 +93,7 @@ function logAudit(username, user_id, action, details) {
 
 export async function getAuditLog() {
   try {
+    await requirePerm('admin', 'view_audit');
     return query('SELECT id, timestamp, username, action, details FROM audit_log ORDER BY id DESC LIMIT 500');
   } catch { return []; }
 }
@@ -385,6 +387,7 @@ export async function getPastEmployeeProfile(name) {
 
 export async function getBonuses() {
   try {
+    await requirePerm('bonuses', 'view');
     const rows = query('SELECT name, rank, hire_date, bonus_anchor, bonus_step FROM employees ORDER BY name ASC');
     return rows.map(r => ({
       name: r.name, rank: r.rank, hireDate: r.hire_date,
@@ -409,6 +412,7 @@ export async function getRankHistory() {
 
 export async function getTreasury() {
   try {
+    await requirePerm('payroll', 'view');
     const transactions = query('SELECT id, timestamp, type, amount, balance, notes FROM treasury ORDER BY id DESC');
     const latest = queryOne('SELECT balance FROM treasury ORDER BY id DESC LIMIT 1');
     return { transactions, balance: latest?.balance ?? 0 };
@@ -629,57 +633,6 @@ export async function renameEmployee({ oldName, newName }) {
 // ── Payroll ───────────────────────────────────────────────────
 
 // entries: [{ name, hours }] — only employees who worked that week
-export async function submitPay({ weekDate, startingBalance, entries }) {
-  try {
-    if (!weekDate?.trim()) return { ok: false, error: 'Week date required.' };
-    if (isNaN(parseFloat(startingBalance))) return { ok: false, error: 'Invalid starting balance.' };
-    if (!Array.isArray(entries) || entries.length === 0) return { ok: false, error: 'No hours entered.' };
-
-    const active = entries.filter(e => e.hours > 0);
-    if (!active.length) return { ok: false, error: 'All hours are zero.' };
-
-    let totalPay   = 0;
-    let totalHours = 0;
-
-    // Validate all employees exist and calculate total pay
-    for (const e of active) {
-      const emp = queryOne('SELECT rank FROM employees WHERE name = ?', [e.name]);
-      if (!emp) return { ok: false, error: `Employee "${e.name}" not found.` };
-      const rate = HOURLY_RATES[emp.rank] || 0;
-      totalPay   += e.hours * rate;
-      totalHours += e.hours;
-    }
-
-    const newBalance = parseFloat(startingBalance) - totalPay;
-    const wk = weekDate.trim();
-
-    transaction(() => {
-      for (const e of active) {
-        run(
-          'INSERT INTO employee_hours (employee_name, week_ending, hours) VALUES (?, ?, ?) ON CONFLICT(employee_name, week_ending) DO UPDATE SET hours = excluded.hours',
-          [e.name, wk, e.hours]
-        );
-      }
-      run(
-        'INSERT INTO treasury (timestamp, type, amount, balance, notes) VALUES (?, ?, ?, ?, ?)',
-        [
-          new Date().toLocaleString('en-US'),
-          'Payroll',
-          totalPay,
-          newBalance,
-          `Week ${wk}: ${worked.length} employees, ${totalHours.toFixed(2)} hrs`,
-        ]
-      );
-    });
-
-    revalidatePath('/');
-    revalidatePath('/payroll');
-    return { ok: true, updatedCount: active.length, totalHours, totalPay, newBalance };
-  } catch (e) { return { ok: false, error: e.message }; }
-}
-
-// entries: [{ name, hours, amount }] — name already resolved to DB employee, amount from CSV
-// bonusEntries (optional): [{ name, amount }] — retention bonuses to pay out in same run
 export async function submitPayCSV({ weekDate, startingBalance, entries, bonusEntries = [] }) {
   try {
     await requirePerm('payroll', 'submit');
@@ -915,6 +868,7 @@ export async function addDiscussion({ datePosted, topic, link }) {
   try {
     await requirePerm('discussions', 'add');
     if (!topic?.trim()) return { ok: false, error: 'Topic required.' };
+    if (link?.trim() && !/^https?:\/\/\S+$/i.test(link.trim())) return { ok: false, error: 'Link must start with http:// or https://' };
     const supervisors = query('SELECT name FROM supervisors ORDER BY name ASC');
     const { lastInsertRowid } = run(
       'INSERT INTO sup_discussions (date_posted, topic, link) VALUES (?, ?, ?)',
@@ -941,6 +895,7 @@ export async function deleteDiscussion(id) {
 
 export async function toggleDiscussionResponse({ discussionId, supervisorName, responded }) {
   try {
+    await requirePerm('discussions', 'respond');
     run(
       'INSERT INTO sup_discussion_responses (discussion_id, supervisor_name, responded) VALUES (?, ?, ?) ON CONFLICT(discussion_id, supervisor_name) DO UPDATE SET responded = excluded.responded',
       [discussionId, supervisorName, responded ? 1 : 0]
@@ -978,6 +933,8 @@ export async function markBonusPaid({ employeeName, amount, monthsTenure }) {
 
 export async function getBonusPayments() {
   try {
+    // Used by both the Bonuses and Payroll pages
+    if (!(await hasPerm('bonuses', 'view')) && !(await hasPerm('payroll', 'view'))) return [];
     const rows = query('SELECT id, employee_name, amount, months_tenure, paid_date FROM bonus_payments');
     rows.sort((a, b) => {
       const da = parseFlexDate(a.paid_date);
@@ -991,6 +948,7 @@ export async function getBonusPayments() {
 
 export async function getDivisionalData() {
   try {
+    await requirePerm('bonuses', 'view');
     const employees = query(
       'SELECT name, rank, hire_date, is_on_loa, loa_start, loa_end FROM employees ORDER BY name ASC'
     ).map(r => ({ name: r.name, rank: r.rank, hireDate: r.hire_date, isOnLoa: !!r.is_on_loa && isLoaActive(r.loa_end), loaStart: r.loa_start, loaEnd: r.loa_end }));
@@ -1053,6 +1011,13 @@ const SETTING_DEFAULTS = {
     tasks:       { view:1, add:1, edit:1, delete:2 },
     discussions: { view:1, add:1, delete:2, respond:1 },
     admin:       { view:2, edit_config:3, edit_bbcode:2, access_control:3, view_audit:2 },
+    calendar:    { view:1, add:2, edit:2, delete:2 },
+  },
+  // Discord reminder wording for supervisor events. Placeholders are filled in
+  // by loa-bot.mjs (which keeps its own copy of these defaults).
+  calendar_reminders: {
+    day:  '{role} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+    hour: '{role} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
   },
   hour_requirements: {
     'Chief':           { type:'weekly',  hours:5,   goal:10 },
@@ -1149,6 +1114,10 @@ export async function getPageAccess(pageName) {
   } catch { return {}; }
 }
 
+async function hasPerm(page, action) {
+  try { await requirePerm(page, action); return true; } catch { return false; }
+}
+
 // Server-side guard — always uses REAL level, never viewAs
 async function requirePerm(page, action) {
   const { level } = await getActor();
@@ -1157,8 +1126,24 @@ async function requirePerm(page, action) {
   if (!resolveAccess(level, rawPerms, action)) throw new Error('Permission denied.');
 }
 
+// Which Admin permission is needed to change each setting. Keys not listed
+// here can't be changed at all.
+const SETTING_PERMS = {
+  hour_requirements:  'edit_config',
+  salaries:           'edit_config',
+  bonus_cycle:        'edit_config',
+  bbcode_templates:   'edit_bbcode',
+  calendar_reminders: 'edit_bbcode',
+  page_permissions:   'access_control',
+  permission_roles:   'access_control',
+  level_names:        'access_control',
+};
+
 export async function updateAppSetting(key, value) {
   try {
+    const action = SETTING_PERMS[key];
+    if (!action) return { ok: false, error: 'Unknown setting.' };
+    await requirePerm('admin', action);
     run(
       'INSERT INTO app_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
       [key, JSON.stringify(value)]
@@ -1172,11 +1157,64 @@ export async function updateAppSetting(key, value) {
 
 // ── Employment history ─────────────────────────────────────────────
 
-export async function getEmploymentHistory() {
+export async function getEvents() {
   try {
-    const history = query('SELECT event_date, name, old_rank, new_rank, authorizer FROM rank_history ORDER BY name ASC, id ASC');
-    const past    = query('SELECT name, hire_date, date_separated, exit_rank, authorizer, total_hours FROM past_employees ORDER BY name ASC');
-    const current = query('SELECT name, rank, hire_date, last_promotion FROM employees ORDER BY name ASC');
-    return { history, past, current };
-  } catch (e) { return { history: [], past: [], current: [] }; }
+    ensureEventsTable();
+    return query('SELECT id, title, link, start_ts, end_ts, for_supervisors, created_by, reminded_24h_at, reminded_1h_at FROM calendar_events ORDER BY start_ts ASC');
+  } catch (e) { console.error('getEvents:', e); return []; }
+}
+
+export async function addEvent({ title, link, startTs, endTs, forSupervisors }) {
+  try {
+    await requirePerm('calendar', 'add');
+    ensureEventsTable();
+    const err = validateEvent({ title, link, startTs, endTs });
+    if (err) return { ok: false, error: err };
+    const { username, user_id } = await getActor();
+    const now = Math.floor(Date.now() / 1000);
+    run(
+      'INSERT INTO calendar_events (title, link, start_ts, end_ts, for_supervisors, created_by, created_at, timing_set_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [title.trim(), link?.trim() || null, startTs, endTs, forSupervisors ? 1 : 0, username, now, now]
+    );
+    logAudit(username, user_id, 'Calendar Event Added', `${title.trim()} · ${new Date(startTs * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC${forSupervisors ? ' · Supervisors' : ''}`);
+    revalidatePath('/calendar');
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
+
+export async function updateEvent({ id, title, link, startTs, endTs, forSupervisors }) {
+  try {
+    await requirePerm('calendar', 'edit');
+    ensureEventsTable();
+    const ev = queryOne('SELECT start_ts, for_supervisors FROM calendar_events WHERE id = ?', [id]);
+    if (!ev) return { ok: false, error: 'Event not found.' };
+    const err = validateEvent({ title, link, startTs, endTs });
+    if (err) return { ok: false, error: err };
+    // A new start time, or newly flagging it for supervisors, re-arms the reminders
+    const rearm = ev.start_ts !== startTs || (!ev.for_supervisors && forSupervisors);
+    const now   = Math.floor(Date.now() / 1000);
+    run(
+      `UPDATE calendar_events SET title = ?, link = ?, start_ts = ?, end_ts = ?, for_supervisors = ?
+       ${rearm ? ', timing_set_at = ?, reminded_24h_at = NULL, reminded_1h_at = NULL' : ''} WHERE id = ?`,
+      [title.trim(), link?.trim() || null, startTs, endTs, forSupervisors ? 1 : 0, ...(rearm ? [now] : []), id]
+    );
+    const { username, user_id } = await getActor();
+    logAudit(username, user_id, 'Calendar Event Edited', title.trim());
+    revalidatePath('/calendar');
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
+
+export async function deleteEvent(id) {
+  try {
+    await requirePerm('calendar', 'delete');
+    ensureEventsTable();
+    const ev = queryOne('SELECT title FROM calendar_events WHERE id = ?', [id]);
+    if (!ev) return { ok: false, error: 'Event not found.' };
+    run('DELETE FROM calendar_events WHERE id = ?', [id]);
+    const { username, user_id } = await getActor();
+    logAudit(username, user_id, 'Calendar Event Deleted', ev.title);
+    revalidatePath('/calendar');
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
 }

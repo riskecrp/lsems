@@ -21,8 +21,8 @@ const SUPERVISOR_ROLE     = '740782964157448363';
 const SENIOR_PARA_ROLE    = '459439799825072129';
 const LEAD_PARA_ROLE      = '579584822494625803';
 const DB_PATH             = '/opt/lsems/data/lsems.db';
-const REVALIDATE_URL      = 'http://localhost:3000/api/revalidate';
-const REVALIDATE_SECRET   = 'lsems-loa-revalidate';
+const REVALIDATE_URL      = 'http://127.0.0.1:3002/api/revalidate';
+const REVALIDATE_SECRET   = process.env.REVALIDATE_SECRET;
 
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTH_LOOKUP = {};
@@ -388,7 +388,8 @@ async function sendDailyDigest() {
     await fetch(`https://discord.com/api/v10/channels/${NOTIFY_CHANNEL}/messages`, {
       method: 'POST',
       headers: { Authorization: `Bot ${BOT_TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
+      // Task names/topics are user-entered — only the Supervisor role may be pinged
+      body: JSON.stringify({ content, allowed_mentions: { parse: [], roles: [SUPERVISOR_ROLE] } }),
     });
     console.log('[LOA Bot] Daily digest sent.');
   } catch (e) {
@@ -463,11 +464,93 @@ async function pollRibbonChannel(client, limit = 20) {
   }
 }
 
+// ── Calendar reminders ──────────────────────────────────────────
+// Supervisor events get a reminder 24h and 1h before they start. Wording comes
+// from the Admin page (app_settings.calendar_reminders); these are the fallbacks
+// and should match SETTING_DEFAULTS in src/app/actions.js.
+const REMINDER_DEFAULTS = {
+  day:  '{role} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+  hour: '{role} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+};
+const DAY = 24 * 60 * 60, HOUR = 60 * 60;
+
+function fillReminder(tpl, ev) {
+  return tpl
+    .replaceAll('{title}',          ev.title)
+    .replaceAll('{link}',           ev.link || '')
+    .replaceAll('{start_full}',     `<t:${ev.start_ts}:F>`)
+    .replaceAll('{start_relative}', `<t:${ev.start_ts}:R>`)
+    .replaceAll('{end_full}',       `<t:${ev.end_ts}:F>`)
+    .replaceAll('{end_relative}',   `<t:${ev.end_ts}:R>`)
+    .replaceAll('{role}',           `<@&${SUPERVISOR_ROLE}>`)
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+async function sendCalendarReminders() {
+  let db;
+  try {
+    db = new Database(DB_PATH);
+    db.pragma('busy_timeout = 5000');
+    db.exec(`CREATE TABLE IF NOT EXISTS calendar_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, link TEXT,
+      start_ts INTEGER NOT NULL, end_ts INTEGER NOT NULL, for_supervisors INTEGER NOT NULL DEFAULT 0,
+      created_by TEXT, created_at INTEGER NOT NULL, timing_set_at INTEGER NOT NULL,
+      reminded_24h_at INTEGER, reminded_1h_at INTEGER)`);
+
+    const now = Math.floor(Date.now() / 1000);
+    const due = db.prepare(
+      'SELECT * FROM calendar_events WHERE for_supervisors = 1 AND reminded_1h_at IS NULL AND start_ts > ? AND start_ts <= ?'
+    ).all(now, now + DAY);
+    if (!due.length) return;
+
+    let templates = REMINDER_DEFAULTS;
+    const row = db.prepare("SELECT value FROM app_settings WHERE key = 'calendar_reminders'").get();
+    if (row) { try { templates = { ...REMINDER_DEFAULTS, ...JSON.parse(row.value) }; } catch {} }
+
+    for (const ev of due) {
+      let kind;
+      if (now >= ev.start_ts - HOUR) kind = 'hour';
+      // 24h reminder only if the event was on the calendar before the 24h mark;
+      // short-notice events just get the 1h one
+      else if (ev.reminded_24h_at == null && ev.timing_set_at <= ev.start_ts - DAY) kind = 'day';
+      else continue;
+
+      // Claim the reminder first so an overlapping run can't double-send
+      const claim = kind === 'hour'
+        ? db.prepare('UPDATE calendar_events SET reminded_1h_at = ?, reminded_24h_at = COALESCE(reminded_24h_at, ?) WHERE id = ? AND reminded_1h_at IS NULL AND start_ts = ?').run(now, now, ev.id, ev.start_ts)
+        : db.prepare('UPDATE calendar_events SET reminded_24h_at = ? WHERE id = ? AND reminded_24h_at IS NULL AND start_ts = ?').run(now, ev.id, ev.start_ts);
+      if (!claim.changes) continue;
+
+      const content = fillReminder(templates[kind] || REMINDER_DEFAULTS[kind], ev).slice(0, 2000);
+      const res = await fetch(`https://discord.com/api/v10/channels/${NOTIFY_CHANNEL}/messages`, {
+        method: 'POST',
+        headers: { Authorization: `Bot ${BOT_TOKEN}`, 'Content-Type': 'application/json' },
+        // Only the Supervisor role may be pinged — never @everyone from an event title
+        body: JSON.stringify({ content, allowed_mentions: { parse: [], roles: [SUPERVISOR_ROLE] } }),
+      }).catch(e => ({ ok: false, status: e.message }));
+
+      if (res.ok) {
+        console.log(`[Calendar] Sent ${kind === 'day' ? '24h' : '1h'} reminder for "${ev.title}" (#${ev.id}).`);
+      } else {
+        // Release the claim so the next run retries
+        if (kind === 'hour') db.prepare('UPDATE calendar_events SET reminded_1h_at = NULL, reminded_24h_at = ? WHERE id = ?').run(ev.reminded_24h_at, ev.id);
+        else                 db.prepare('UPDATE calendar_events SET reminded_24h_at = NULL WHERE id = ?').run(ev.id);
+        console.error(`[Calendar] Failed to send reminder for "${ev.title}" (#${ev.id}): ${res.status}`);
+      }
+    }
+  } catch (e) {
+    console.error('[Calendar] Reminder error:', e.message);
+  } finally { db?.close(); }
+}
+
 client.once(Events.ClientReady, async c => {
   console.log(`[LOA Bot] Ready as ${c.user.tag}`);
   clearExpiredLOAs();
   setInterval(clearExpiredLOAs, 6 * 60 * 60 * 1000);
   scheduleDailyDigest();
+  sendCalendarReminders();
+  setInterval(sendCalendarReminders, 60 * 1000);
   console.log('[LOA Bot] Running startup catchup scan (last 100 messages)...');
   await pollChannel(c, 100);
   console.log('[LOA Bot] Startup scan complete. Polling every 2 minutes.');

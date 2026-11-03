@@ -5,11 +5,13 @@ const ERRORS = {
   token:  'Failed to get access token from Discord. Please wait a moment and try again.',
   guild:  'You must be a member of the LSEMS Discord server.',
   role:   'You do not have the required role to access this dashboard.',
+  state:  'Your login session expired or was started in another browser. Please try again.',
   server: 'Discord returned an unexpected response — this is usually a temporary rate-limit. Wait 60 seconds then try again.',
 };
 
-export default function LoginPage({ searchParams }) {
-  const error = ERRORS[searchParams?.error] || null;
+export default async function LoginPage({ searchParams }) {
+  const params = await searchParams;
+  const error = ERRORS[params?.error] || null;
 
   return (
     <div style={{

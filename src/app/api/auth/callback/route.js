@@ -15,6 +15,14 @@ export async function GET(req) {
     return NextResponse.redirect(new URL('/login?error=denied', SITE_URL));
   }
 
+  // The state must match the one /api/auth/login set in this browser
+  const state = searchParams.get('state');
+  const saved = req.cookies.get('lsems_oauth_state')?.value;
+  if (!state || !saved || state !== saved) {
+    console.error('[Auth] OAuth state mismatch');
+    return NextResponse.redirect(new URL('/login?error=state', SITE_URL));
+  }
+
   try {
     const tokens = await exchangeCode(code);
     console.log('[Auth] token keys:', Object.keys(tokens));
@@ -82,8 +90,9 @@ export async function GET(req) {
 
     const res = NextResponse.redirect(new URL('/', SITE_URL));
     res.cookies.set('lsems_session', session, {
-      httpOnly: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 7,
+      httpOnly: true, secure: true, sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 7,
     });
+    res.cookies.set('lsems_oauth_state', '', { maxAge: 0, path: '/api/auth' });
     return res;
 
   } catch (e) {

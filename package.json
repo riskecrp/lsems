@@ -13,14 +13,14 @@
     "better-sqlite3": "^11.10.0",
     "discord.js": "^14.26.4",
     "jose": "^6.2.3",
-    "next": "16.1.6",
+    "next": "16.4.5",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.4.5",
     "google-auth-library": "^10.6.2",
     "google-spreadsheet": "^5.2.0",
     "tailwindcss": "^4"

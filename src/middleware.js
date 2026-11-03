@@ -6,7 +6,7 @@ const JWT_SECRET = new TextEncoder().encode(
 );
 
 const LEVEL1_BLOCKED = ['/payroll', '/bonuses', '/admin'];
-const PUBLIC_PATHS   = ['/login', '/api/auth'];
+const PUBLIC_PATHS   = ['/login', '/api/auth', '/api/revalidate'];
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;

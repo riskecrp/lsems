@@ -1,8 +1,16 @@
 import { revalidatePath } from 'next/cache';
+import { timingSafeEqual } from 'crypto';
+
+function secretOk(given) {
+  const expected = process.env.REVALIDATE_SECRET;
+  if (!expected || typeof given !== 'string') return false;
+  const a = Buffer.from(given), b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 export async function POST(req) {
   const { secret } = await req.json().catch(() => ({}));
-  if (secret !== process.env.REVALIDATE_SECRET && secret !== 'lsems-loa-revalidate') {
+  if (!secretOk(secret)) {
     return Response.json({ ok: false }, { status: 401 });
   }
   revalidatePath('/');
