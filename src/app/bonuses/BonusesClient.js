@@ -575,7 +575,7 @@ ${notRecBB}${recExcBB}Please let me know if you have any follow up questions!
                         ? <span className="pill pill-danger" style={{cursor: can('pay') ? 'pointer' : 'default'}} onClick={() => can('pay') && setPayModal({ name:b.name, amount:b.bonus.nextAmount, months: b.bonus.monthsTenure, milestone: b.bonus.milestone })}>{d === 0 ? 'Due today' : `${-d}d overdue`}</span>
                         : <span style={{ fontSize:11, fontFamily:'monospace', color: d <= 30 ? 'var(--c-warning)' : 'var(--text-2)' }}>in {d}d</span>;
                     return (
-                      <tr key={b.name}>
+                      <tr key={b.name} style={d != null && d <= 0 ? { background:'var(--c-danger-bg)', boxShadow:'inset 3px 0 0 var(--c-danger)' } : undefined}>
                         <td style={{ fontWeight:600, color:'var(--text-1)' }}>{b.name}</td>
                         <td style={{ color:'var(--text-2)' }}>{fmtDate(b.hireDate)}</td>
                         <td className="text-center"><span className="pill pill-muted">#{b.bonus?.milestone ?? '—'}</span></td>
