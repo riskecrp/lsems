@@ -1155,7 +1155,41 @@ export async function updateAppSetting(key, value) {
   } catch (e) { return { ok: false, error: e.message }; }
 }
 
-// ── Employment history ─────────────────────────────────────────────
+// ── Calendar ──────────────────────────────────────────────────────
+// Times are unix seconds (UTC). timing_set_at records when the start time (or
+// the supervisor flag) was last set — the bot only sends the 24h reminder if
+// that was at least 24h before the start, so short-notice events get just the
+// 1h reminder. reminded_*_at are set by the bot once a reminder has gone out.
+
+const EVENTS_DDL = `CREATE TABLE IF NOT EXISTS calendar_events (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  title           TEXT    NOT NULL,
+  link            TEXT,
+  start_ts        INTEGER NOT NULL,
+  end_ts          INTEGER NOT NULL,
+  for_supervisors INTEGER NOT NULL DEFAULT 0,
+  created_by      TEXT,
+  created_at      INTEGER NOT NULL,
+  timing_set_at   INTEGER NOT NULL,
+  reminded_24h_at INTEGER,
+  reminded_1h_at  INTEGER
+)`;
+let _eventsReady = false;
+function ensureEventsTable() {
+  if (_eventsReady) return;
+  run(EVENTS_DDL);
+  run('CREATE INDEX IF NOT EXISTS idx_calendar_events_start ON calendar_events(start_ts)');
+  _eventsReady = true;
+}
+
+function validateEvent({ title, link, startTs, endTs }) {
+  if (!title?.trim())             return 'Title required.';
+  if (title.trim().length > 200)  return 'Title is too long (200 characters max).';
+  if (link?.trim() && !/^https?:\/\/\S+$/i.test(link.trim())) return 'Link must start with http:// or https://';
+  if (!Number.isInteger(startTs) || !Number.isInteger(endTs)) return 'Start and end times are required.';
+  if (endTs <= startTs)           return 'End time must be after the start time.';
+  return null;
+}
 
 export async function getEvents() {
   try {
