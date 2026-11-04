@@ -192,6 +192,15 @@ function isLoaActive(loaEnd) {
   return end >= now;
 }
 
+// True once the LOA start date has arrived (an unreadable start date counts as started)
+function isLoaStarted(loaStart) {
+  if (!loaStart) return true;
+  const start = parseFlexDate(loaStart);
+  if (!start) return true;
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  return start <= now;
+}
+
 function getTotalHours(name) {
   const rows = query('SELECT hours FROM employee_hours WHERE employee_name = ?', [name]);
   return rows.reduce((sum, r) => sum + (r.hours || 0), 0);
@@ -226,6 +235,7 @@ export async function getEmployees() {
         totalHours:    total,
         hoursInRank:   inRank,
         isOnLoa:       !!r.is_on_loa && isLoaActive(r.loa_end),
+        loaStarted:    !!r.is_on_loa && isLoaActive(r.loa_end) && isLoaStarted(r.loa_start),
         loaStart:      r.loa_start  || '',
         loaEnd:        r.loa_end    || '',
         loaReason:     r.loa_reason || '',

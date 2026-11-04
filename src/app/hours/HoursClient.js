@@ -27,7 +27,10 @@ const MON = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10
 function parseDate(s) {
   if (!s) return null;
   const m1 = s.match(/^(\d{1,2})\/([A-Za-z]{3})\/(\d{4})$/);
-  if (m1) return new Date(+m1[3], MON[m1[2]], +m1[1]);
+  if (m1) {
+    const mon = MON[m1[2][0].toUpperCase() + m1[2].slice(1).toLowerCase()];
+    return mon === undefined ? null : new Date(+m1[3], mon, +m1[1]);
+  }
   const m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (m2) return new Date(+m2[3], +m2[1]-1, +m2[2]);
   return null;
@@ -45,6 +48,16 @@ function loaDuringWeek(emp, weekEnding) {
   const overlaps = loaStart <= weekEnd && (!loaEnd || loaEnd >= weekStart);
   if (!overlaps) return null;
   return { start: emp.loaStart, end: emp.loaEnd || null };
+}
+
+// True only when today falls within the employee's LOA dates (open-ended if no valid end)
+function loaActiveToday(emp) {
+  if (!emp.isOnLoa) return false;
+  const start = parseDate(emp.loaStart);
+  if (!start) return false;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const end = parseDate(emp.loaEnd);
+  return start <= today && (!end || end >= today);
 }
 
 function sortEmployees(arr) {
@@ -264,6 +277,11 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
     if (status === 'saving') return { bg: 'var(--c-accent-bg)',  color: 'var(--c-accent)' };
     if (status === 'ok')     return { bg: 'rgba(52,211,153,0.20)',  color: 'var(--c-success)' };
     if (status === 'err')    return { bg: 'rgba(248,113,113,0.20)', color: 'var(--c-danger)' };
+    if (loaDuringWeek(emp, week)) return {
+      bg: 'repeating-linear-gradient(135deg, var(--c-warn-bg) 0 5px, var(--c-warn-glow) 5px 6px), var(--c-warn-bg)',
+      color: 'var(--c-warning)',
+      shadow: 'inset 0 0 0 1px var(--c-warn-glow)',
+    };
     const req = getReq(emp.rank);
     if (req.type === 'monthly') {
       const mk    = monthKey(week);
@@ -337,6 +355,28 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
           </div>
         </div>
 
+        {/* Legend */}
+        <div className="surface" style={{ width:'100%', padding:'8px 14px', display:'flex', flexWrap:'wrap', gap:'6px 16px', alignItems:'center' }}>
+          <span style={{ fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'var(--text-3)' }}>Legend:</span>
+          {[
+            { label:'Met requirement',   bg:'rgba(52,211,153,0.14)',  color:'var(--c-success)', text:'5.00' },
+            { label:'Below requirement', bg:'rgba(248,113,113,0.14)', color:'var(--c-danger)',  text:'1.00' },
+            { label:'Met requirement, below goal', bg:'rgba(251,191,36,0.14)', color:'var(--c-warning)', text:'6.00' },
+            { label:'On LOA (excused)',  bg:'repeating-linear-gradient(135deg, var(--c-warn-bg) 0 5px, var(--c-warn-glow) 5px 6px), var(--c-warn-bg)', color:'var(--c-warning)', shadow:'inset 0 0 0 1px var(--c-warn-glow)', text:'0.00' },
+            { label:'No hours logged',   bg:'transparent', color:'var(--text-4)', shadow:'inset 0 0 0 1px var(--border)', text:'—' },
+          ].map(item => (
+            <span key={item.label} style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:11, color:'var(--text-2)' }}>
+              <span className="font-mono" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:38, height:18, borderRadius:3, fontSize:10, background:item.bg, color:item.color, boxShadow:item.shadow }}>
+                {item.text}
+              </span>
+              {item.label}
+            </span>
+          ))}
+          <span style={{ fontSize:10, color:'var(--text-3)', fontStyle:'italic', marginLeft:'auto' }}>
+            Monthly ranks (EMT-P) are colored by their total for the month.
+          </span>
+        </div>
+
         {/* Grid */}
         <div className="surface" style={{ overflow:'hidden' }}>
           <div className="overflow-x-auto custom-scrollbar">
@@ -392,6 +432,12 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
                         <div style={{ display:'flex', alignItems:'center', gap:6 }}>
                           <span className="text-[11px] font-semibold" style={T.t1}>{emp.name}</span>
                           <span className="text-[10px]" style={T.t3}>{emp.rank}</span>
+                          {loaActiveToday(emp) && (
+                            <span className="pill pill-warning" style={{ fontSize:8, padding:'0 6px', lineHeight:'14px' }}
+                              title={`On LOA ${emp.loaStart || ''}${emp.loaEnd ? ` – ${emp.loaEnd}` : ' – ongoing'}`}>
+                              LOA
+                            </span>
+                          )}
                         </div>
                       </td>
                       {visibleWeeks.map(w => {
@@ -399,10 +445,13 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
                         const key    = `${emp.name}::${w}`;
                         const isEdit = can('edit') && editCell?.name === emp.name && editCell?.week === w;
                         const status = saveStatus[key];
-                        const { bg, color } = cellStyle(emp, w, hrs, isEdit, status, hasEntry(emp.name, w));
+                        const { bg, color, shadow } = cellStyle(emp, w, hrs, isEdit, status, hasEntry(emp.name, w));
+                        const loa    = loaDuringWeek(emp, w);
+                        const loaTip = loa ? `On LOA ${loa.start}${loa.end ? ` – ${loa.end}` : ' – ongoing'}` : '';
+                        const editTip = can('edit') ? `Click to edit${req.type==='monthly' ? ` — monthly req: ${req.hours}h` : ` — weekly req: ${req.hours}h`}` : '';
                         return (
                           <td key={w} className="border-r p-0"
-                            style={{ borderColor:'rgba(255,255,255,0.04)', background:bg, minWidth:70 }}>
+                            style={{ borderColor:'rgba(255,255,255,0.04)', background:bg, boxShadow:shadow, minWidth:70 }}>
                             {isEdit ? (
                               <input autoFocus type="number" min="0" step="0.25"
                                 className="w-full px-1.5 py-1 text-center text-[11px] font-mono outline-none"
@@ -416,7 +465,7 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
                               <div className={`w-full px-1.5 py-1 text-center text-[11px] font-mono${can('edit') ? ' cursor-pointer' : ''}`}
                                 style={{ color }}
                                 onClick={() => can('edit') && startEdit(emp.name, w)}
-                                title={can('edit') ? `Click to edit${req.type==='monthly' ? ` — monthly req: ${req.hours}h` : ` — weekly req: ${req.hours}h`}` : undefined}
+                                title={[loaTip, editTip].filter(Boolean).join(' · ') || undefined}
                                 onMouseEnter={e => can('edit') && (e.currentTarget.style.opacity = '0.7')}
                                 onMouseLeave={e => can('edit') && (e.currentTarget.style.opacity = '1')}>
                                 {status === 'saving' ? '…' : hrs > 0 ? hrs.toFixed(2) : hasEntry(emp.name, w) ? <span style={{ color:'var(--text-3)' }}>0.00</span> : <span style={{ opacity:0.15 }}>—</span>}

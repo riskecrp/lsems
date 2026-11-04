@@ -107,7 +107,7 @@ export default function RosterClient({ employees: initial, userLevel = 1, perms 
           <h1 style={{fontSize:18,fontWeight:800,color:'var(--text-1)',lineHeight:1}}>Staff Roster</h1>
           <p style={{fontSize:11,color:'var(--text-3)',marginTop:3}}>
             <span className="stat-accent" style={{fontWeight:700}}>{employees.length}</span> active
-            {employees.filter(e=>e.isOnLoa).length > 0 && <span> · <span style={{color:'var(--c-warning)',fontWeight:600}}>{employees.filter(e=>e.isOnLoa).length} on LOA</span></span>}
+            {employees.filter(e=>e.loaStarted).length > 0 && <span> · <span style={{color:'var(--c-warning)',fontWeight:600}}>{employees.filter(e=>e.loaStarted).length} on LOA</span></span>}
           </p>
         </div>
         <div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
@@ -157,9 +157,9 @@ export default function RosterClient({ employees: initial, userLevel = 1, perms 
                 <span style={{ fontSize:10, color:'var(--text-4)' }}>
                   {group.members.length} member{group.members.length !== 1 ? 's' : ''}
                 </span>
-                {group.members.some(e => e.isOnLoa) && (
+                {group.members.some(e => e.loaStarted) && (
                   <span className="pill pill-warning" style={{ marginLeft:'auto', fontSize:10 }}>
-                    {group.members.filter(e=>e.isOnLoa).length} on LOA
+                    {group.members.filter(e=>e.loaStarted).length} on LOA
                   </span>
                 )}
               </div>
@@ -193,7 +193,7 @@ export default function RosterClient({ employees: initial, userLevel = 1, perms 
                     {group.members.map((emp, ri) => {
                     const days = daysInRank(emp.hireDate, emp.lastPromotion);
                     return (
-                      <tr key={emp.name} style={emp.isOnLoa ? { background:'rgba(251,191,36,0.03)' } : {}}>
+                      <tr key={emp.name} style={emp.loaStarted ? { background:'rgba(251,191,36,0.03)' } : {}}>
                         <td style={{ padding:'10px 16px', overflow:'hidden' }}>
                           <div style={{ display:'flex', alignItems:'center', gap:6, overflow:'hidden' }}>
                             <div style={{ overflow:'hidden', minWidth:0 }}>
@@ -212,8 +212,8 @@ export default function RosterClient({ employees: initial, userLevel = 1, perms 
                               </button>
                               <div style={{ marginTop:3 }}>
                                 {emp.isOnLoa && (
-                                  <div style={{ fontSize:10, color:'var(--c-warning)', whiteSpace:'nowrap', marginBottom:3 }}>
-                                    LOA {emp.loaStart}{emp.loaEnd ? ` – ${emp.loaEnd}` : ''}
+                                  <div style={{ fontSize:10, color: emp.loaStarted ? 'var(--c-warning)' : 'var(--text-3)', whiteSpace:'nowrap', marginBottom:3 }}>
+                                    {emp.loaStarted ? 'LOA' : 'LOA scheduled'} {emp.loaStart}{emp.loaEnd ? ` – ${emp.loaEnd}` : ''}
                                   </div>
                                 )}
                                 {can('loa') && (
@@ -367,7 +367,8 @@ export default function RosterClient({ employees: initial, userLevel = 1, perms 
                 <div style={{fontSize:12,color:'var(--text-3)',marginTop:4,display:'flex',gap:10,flexWrap:'wrap'}}>
                   <span>{profileEmp.rank}</span>
                   <span>Hired {profileEmp.hireDate}</span>
-                  {profileEmp.isOnLoa && <span style={{color:'var(--c-warning)',fontWeight:600}}>On LOA</span>}
+                  {profileEmp.loaStarted && <span style={{color:'var(--c-warning)',fontWeight:600}}>On LOA</span>}
+                  {profileEmp.isOnLoa && !profileEmp.loaStarted && <span style={{color:'var(--text-3)',fontWeight:600}}>LOA scheduled {profileEmp.loaStart}</span>}
                 </div>
                 <div style={{fontSize:11,color:'var(--text-3)',marginTop:2,display:'flex',gap:10,flexWrap:'wrap'}}>
                   <span>Total <span style={{color:'var(--c-success)',fontWeight:700,fontFamily:'monospace'}}>{profileEmp.totalHours?.toFixed(1)}</span> hrs</span>
