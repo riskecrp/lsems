@@ -436,8 +436,8 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
               { key:'{start_relative}', desc:'Start — relative, e.g. "in 23 hours" (<t:…:R>)' },
               { key:'{end_full}',       desc:'End — full date & time (<t:…:F>); blank if the event has no end time' },
               { key:'{end_relative}',   desc:'End — relative (<t:…:R>); blank if the event has no end time' },
-              { key:'{role}',           desc:'@Supervisor role mention' },
-              { key:'{everyone}',       desc:'@everyone mention' },
+              { key:'{supervisor}',     desc:'@Supervisor role mention' },
+              { key:'{employee}',       desc:'@Employee role mention' },
             ];
             const GROUPS = [
               { id:'calendar_reminders', title:'Supervisor Events', sub:'Posted in the Supervisor channel for events marked For Supervisors',
@@ -447,7 +447,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
                 ]},
               { id:'allhands_messages', title:'All-Hands Meetings', sub:'Posted in #announcements for events marked All-Hands Meeting',
                 sample:'All-Hands Meeting', value:allHandsMsgs, set:setAllHandsMsgs, kinds:[
-                  { key:'created', label:'When Created',    ahead:7*864e5 },
+                  { key:'created', label:'7 Days Before (or when created, if sooner)', ahead:7*864e5 },
                   { key:'day',     label:'24 Hours Before', ahead:864e5   },
                   { key:'hour',    label:'1 Hour Before',   ahead:36e5    },
                 ]},
@@ -465,14 +465,15 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
                 .replaceAll('{start_relative}', relative(kind.ahead))
                 .replaceAll('{end_full}', full(end))
                 .replaceAll('{end_relative}', relative(kind.ahead + 36e5))
+                .replaceAll('{supervisor}', '@Supervisor')
                 .replaceAll('{role}', '@Supervisor')
-                .replaceAll('{everyone}', '@everyone');
+                .replaceAll('{employee}', '@Employee');
             };
             return (
               <div className="space-y-3">
                 <div className="surface" style={{ padding:'14px 20px', fontSize:11, color:'var(--text-3)', lineHeight:1.5 }}>
                   Discord shows <code>{'{start_relative}'}</code> as e.g. <em>“in 23 hours”</em> — so write <code>which is {'{start_relative}'}</code>, not <code>which is in {'{start_relative}'}</code>.
-                  Only mentions written here can ping (<code>{'{role}'}</code>, <code>{'{everyone}'}</code>, or a role pasted as <code>{'<@&ROLE_ID>'}</code>) — never anything typed into an event title.
+                  Only mentions written here can ping (<code>{'{supervisor}'}</code>, <code>{'{employee}'}</code>, or a role pasted as <code>{'<@&ROLE_ID>'}</code>) — never anything typed into an event title.
                   Changes apply to the next message sent.
                 </div>
                 {GROUPS.map(group => (

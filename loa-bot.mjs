@@ -18,6 +18,7 @@ const RESIGN_CHANNEL_ID   = '1369582404963930122';
 const RIBBON_CHANNEL_ID   = '1369586851975008326';
 const NOTIFY_CHANNEL      = '520680995704274954';
 const SUPERVISOR_ROLE     = '740782964157448363';
+const EMPLOYEE_ROLE       = '463305002400743444';
 const SENIOR_PARA_ROLE    = '459439799825072129';
 const LEAD_PARA_ROLE      = '579584822494625803';
 const DB_PATH             = '/opt/lsems/data/lsems.db';
@@ -471,15 +472,15 @@ async function pollRibbonChannel(client, limit = 20) {
 // 1h before the start; All-Hands also gets an announcement when created.
 // Defaults should match SETTING_DEFAULTS in src/app/actions.js.
 const ANNOUNCEMENTS_CHANNEL = '459438937635553291';
-const DAY = 24 * 60 * 60, HOUR = 60 * 60;
+const DAY = 24 * 60 * 60, HOUR = 60 * 60, WEEK = 7 * DAY;
 
 const AUDIENCES = [
   {
     name: 'Supervisors', flag: 'for_supervisors', channel: NOTIFY_CHANNEL, setting: 'calendar_reminders',
     timing: 'timing_set_at', day: 'reminded_24h_at', hour: 'reminded_1h_at', created: null,
     defaults: {
-      day:  '{role} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
-      hour: '{role} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+      day:  '{supervisor} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+      hour: '{supervisor} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
     },
   },
   {
@@ -501,8 +502,9 @@ function fillReminder(tpl, ev) {
     .replaceAll('{start_relative}', `<t:${ev.start_ts}:R>`)
     .replaceAll('{end_full}',       ev.end_ts ? `<t:${ev.end_ts}:F>` : '')   // end time is optional
     .replaceAll('{end_relative}',   ev.end_ts ? `<t:${ev.end_ts}:R>` : '')
-    .replaceAll('{role}',           `<@&${SUPERVISOR_ROLE}>`)
-    .replaceAll('{everyone}',       '@everyone')
+    .replaceAll('{supervisor}',     `<@&${SUPERVISOR_ROLE}>`)
+    .replaceAll('{role}',           `<@&${SUPERVISOR_ROLE}>`)   // old name, still honoured
+    .replaceAll('{employee}',       `<@&${EMPLOYEE_ROLE}>`)
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
@@ -511,9 +513,10 @@ function fillReminder(tpl, ev) {
 // typed into an event title (e.g. "@everyone").
 function allowedMentionsFor(tpl) {
   const roles = new Set([...tpl.matchAll(/<@&(\d+)>/g)].map(m => m[1]));
-  if (tpl.includes('{role}')) roles.add(SUPERVISOR_ROLE);
+  if (tpl.includes('{supervisor}') || tpl.includes('{role}')) roles.add(SUPERVISOR_ROLE);
+  if (tpl.includes('{employee}')) roles.add(EMPLOYEE_ROLE);
   const users = [...new Set([...tpl.matchAll(/<@!?(\d+)>/g)].map(m => m[1]))];
-  const parse = (tpl.includes('{everyone}') || /@(everyone|here)/.test(tpl)) ? ['everyone'] : [];
+  const parse = /@(everyone|here)/.test(tpl) ? ['everyone'] : [];
   return { parse, roles: [...roles], users };
 }
 
@@ -549,12 +552,12 @@ async function sendCalendarReminders() {
     const now = Math.floor(Date.now() / 1000);
 
     for (const a of AUDIENCES) {
-      // Upcoming events still owed something: an announcement (any time before
-      // the start) or a reminder within the next 24h
+      // Upcoming events still owed something: an announcement (once the event
+      // is 7 days or less away) or a reminder within the next 24h
       const due = db.prepare(
         `SELECT * FROM calendar_events WHERE ${a.flag} = 1 AND start_ts > ?
-         AND (${a.created ? `${a.created} IS NULL OR ` : ''}(${a.hour} IS NULL AND start_ts <= ?))`
-      ).all(now, now + DAY);
+         AND (${a.created ? `(${a.created} IS NULL AND start_ts <= ?) OR ` : ''}(${a.hour} IS NULL AND start_ts <= ?))`
+      ).all(...(a.created ? [now, now + WEEK, now + DAY] : [now, now + DAY]));
       if (!due.length) continue;
 
       let templates = a.defaults;
@@ -562,11 +565,12 @@ async function sendCalendarReminders() {
       if (row) { try { templates = { ...a.defaults, ...JSON.parse(row.value) }; } catch {} }
 
       for (const ev of due) {
-        // Pick what to send: the announcement always goes first; a reminder
+        // Pick what to send: the announcement (held until 7 days out) always
+        // goes first; a reminder
         // that's already due when it goes out is marked sent so people don't
         // get two messages back to back.
         let kind, set;
-        if (a.created && ev[a.created] == null) {
+        if (a.created && ev[a.created] == null && now >= ev.start_ts - WEEK) {
           kind = 'created';
           set  = { [a.created]: now };
           if (now >= ev.start_ts - DAY)  set[a.day]  = now;

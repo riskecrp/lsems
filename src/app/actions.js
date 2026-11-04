@@ -1026,11 +1026,11 @@ const SETTING_DEFAULTS = {
   // Discord reminder wording for supervisor events. Placeholders are filled in
   // by loa-bot.mjs (which keeps its own copy of these defaults).
   calendar_reminders: {
-    day:  '{role} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
-    hour: '{role} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+    day:  '{supervisor} **Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
+    hour: '{supervisor} **Starting soon — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
   },
   // All-Hands Meeting messages (posted in #announcements). No ping by default —
-  // add {everyone} or a role mention on the Admin page.
+  // add {employee} or a role mention on the Admin page.
   allhands_messages: {
     created: '**All-Hands Meeting Scheduled — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
     day:     '**All-Hands Meeting Reminder — {title}**\nStarts {start_full}, which is {start_relative}.\n{link}',
