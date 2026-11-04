@@ -10,7 +10,12 @@ const T = {
   t3: { color: 'var(--text-3)' }, t4: { color: 'var(--text-4)' },
 };
 
-const WEEK_OPTIONS = [4, 8, 12, 20, 999];
+const WEEK_OPTIONS = [4, 8, 12, 999];
+
+// Calendar quarters are indexed as year*4 + (0..3); a week belongs to the quarter its week-ending date falls in
+const quarterIndex = (d) => d.getFullYear() * 4 + Math.floor(d.getMonth() / 3);
+const QUARTER_MONTHS = ['Jan–Mar', 'Apr–Jun', 'Jul–Sep', 'Oct–Dec'];
+const quarterLabel = (qi) => `Q${(qi % 4) + 1} ${Math.floor(qi / 4)} (${QUARTER_MONTHS[qi % 4]})`;
 
 const DEFAULT_REQ = { type: 'weekly', hours: 2.5 };
 
@@ -131,6 +136,8 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
   const [tab,        setTab]        = useState('grid');
   const [search,     setSearch]     = useState('');
   const [weekLimit,  setWeekLimit]  = useState(12);
+  const currentQuarter = useMemo(() => quarterIndex(new Date()), []);
+  const [quarter,    setQuarter]    = useState(currentQuarter);
   const [localHours, setLocalHours] = useState({});
   const [editCell,   setEditCell]   = useState(null);
   const [editValue,  setEditValue]  = useState('');
@@ -138,7 +145,14 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
   const [copiedKey,  setCopiedKey]  = useState(null);
 
   const sorted       = useMemo(() => sortEmployees(employees), [employees]);
-  const visibleWeeks = useMemo(() => weeks.slice(0, weekLimit === 999 ? weeks.length : weekLimit), [weeks, weekLimit]);
+  const earliestQuarter = useMemo(() => {
+    const qs = weeks.map(parseDate).filter(Boolean).map(quarterIndex);
+    return qs.length ? Math.min(...qs) : currentQuarter;
+  }, [weeks, currentQuarter]);
+  const visibleWeeks = useMemo(() => {
+    if (weekLimit === 'quarter') return weeks.filter(w => { const d = parseDate(w); return d && quarterIndex(d) === quarter; });
+    return weeks.slice(0, weekLimit === 999 ? weeks.length : weekLimit);
+  }, [weeks, weekLimit, quarter]);
 
   const getHours = useCallback((name, week) => {
     const key = `${name}::${week}`;
@@ -352,7 +366,36 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
                 {n === 999 ? 'All' : n}
               </button>
             ))}
+            <button onClick={() => { setWeekLimit('quarter'); if (weekLimit !== 'quarter') setQuarter(currentQuarter); }}
+              style={{
+                padding:'2px 8px', borderRadius:6, border:'1px solid',
+                fontSize:10, fontWeight:700, cursor:'pointer', transition:'all 0.12s',
+                background:  weekLimit==='quarter' ? 'var(--c-accent-bg)' : 'var(--bg-sub)',
+                borderColor: weekLimit==='quarter' ? 'var(--c-accent)'    : 'var(--border)',
+                color:       weekLimit==='quarter' ? 'var(--c-accent)'    : 'var(--text-3)',
+              }}>
+              Quarterly
+            </button>
           </div>
+          {weekLimit === 'quarter' && (
+            <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+              {[['‹', -1, quarter <= earliestQuarter, 'Previous quarter'], null, ['›', 1, quarter >= currentQuarter, 'Next quarter']].map((b, i) => b ? (
+                <button key={i} onClick={() => setQuarter(q => q + b[1])} disabled={b[2]} title={b[3]}
+                  style={{
+                    padding:'0 7px', borderRadius:6, border:'1px solid var(--border)', background:'var(--bg-sub)',
+                    fontSize:13, fontWeight:700, lineHeight:'18px',
+                    color: b[2] ? 'var(--text-4)' : 'var(--text-2)', cursor: b[2] ? 'default' : 'pointer', opacity: b[2] ? 0.5 : 1,
+                  }}>
+                  {b[0]}
+                </button>
+              ) : (
+                <span key={i} style={{ fontSize:11, fontWeight:700, color:'var(--c-accent)', minWidth:118, textAlign:'center' }}>
+                  {quarterLabel(quarter)}
+                  {visibleWeeks.length === 0 && <span style={{ fontWeight:400, color:'var(--text-3)' }}> · no weeks yet</span>}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Legend */}
@@ -409,8 +452,8 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
                       </div>
                     </th>
                   ))}
-                  <th className="px-2 py-1.5 text-[10px] font-semibold text-right whitespace-nowrap"
-                    style={{ color:'var(--text-3)', minWidth:64 }}>
+                  <th className="sticky right-0 z-30 px-2 py-1.5 text-[10px] font-semibold text-right whitespace-nowrap border-l"
+                    style={{ background:'var(--bg-sub)', borderColor:'var(--border)', color:'var(--text-3)', minWidth:64 }}>
                     Total
                   </th>
                 </tr>
@@ -474,8 +517,8 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
                           </td>
                         );
                       })}
-                      <td className="px-2 py-1 text-right text-[11px] font-bold font-mono"
-                        style={{ color: rowTotal > 0 ? 'var(--c-accent)' : 'var(--text-4)' }}>
+                      <td className="sticky right-0 z-10 px-2 py-1 text-right text-[11px] font-bold font-mono border-l"
+                        style={{ borderColor:'var(--border)', background: isEven ? 'color-mix(in srgb, var(--bg-sub) 96%, transparent)' : 'var(--bg-sub)', color: rowTotal > 0 ? 'var(--c-accent)' : 'var(--text-4)' }}>
                         {rowTotal > 0 ? rowTotal.toFixed(2) : '—'}
                       </td>
                     </tr>
@@ -494,8 +537,8 @@ export default function HoursClient({ employees, weeks, hoursMap: initialMap, ho
                       {total > 0 ? total.toFixed(2) : '—'}
                     </td>
                   ))}
-                  <td className="px-2 py-1.5 text-right text-[11px] font-bold font-mono"
-                    style={{ color:'var(--c-accent)' }}>
+                  <td className="sticky right-0 z-30 px-2 py-1.5 text-right text-[11px] font-bold font-mono border-l"
+                    style={{ background:'var(--bg-sub)', borderColor:'var(--border)', color:'var(--c-accent)' }}>
                     {grandTotal.toFixed(2)}
                   </td>
                 </tr>
