@@ -37,7 +37,7 @@ export default async function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: "(function(){var t=localStorage.getItem('lsems-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})()" }} />
       </head>
       <body className="min-h-screen font-sans antialiased" style={{ color: 'var(--text-2)' }}>
-        <Navbar session={session} viewAs={viewAs} pageViewLevels={pageViewLevels} />
+        <Navbar session={session} viewAs={viewAs} pageViewLevels={pageViewLevels} cartersCount={settings.carters_count ?? 0} />
         <main className="relative z-10">{children}</main>
       </body>
     </html>

@@ -125,6 +125,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
   const [hourReqs,   setHourReqs]   = useState(initial.hour_requirements);
   const [salaries,   setSalaries]   = useState(initial.salaries);
   const [bonusCycle, setBonusCycle] = useState(initial.bonus_cycle);
+  const [cartersCount, setCartersCount] = useState(String(initial.carters_count ?? 0));
   const [permRoles,  setPermRoles]  = useState(initial.permission_roles);
   const [pagePerms,  setPagePerms]  = useState(initial.page_permissions || {});
   const [levelNames, setLevelNames] = useState(() => {
@@ -368,6 +369,25 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
             </div>
           )}
 
+          {/* ── Carter's Kill Count ── */}
+          {section === 'bonuses' && (
+            <div className="surface" style={{ padding:'18px 20px', marginTop:12 }}>
+              <SectionTitle title="Carter's Kill Count" sub="Shown in the top navigation bar for everyone" />
+              <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+                <input type="number" step="1" style={{ ...inp, width:120 }}
+                  value={cartersCount}
+                  onChange={e => setCartersCount(e.target.value)}
+                  onFocus={fr} onBlur={fb} />
+                <SaveBtn saving={saving.carters_count} saved={saved.carters_count}
+                  onClick={() => {
+                    const n = Number(cartersCount);
+                    if (cartersCount === '' || !Number.isInteger(n)) { alert("Carter's Kill Count must be a whole number."); return; }
+                    save('carters_count', n);
+                  }} />
+              </div>
+            </div>
+          )}
+
           {/* ── BBCode Templates ── */}
           {section === 'bbcode' && (() => {
             const activeCfg = BBCODE_CONFIGS.find(c => c.key === bbTab) || BBCODE_CONFIGS[0];
@@ -589,6 +609,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
                 { key:'edit_bbcode',    label:'Edit BBCode Templates'        },
                 { key:'access_control', label:'Edit Access Control'          },
                 { key:'view_audit',     label:'View Audit Log'               },
+                { key:'edit_carters_count', label:"Edit Carter's Kill Count"      },
               ]},
             ];
 

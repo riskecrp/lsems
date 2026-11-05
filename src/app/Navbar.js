@@ -18,7 +18,7 @@ const ALL_NAV = [
   { href: '/admin',          label: 'Admin'            },
 ];
 
-export default function Navbar({ session, viewAs, pageViewLevels = {} }) {
+export default function Navbar({ session, viewAs, pageViewLevels = {}, cartersCount = 0 }) {
   const pathname       = usePathname();
   const realLevel      = session?.level ?? 1;
   const effectiveLevel = viewAs ?? realLevel;
@@ -130,6 +130,19 @@ export default function Navbar({ session, viewAs, pageViewLevels = {} }) {
                 onMouseLeave={e => e.currentTarget.style.opacity='1'}>
                 Return
               </button>
+            </div>
+          )}
+          {session && (
+            <div title="Carter's Kill Count" style={{
+              display: 'flex', alignItems: 'center', gap: 7, height: 32, padding: '0 10px',
+              borderRadius: 8, border: '1px solid var(--border)', whiteSpace: 'nowrap',
+            }}>
+              <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-3)' }}>
+                Carter&apos;s Kill Count
+              </span>
+              <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--c-accent)', fontVariantNumeric: 'tabular-nums' }}>
+                {Number(cartersCount).toLocaleString()}
+              </span>
             </div>
           )}
           <ThemeToggle />

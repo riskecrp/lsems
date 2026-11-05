@@ -1020,7 +1020,7 @@ const SETTING_DEFAULTS = {
     supervisors: { view:1, add:2, remove:2, loa:2 },
     tasks:       { view:1, add:1, edit:1, delete:2 },
     discussions: { view:1, add:1, delete:2, respond:1 },
-    admin:       { view:2, edit_config:3, edit_bbcode:2, access_control:3, view_audit:2 },
+    admin:       { view:2, edit_config:3, edit_bbcode:2, access_control:3, view_audit:2, edit_carters_count:2 },
     calendar:    { view:1, add:2, edit:2, delete:2 },
   },
   // Discord reminder wording for supervisor events. Placeholders are filled in
@@ -1062,6 +1062,7 @@ const SETTING_DEFAULTS = {
     'Consultant':7000,'EMT-P':6900,'Master EMT':6900,
     'EMT-A':6800,'EMT-I':6650,'EMT-B':6500,'EMR':6000,
   },
+  carters_count: 0,
   bonus_cycle: [
     { months:3,  amount:50000  },
     { months:6,  amount:75000  },
@@ -1149,6 +1150,7 @@ const SETTING_PERMS = {
   hour_requirements:  'edit_config',
   salaries:           'edit_config',
   bonus_cycle:        'edit_config',
+  carters_count:      'edit_carters_count',
   bbcode_templates:   'edit_bbcode',
   calendar_reminders: 'edit_bbcode',
   allhands_messages:  'edit_bbcode',
@@ -1162,12 +1164,17 @@ export async function updateAppSetting(key, value) {
     const action = SETTING_PERMS[key];
     if (!action) return { ok: false, error: 'Unknown setting.' };
     await requirePerm('admin', action);
+    if (key === 'carters_count') {
+      value = Number(value);
+      if (!Number.isInteger(value)) return { ok: false, error: "Carter's Kill Count must be a whole number." };
+    }
     run(
       'INSERT INTO app_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
       [key, JSON.stringify(value)]
     );
     const { username, user_id } = await getActor();
-    logAudit(username, user_id, `Admin Setting Changed — ${key}`, null);
+    logAudit(username, user_id, `Admin Setting Changed — ${key}`, key === 'carters_count' ? `Set to ${value}` : null);
+    if (key === 'carters_count') revalidatePath('/', 'layout'); // navbar counter on every page
     revalidatePath('/'); revalidatePath('/hours'); revalidatePath('/bonuses'); revalidatePath('/payroll'); revalidatePath('/admin');
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
