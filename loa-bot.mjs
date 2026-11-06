@@ -152,7 +152,9 @@ async function processMessage(msg, db) {
 async function processResignation(msg, db) {
   const embed = msg.embeds?.[0];
   if (!embed) return;
-  if (!/Resignation\s*[-|]/i.test(embed.author?.name || '')) return;
+  // Feed titles vary ("[Resignation] Name", "Name - Resignation", "Resignation | Name"),
+  // and this channel only carries the resignation feed, so match the word anywhere.
+  if (!/resignation/i.test(embed.author?.name || '')) return;
 
   const name = embed.footer?.text?.replace(/^Author:\s*/i, '').trim() || null;
   if (!name) {
@@ -411,59 +413,61 @@ function scheduleDailyDigest() {
   }, delay);
 }
 
-async function pollResignChannel(client, limit = 20) {
-  try {
-    const db = new Database(DB_PATH);
-    const channel = await client.channels.fetch(RESIGN_CHANNEL_ID).catch(() => null);
-    if (!channel) return;
-    const msgs = await channel.messages.fetch({ limit });
-    const botId = client.user.id;
-    const sorted = [...msgs.values()].sort((a, b) => a.createdTimestamp - b.createdTimestamp);
-    for (const msg of sorted) {
-      if (msg.createdTimestamp < BOT_START_TIME) continue;
-      for (const emoji of ['✅', '❓']) {
-        const r = msg.reactions.cache.get(emoji);
-        if (r) {
-          const users = await r.users.fetch().catch(() => null);
-          if (users?.has(botId)) { msg._botHandled = true; break; }
-        }
-      }
-      if (msg._botHandled) continue;
-      try { await processResignation(msg, db); }
-      catch (e) { console.error('[Resign Poll] Error on message:', e.message); }
-    }
-    db.close();
-  } catch (e) {
-    console.error('[Resign Poll] Error:', e.message);
-  }
+// Resignation / ribbon polling. Each channel keeps a watermark in app_settings:
+// the time its last fully successful poll started. Anything posted after that
+// and not yet reacted to by the bot is processed, so posts made while the bot
+// was restarting or Discord was unreachable are caught up. On first run the
+// watermark starts at "now" so historical posts are never re-processed.
+function getPollWatermark(db, key) {
+  const row = db.prepare('SELECT value FROM app_settings WHERE key = ?').get(key);
+  const n = row ? Number(row.value) : NaN;
+  if (Number.isFinite(n)) return n;
+  setPollWatermark(db, key, BOT_START_TIME);
+  return BOT_START_TIME;
 }
 
-async function pollRibbonChannel(client, limit = 20) {
+function setPollWatermark(db, key, ts) {
+  db.prepare('INSERT INTO app_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value')
+    .run(key, String(ts));
+}
+
+async function pollWatchedChannel(client, { channelId, settingKey, label, handler }, limit = 20) {
+  let db;
   try {
-    const db = new Database(DB_PATH);
-    const channel = await client.channels.fetch(RIBBON_CHANNEL_ID).catch(() => null);
-    if (!channel) return;
+    db = new Database(DB_PATH);
+    const pollStarted = Date.now();
+    const since = getPollWatermark(db, settingKey);
+    const channel = await client.channels.fetch(channelId);
     const msgs = await channel.messages.fetch({ limit });
     const botId = client.user.id;
     const sorted = [...msgs.values()].sort((a, b) => a.createdTimestamp - b.createdTimestamp);
+    let failed = false;
     for (const msg of sorted) {
-      if (msg.createdTimestamp < BOT_START_TIME) continue;
+      if (msg.createdTimestamp < since) continue;
+      if (msg.author.id === botId) continue;
+      let handled = false;
       for (const emoji of ['✅', '❓']) {
         const r = msg.reactions.cache.get(emoji);
         if (r) {
           const users = await r.users.fetch().catch(() => null);
-          if (users?.has(botId)) { msg._botHandled = true; break; }
+          if (users?.has(botId)) { handled = true; break; }
         }
       }
-      if (msg._botHandled) continue;
-      try { await processRibbonRequest(msg, db); }
-      catch (e) { console.error('[Ribbon Poll] Error on message:', e.message); }
+      if (handled) continue;
+      try { await handler(msg, db); }
+      catch (e) { failed = true; console.error(`[${label} Poll] Error on message ${msg.id}:`, e.message); }
     }
-    db.close();
+    // Only move the watermark forward when nothing failed, so failures retry next poll
+    if (!failed) setPollWatermark(db, settingKey, pollStarted);
   } catch (e) {
-    console.error('[Ribbon Poll] Error:', e.message);
-  }
+    console.error(`[${label} Poll] Error:`, e.message);
+  } finally { db?.close(); }
 }
+
+const RESIGN_POLL = { channelId: RESIGN_CHANNEL_ID, settingKey: 'bot_poll_since_resign', label: 'Resign', handler: processResignation };
+const RIBBON_POLL = { channelId: RIBBON_CHANNEL_ID, settingKey: 'bot_poll_since_ribbon', label: 'Ribbon', handler: processRibbonRequest };
+const pollResignChannel = (client, limit) => pollWatchedChannel(client, RESIGN_POLL, limit);
+const pollRibbonChannel = (client, limit) => pollWatchedChannel(client, RIBBON_POLL, limit);
 
 // ── Calendar reminders ──────────────────────────────────────────
 // Events can be for Supervisors and/or an All-Hands Meeting. Each has its own
@@ -621,6 +625,8 @@ client.once(Events.ClientReady, async c => {
   setInterval(sendCalendarReminders, 60 * 1000);
   console.log('[LOA Bot] Running startup catchup scan (last 100 messages)...');
   await pollChannel(c, 100);
+  await pollResignChannel(c, 100);
+  await pollRibbonChannel(c, 100);
   console.log('[LOA Bot] Startup scan complete. Polling every 2 minutes.');
   setInterval(() => pollChannel(c, 20), 2 * 60 * 1000);
   setInterval(() => pollResignChannel(c, 20), 2 * 60 * 1000);
