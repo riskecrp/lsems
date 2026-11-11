@@ -82,7 +82,8 @@ CREATE TABLE IF NOT EXISTS sup_tasks (
   completed_date TEXT,
   notes          TEXT,
   is_historical  INTEGER NOT NULL DEFAULT 0,
-  created_at     TEXT    DEFAULT (datetime('now'))
+  created_at     TEXT    DEFAULT (datetime('now')),
+  announced_at   TEXT              -- when Discord was told; NULL = held until start date (00:00 UTC)
 );
 
 -- ── Supervisor discussions ───────────────────────────────────────
@@ -91,7 +92,9 @@ CREATE TABLE IF NOT EXISTS sup_discussions (
   date_posted TEXT    NOT NULL,
   topic       TEXT    NOT NULL,
   link        TEXT,
-  created_at  TEXT    DEFAULT (datetime('now'))
+  created_at  TEXT    DEFAULT (datetime('now')),
+  archived_at TEXT,             -- NULL = active; set when archived
+  archived_by TEXT
 );
 
 -- ── Discussion responses (one row per supervisor per discussion) ─
@@ -99,7 +102,7 @@ CREATE TABLE IF NOT EXISTS sup_discussion_responses (
   id              INTEGER PRIMARY KEY AUTOINCREMENT,
   discussion_id   INTEGER NOT NULL REFERENCES sup_discussions(id) ON DELETE CASCADE,
   supervisor_name TEXT    NOT NULL COLLATE NOCASE,
-  responded       INTEGER NOT NULL DEFAULT 0,
+  responded       INTEGER NOT NULL DEFAULT 0,   -- 0 pending, 1 responded, 2 no response, 3 excused (LOA)
   UNIQUE (discussion_id, supervisor_name)
 );
 
@@ -134,3 +137,22 @@ CREATE TABLE IF NOT EXISTS calendar_events (
   reminded_1h_at  INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_calendar_events_start ON calendar_events(start_ts);
+
+-- ── Retention bonus resolutions ─────────────────────────────────
+-- Marks an overdue milestone as settled without a new payment: either
+-- covered by an existing bonus_payments row, or dismissed with a reason.
+-- Never deleted; "undo" sets undone_at so the history is kept.
+CREATE TABLE IF NOT EXISTS bonus_resolutions (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  employee_name  TEXT    NOT NULL COLLATE NOCASE,
+  months_tenure  INTEGER NOT NULL,          -- milestone month (3, 6, 9...)
+  amount         REAL,                      -- amount that was due (info only)
+  due_date       TEXT    NOT NULL,          -- YYYY-MM-DD; settles the schedule up to here
+  type           TEXT    NOT NULL CHECK (type IN ('covered','dismissed')),
+  payment_id     INTEGER REFERENCES bonus_payments(id) ON DELETE SET NULL,
+  reason         TEXT,
+  resolved_by    TEXT,
+  resolved_at    TEXT    DEFAULT (datetime('now')),
+  undone_by      TEXT,
+  undone_at      TEXT
+);

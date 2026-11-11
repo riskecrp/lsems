@@ -317,7 +317,12 @@ export async function getEmployeeProfile(name) {
       "SELECT timestamp, username, action, details FROM audit_log WHERE action = ? ORDER BY id DESC",
       [`LOA — ${name}`]
     );
-    return { ok: true, hours, bonuses, rankHistory, loaHistory };
+    // Same inputs the Bonuses page uses, so the profile's "Next Bonus" matches it.
+    const bonusResolutions = query(
+      'SELECT employee_name, months_tenure, due_date, undone_at FROM bonus_resolutions WHERE LOWER(employee_name) = LOWER(?) AND undone_at IS NULL', [name]
+    );
+    const bonusCycle = (await getAppSettings()).bonus_cycle || null;
+    return { ok: true, hours, bonuses, rankHistory, loaHistory, bonusResolutions, bonusCycle };
   } catch (e) { return { ok: false, error: e.message, hours: [], bonuses: [], rankHistory: [], loaHistory: [] }; }
 }
 
@@ -818,19 +823,34 @@ export async function setLOA({ name, isOnLoa, loaStart, loaEnd, loaReason }) {
 export async function getSupTasks(includeHistorical = false) {
   try {
     const where = includeHistorical ? '' : 'WHERE is_historical = 0';
-    return query(`SELECT id, task_name, owner, status, assigned_date, due_date, completed_date, notes, is_historical FROM sup_tasks ${where} ORDER BY id DESC`);
+    return query(`SELECT id, task_name, owner, status, assigned_date, due_date, completed_date, notes, is_historical, announced_at FROM sup_tasks ${where} ORDER BY id DESC`);
   } catch (e) { return []; }
+}
+
+// A task's start date (assigned_date) as YYYY-MM-DD, or null if unreadable.
+function taskStartIso(dateStr) {
+  const d = parseFlexDate(dateStr);
+  return d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : null;
+}
+// Future start → Discord is told by loa-bot.mjs at 00:00 UTC on the start date.
+function taskStartsLater(dateStr) {
+  const iso = taskStartIso(dateStr);
+  return !!iso && iso > new Date().toISOString().slice(0, 10);
 }
 
 export async function addSupTask({ taskName, owner, assignedDate, dueDate, notes }) {
   try {
     await requirePerm('tasks', 'add');
     if (!taskName?.trim()) return { ok: false, error: 'Task name required.' };
+    const start = assignedDate?.trim() || today();
+    if (assignedDate?.trim() && !taskStartIso(start)) return { ok: false, error: 'Start date not recognised — use DD/Mon/YYYY.' };
+    const later = taskStartsLater(start);
     run(
-      'INSERT INTO sup_tasks (task_name, owner, status, assigned_date, due_date, notes) VALUES (?, ?, ?, ?, ?, ?)',
-      [taskName.trim(), owner?.trim() || null, 'Assigned', assignedDate?.trim() || today(), dueDate?.trim() || null, notes?.trim() || null]
+      `INSERT INTO sup_tasks (task_name, owner, status, assigned_date, due_date, notes, announced_at) VALUES (?, ?, ?, ?, ?, ?, ${later ? 'NULL' : "datetime('now')"})`,
+      [taskName.trim(), owner?.trim() || null, 'Assigned', start, dueDate?.trim() || null, notes?.trim() || null]
     );
     revalidatePath('/tasks');
+    if (later) return { ok: true, scheduled: start };
     const assignee = owner?.trim() || 'TBD';
     const due      = dueDate?.trim() ? `\n**Due:** ${dueDate.trim()}` : '';
     discordNotify(`<@&${SUPERVISOR_ROLE}> **New Task Added**\n**Task:** ${taskName.trim()}\n**Assigned To:** ${assignee}${due}\nhttps://ecrplsems.com/tasks`);
@@ -838,7 +858,7 @@ export async function addSupTask({ taskName, owner, assignedDate, dueDate, notes
   } catch (e) { return { ok: false, error: e.message }; }
 }
 
-export async function updateSupTask({ id, status, owner, completedDate, notes }) {
+export async function updateSupTask({ id, status, owner, completedDate, notes, startDate }) {
   try {
     await requirePerm('tasks', 'edit');
     const task = queryOne('SELECT id FROM sup_tasks WHERE id = ?', [id]);
@@ -847,6 +867,13 @@ export async function updateSupTask({ id, status, owner, completedDate, notes })
       'UPDATE sup_tasks SET status = ?, owner = ?, completed_date = ?, notes = ? WHERE id = ?',
       [status, owner?.trim() || null, completedDate?.trim() || null, notes?.trim() || null, id]
     );
+    // Start date only changes when the caller sends one (the Edit dialog does).
+    // A not-yet-announced task is picked up by the bot on its (new) start date;
+    // one that was already announced is never announced again.
+    if (startDate !== undefined && startDate?.trim()) {
+      if (!taskStartIso(startDate.trim())) return { ok: false, error: 'Start date not recognised — use DD/Mon/YYYY.' };
+      run('UPDATE sup_tasks SET assigned_date = ? WHERE id = ?', [startDate.trim(), id]);
+    }
     revalidatePath('/tasks');
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
@@ -861,14 +888,17 @@ export async function deleteSupTask(id) {
   } catch (e) { return { ok: false, error: e.message }; }
 }
 
+// sup_discussion_responses.responded values
+const RESP = { PENDING: 0, RESPONDED: 1, NO_RESPONSE: 2, EXCUSED: 3 };
+
 export async function getDiscussions() {
   try {
-    const discussions = query('SELECT id, date_posted, topic, link FROM sup_discussions ORDER BY id DESC');
+    const discussions = query('SELECT id, date_posted, topic, link FROM sup_discussions WHERE archived_at IS NULL ORDER BY id DESC');
     const responses   = query('SELECT discussion_id, supervisor_name, responded FROM sup_discussion_responses');
     const respMap = {};
     for (const r of responses) {
       if (!respMap[r.discussion_id]) respMap[r.discussion_id] = {};
-      respMap[r.discussion_id][r.supervisor_name] = !!r.responded;
+      respMap[r.discussion_id][r.supervisor_name] = r.responded === RESP.RESPONDED;
     }
     return discussions.map(d => ({ ...d, responses: respMap[d.id] || {} }));
   } catch (e) { return []; }
@@ -906,6 +936,9 @@ export async function deleteDiscussion(id) {
 export async function toggleDiscussionResponse({ discussionId, supervisorName, responded }) {
   try {
     await requirePerm('discussions', 'respond');
+    const disc = queryOne('SELECT archived_at FROM sup_discussions WHERE id = ?', [discussionId]);
+    if (!disc) return { ok: false, error: 'Discussion not found.' };
+    if (disc.archived_at) return { ok: false, error: 'This discussion is archived. Unarchive it to change responses.' };
     run(
       'INSERT INTO sup_discussion_responses (discussion_id, supervisor_name, responded) VALUES (?, ?, ?) ON CONFLICT(discussion_id, supervisor_name) DO UPDATE SET responded = excluded.responded',
       [discussionId, supervisorName, responded ? 1 : 0]
@@ -915,7 +948,131 @@ export async function toggleDiscussionResponse({ discussionId, supervisorName, r
   } catch (e) { return { ok: false, error: e.message }; }
 }
 
+export async function getArchivedDiscussions() {
+  try {
+    const discussions = query('SELECT id, date_posted, topic, link, archived_at, archived_by FROM sup_discussions WHERE archived_at IS NOT NULL ORDER BY id DESC');
+    const responses   = query('SELECT discussion_id, supervisor_name, responded FROM sup_discussion_responses WHERE responded != 0 ORDER BY supervisor_name ASC');
+    const byDisc = {};
+    for (const r of responses) {
+      const b = byDisc[r.discussion_id] ||= { responded: [], noResponse: [], excused: [] };
+      if (r.responded === RESP.RESPONDED)        b.responded.push(r.supervisor_name);
+      else if (r.responded === RESP.NO_RESPONSE) b.noResponse.push(r.supervisor_name);
+      else if (r.responded === RESP.EXCUSED)     b.excused.push(r.supervisor_name);
+    }
+    return discussions.map(d => ({ ...d, ...(byDisc[d.id] || { responded: [], noResponse: [], excused: [] }) }));
+  } catch (e) { return []; }
+}
+
+// Archive a discussion: every current supervisor who hasn't responded is
+// recorded as "no response" (or "excused" if they're on an active LOA).
+export async function archiveDiscussion(id) {
+  try {
+    await requirePerm('discussions', 'archive');
+    const disc = queryOne('SELECT id, topic, archived_at FROM sup_discussions WHERE id = ?', [id]);
+    if (!disc) return { ok: false, error: 'Discussion not found.' };
+    if (disc.archived_at) return { ok: false, error: 'Already archived.' };
+    const sups = await getSupervisors();
+    const { username, user_id } = await getActor();
+    let noResp = 0, excused = 0;
+    transaction(() => {
+      for (const s of sups) {
+        const status = s.is_on_loa ? RESP.EXCUSED : RESP.NO_RESPONSE;
+        const r = run(
+          `INSERT INTO sup_discussion_responses (discussion_id, supervisor_name, responded) VALUES (?, ?, ?)
+           ON CONFLICT(discussion_id, supervisor_name) DO UPDATE SET responded = excluded.responded WHERE responded = ${RESP.PENDING}`,
+          [id, s.name, status]
+        );
+        if (r.changes) status === RESP.EXCUSED ? excused++ : noResp++;
+      }
+      run('UPDATE sup_discussions SET archived_at = ?, archived_by = ? WHERE id = ?', [today(), username || null, id]);
+    });
+    revalidatePath('/tasks'); revalidatePath('/discussions');
+    logAudit(username, user_id, `Archive Discussion — ${disc.topic}`, `${noResp} no response${excused ? ` · ${excused} excused (LOA)` : ''}`);
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
+
+// Unarchive: back to the active list; auto-marked no-response/excused go back to pending.
+export async function unarchiveDiscussion(id) {
+  try {
+    await requirePerm('discussions', 'archive');
+    const disc = queryOne('SELECT id, topic, archived_at FROM sup_discussions WHERE id = ?', [id]);
+    if (!disc) return { ok: false, error: 'Discussion not found.' };
+    if (!disc.archived_at) return { ok: false, error: 'Not archived.' };
+    transaction(() => {
+      run(`UPDATE sup_discussion_responses SET responded = ${RESP.PENDING} WHERE discussion_id = ? AND responded IN (${RESP.NO_RESPONSE}, ${RESP.EXCUSED})`, [id]);
+      run('UPDATE sup_discussions SET archived_at = NULL, archived_by = NULL WHERE id = ?', [id]);
+    });
+    revalidatePath('/tasks'); revalidatePath('/discussions');
+    const { username, user_id } = await getActor();
+    logAudit(username, user_id, `Unarchive Discussion — ${disc.topic}`, '');
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
+
 // ── Bonus payment records ──────────────────────────────────────────
+
+// ── Retention bonus resolutions ────────────────────────────────────
+// Settle an overdue milestone without recording a new payment.
+const isoDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+export async function getBonusResolutions() {
+  try {
+    if (!(await hasPerm('bonuses', 'view')) && !(await hasPerm('payroll', 'view'))) return [];
+    return query(`
+      SELECT r.id, r.employee_name, r.months_tenure, r.amount, r.due_date, r.type, r.payment_id, r.reason,
+             r.resolved_by, r.resolved_at, r.undone_by, r.undone_at,
+             p.paid_date AS payment_date, p.amount AS payment_amount, p.months_tenure AS payment_months
+      FROM bonus_resolutions r LEFT JOIN bonus_payments p ON p.id = r.payment_id
+      ORDER BY r.id DESC`);
+  } catch (e) { return []; }
+}
+
+export async function resolveBonus({ employeeName, monthsTenure, amount, type, paymentId, reason }) {
+  try {
+    await requirePerm('bonuses', 'resolve');
+    if (type !== 'covered' && type !== 'dismissed') return { ok: false, error: 'Choose how to resolve it.' };
+    const emp = queryOne('SELECT name, hire_date, bonus_anchor, bonus_step FROM employees WHERE LOWER(name) = LOWER(?)', [employeeName || '']);
+    if (!emp) return { ok: false, error: 'Employee not found.' };
+    const months = Number(monthsTenure);
+    const due = milestoneDueDate(emp, months);
+    if (!due) return { ok: false, error: 'Could not work out that milestone\'s due date.' };
+    const now = new Date(); now.setHours(0, 0, 0, 0);
+    if (due > now) return { ok: false, error: 'That milestone isn\'t due yet.' };
+    const dup = queryOne('SELECT id FROM bonus_resolutions WHERE LOWER(employee_name) = LOWER(?) AND months_tenure = ? AND undone_at IS NULL', [emp.name, months]);
+    if (dup) return { ok: false, error: 'That milestone is already resolved.' };
+    const note = (reason || '').trim();
+    let pay = null;
+    if (type === 'covered') {
+      pay = queryOne('SELECT id, paid_date, amount, months_tenure FROM bonus_payments WHERE id = ? AND LOWER(employee_name) = LOWER(?)', [paymentId, emp.name]);
+      if (!pay) return { ok: false, error: 'Pick one of this employee\'s payments.' };
+    } else if (note.length < 5) {
+      return { ok: false, error: 'Please give a reason (at least a few words).' };
+    }
+    const { username, user_id } = await getActor();
+    run(`INSERT INTO bonus_resolutions (employee_name, months_tenure, amount, due_date, type, payment_id, reason, resolved_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [emp.name, months, Number(amount) || null, isoDate(due), type, pay?.id ?? null, note || null, username || null]);
+    revalidatePath('/bonuses'); revalidatePath('/payroll');
+    logAudit(username, user_id, `Retention Bonus ${type === 'covered' ? 'Resolved' : 'Dismissed'} — ${emp.name}`,
+      `${months}-month milestone` + (pay ? ` · covered by payment ${pay.paid_date} ($${Number(pay.amount).toLocaleString()})` : '') + (note ? ` · ${note}` : ''));
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
+
+export async function undoBonusResolution(id) {
+  try {
+    await requirePerm('bonuses', 'resolve');
+    const r = queryOne('SELECT id, employee_name, months_tenure, type, undone_at FROM bonus_resolutions WHERE id = ?', [id]);
+    if (!r) return { ok: false, error: 'Not found.' };
+    if (r.undone_at) return { ok: false, error: 'Already undone.' };
+    const { username, user_id } = await getActor();
+    run("UPDATE bonus_resolutions SET undone_at = datetime('now'), undone_by = ? WHERE id = ?", [username || null, id]);
+    revalidatePath('/bonuses'); revalidatePath('/payroll');
+    logAudit(username, user_id, `Retention Bonus ${r.type === 'covered' ? 'Resolution' : 'Dismissal'} Undone — ${r.employee_name}`, `${r.months_tenure}-month milestone is due again`);
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
 
 export async function markBonusPaid({ employeeName, amount, monthsTenure }) {
   try {
@@ -1003,6 +1160,37 @@ export async function getSupTaskStats() {
   } catch (e) { return {}; }
 }
 
+// Per-person totals for Admin → Supervisor Stats. Tasks with several owners
+// ("A, B") credit each person. Discussion counts cover active + archived topics;
+// "no response" / "excused" are only recorded when a topic is archived.
+export async function getSupervisorStats() {
+  try {
+    await requirePerm('admin', 'view');
+    const people = new Map(); // lower-cased name -> stats
+    const get = (name) => {
+      const key = name.trim().toLowerCase();
+      if (!people.has(key)) people.set(key, { name: name.trim(), current: false, onLoa: false, tasksCompleted: 0, tasksActive: 0, responded: 0, noResponse: 0, excused: 0, pending: 0 });
+      return people.get(key);
+    };
+    for (const s of await getSupervisors()) { const p = get(s.name); p.name = s.name; p.current = true; p.onLoa = !!s.is_on_loa; }
+    for (const t of query("SELECT owner, status, is_historical FROM sup_tasks WHERE owner IS NOT NULL AND TRIM(owner) != ''")) {
+      for (const n of t.owner.split(',').map(x => x.trim()).filter(Boolean)) {
+        const p = get(n);
+        if (t.status === 'Completed') p.tasksCompleted++;
+        else if (!t.is_historical) p.tasksActive++;
+      }
+    }
+    for (const r of query('SELECT supervisor_name, responded FROM sup_discussion_responses')) {
+      const p = get(r.supervisor_name);
+      if (r.responded === RESP.RESPONDED)        p.responded++;
+      else if (r.responded === RESP.NO_RESPONSE) p.noResponse++;
+      else if (r.responded === RESP.EXCUSED)     p.excused++;
+      else                                       p.pending++;
+    }
+    return [...people.values()];
+  } catch (e) { return []; }
+}
+
 // ── App Settings ──────────────────────────────────────────────────
 
 const SETTING_DEFAULTS = {
@@ -1015,11 +1203,11 @@ const SETTING_DEFAULTS = {
     roster:      { view:1, add:2, promote:2, rename:2, separate:3, loa:2 },
     hours:       { view:1, edit:1, delete_entry:2, delete_week:3, compliance:1, warn_bbcode:1 },
     payroll:     { view:2, submit:2, add_entry:2, delete_entry:3, set_balance:3 },
-    bonuses:     { view:2, view_quarterly:2, view_retention:2, pay:2, copy_bbcode:2 },
+    bonuses:     { view:2, view_quarterly:2, view_retention:2, pay:2, copy_bbcode:2, resolve:2 },
     history:     { view:1 },
     supervisors: { view:1, add:2, remove:2, loa:2 },
     tasks:       { view:1, add:1, edit:1, delete:2 },
-    discussions: { view:1, add:1, delete:2, respond:1 },
+    discussions: { view:1, add:1, delete:2, respond:1, archive:2 },
     admin:       { view:2, edit_config:3, edit_bbcode:2, access_control:3, view_audit:2, edit_carters_count:2 },
     calendar:    { view:1, add:2, edit:2, delete:2 },
   },

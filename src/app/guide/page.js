@@ -399,7 +399,7 @@ export default function GuidePage() {
         <Field name="Task Name"       desc="A short description of the assignment." />
         <Field name="Owner"           desc="The supervisor responsible for completing it." />
         <Field name="Status"          desc="Assigned → In Progress → Completed. Change status inline via the dropdown in the task row." />
-        <Field name="Assigned Date"   desc="When the task was created (auto-filled, editable)." />
+        <Field name="Start Date"      desc="When the task can be picked up. Defaults to today. With a future start date, the Discord “New Task Added” message (and the daily digest entry) is held until 00:00 UTC on that day. The row shows “Starts in Xd” until then." />
         <Field name="Due Date"        desc="Optional deadline. Overdue tasks are highlighted in red." />
         <Field name="Notes"           desc="Freeform notes. Expand a task row to show its notes." />
 
@@ -417,6 +417,13 @@ export default function GuidePage() {
         <Note type="tip">
           Supervisors on LOA are highlighted in the response grid so you know not to chase them for a response.
         </Note>
+        <p style={S.p}>
+          When a discussion is finished, click <b>Archive</b> on its row. Every supervisor who hasn't been checked off is
+          recorded as <b>No response</b>, except supervisors on an active LOA, who are recorded as <b>Excused</b>. Archived
+          discussions move to the <b>Archived</b> view, which shows who responded and who didn't. They also leave the
+          daily digest. <b>Unarchive</b> moves a discussion back to the active list and resets those marks to pending.
+          Archiving needs the <b>Archive Discussion</b> permission (Command by default).
+        </p>
       </Card>
 
       {/* ── History ── */}

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo, useEffect } from 'react';
 import { submitPayCSV, setTreasuryBalance, addTreasuryEntry, addEmployee, deleteTreasuryEntry } from '../actions';
-import { fmtCurrency, getNextBonus, buildLastPaymentMap, daysEmployed, RANK_ORDER, getRankIndex } from '../constants';
+import { fmtCurrency, getNextBonus, buildSettledMap, daysEmployed, RANK_ORDER, getRankIndex } from '../constants';
 
 const JP_INDEX = RANK_ORDER.indexOf('Junior Paramedic');
 
@@ -53,7 +53,7 @@ function parseCSV(raw) {
   return result;
 }
 
-export default function PayrollClient({ transactions, currentBalance, employees, bonusPayments = [], bonusCycle = [], perms = {} }) {
+export default function PayrollClient({ transactions, currentBalance, employees, bonusPayments = [], bonusResolutions = [], bonusCycle = [], perms = {} }) {
   const can = (key) => perms[key] !== false;
   // localEmployees: employees added during this session (not yet page-reloaded)
   const [localEmployees,  setLocalEmployees]  = useState([]);
@@ -94,7 +94,7 @@ export default function PayrollClient({ transactions, currentBalance, employees,
 
   // Most recent payment per employee — tells getNextBonus whether the
   // currently-due milestone is already settled (dates compared as dates).
-  const lastPaymentByEmployee = useMemo(() => buildLastPaymentMap(bonusPayments), [bonusPayments]);
+  const lastPaymentByEmployee = useMemo(() => buildSettledMap(bonusPayments, bonusResolutions), [bonusPayments, bonusResolutions]);
 
   // Flag employees whose due date falls within ±7 days of the payroll week ending date
   const dueBonuses = useMemo(() => {

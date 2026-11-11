@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import ThemeToggle from './ThemeToggle';
+import KillCount from './KillCount';
 import { getMyProfile, setMyProfile } from './actions';
 
 const ALL_NAV = [
@@ -49,6 +50,10 @@ export default function Navbar({ session, viewAs, pageViewLevels = {}, cartersCo
   return (
     <>
     <header className="sticky top-0 z-50 w-full" style={{
+      // Inline so it beats globals.css `body > * { z-index: 1 }` (unlayered CSS
+      // overrides Tailwind's z-50). Keeps nav dropdowns, like the kill-count
+      // bubble, above the page content instead of underneath it.
+      zIndex: 50,
       background: 'var(--nav-bg)',
       backdropFilter: 'blur(28px)',
       WebkitBackdropFilter: 'blur(28px)',
@@ -132,19 +137,7 @@ export default function Navbar({ session, viewAs, pageViewLevels = {}, cartersCo
               </button>
             </div>
           )}
-          {session && (
-            <div title="Carter's Kill Count" style={{
-              display: 'flex', alignItems: 'center', gap: 7, height: 32, padding: '0 10px',
-              borderRadius: 8, border: '1px solid var(--border)', whiteSpace: 'nowrap',
-            }}>
-              <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-3)' }}>
-                Carter&apos;s Kill Count
-              </span>
-              <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--c-accent)', fontVariantNumeric: 'tabular-nums' }}>
-                {Number(cartersCount).toLocaleString()}
-              </span>
-            </div>
-          )}
+          {session && <KillCount count={cartersCount} />}
           <ThemeToggle />
           {session && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>

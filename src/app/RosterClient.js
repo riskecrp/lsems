@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { addEmployee, removeEmployee, promoteEmployee, renameEmployee, setEmployeeLOA, getEmployeeProfile } from './actions';
-import { RANK_ORDER, sortByRank, daysInRank, fmtDate, fmtCurrency, getNextBonus, getRankIndex } from './constants';
+import { RANK_ORDER, sortByRank, daysInRank, fmtDate, fmtCurrency, getNextBonus, buildSettledMap, getRankIndex } from './constants';
 
 const JP_INDEX = RANK_ORDER.indexOf('Junior Paramedic');
 
@@ -456,11 +456,15 @@ export default function RosterClient({ employees: initial, userLevel = 1, perms 
 
                   {/* Bonuses tab */}
                   {profileTab==='bonuses' && (() => {
-                    const bonusList  = profileData.bonuses || [];
-                    const lastPayment = bonusList.length > 0
-                      ? bonusList.reduce((a, b) => (a.paid_date >= b.paid_date ? a : b))
+                    // Same calculation as the Bonuses page: real date comparison,
+                    // bonus anchor, Admin bonus cycle, and resolved/dismissed milestones.
+                    const bonusList   = (profileData.bonuses || []).map(b => ({ ...b, employee_name: profileEmp.name }));
+                    const resolutions = (profileData.bonusResolutions || []).map(r => ({ ...r, employee_name: profileEmp.name }));
+                    const lastPayment = buildSettledMap(bonusList, resolutions)[profileEmp.name] || null;
+                    const nextBonus = profileEmp?.hireDate
+                      ? getNextBonus(profileEmp.hireDate, lastPayment, profileData.bonusCycle || null,
+                          profileEmp.bonusAnchor ? { date: profileEmp.bonusAnchor, step: profileEmp.bonusStep } : null)
                       : null;
-                    const nextBonus = profileEmp?.hireDate ? getNextBonus(profileEmp.hireDate, lastPayment) : null;
                     return (
                       <div>
                         {/* Upcoming bonus */}
@@ -475,7 +479,7 @@ export default function RosterClient({ employees: initial, userLevel = 1, perms 
                               <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',
                                 color: nextBonus.daysUntil<=0?'var(--c-danger)':nextBonus.daysUntil<=30?'var(--c-warning)':'var(--text-3)',
                                 marginBottom:3}}>
-                                Next Bonus{nextBonus.lastAmount ? ` — after $${(nextBonus.lastAmount/1000).toFixed(0)}k` : ' — First'}
+                                Next Bonus — Milestone #{nextBonus.milestone}
                               </div>
                               <div style={{fontSize:12,color:'var(--text-2)'}}>
                                 Due {fmtDate(nextBonus.nextDate)}

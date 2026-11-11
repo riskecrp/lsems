@@ -343,12 +343,12 @@ async function sendDailyDigest() {
 
     // Open tasks
     const tasks = db.prepare(
-      "SELECT task_name, owner, due_date FROM sup_tasks WHERE status != 'Completed' AND is_historical = 0 ORDER BY id ASC"
+      "SELECT task_name, owner, due_date FROM sup_tasks WHERE status != 'Completed' AND is_historical = 0 AND announced_at IS NOT NULL ORDER BY id ASC"
     ).all();
 
     // Open discussions with non-responders
     const discussions = db.prepare(
-      "SELECT d.id, d.topic, d.link FROM sup_discussions d ORDER BY d.id DESC LIMIT 20"
+      "SELECT d.id, d.topic, d.link FROM sup_discussions d WHERE d.archived_at IS NULL ORDER BY d.id DESC LIMIT 20"
     ).all();
     const responses = db.prepare(
       "SELECT discussion_id, supervisor_name, responded FROM sup_discussion_responses"
@@ -374,7 +374,7 @@ async function sendDailyDigest() {
     // Discussions section — only those with pending responses
     const pendingDiscs = discussions.map(d => {
       const discResponses = responses.filter(r => r.discussion_id === d.id);
-      const pending = discResponses.filter(r => !r.responded).map(r => r.supervisor_name);
+      const pending = discResponses.filter(r => r.responded === 0).map(r => r.supervisor_name);
       return { ...d, pending };
     }).filter(d => d.pending.length > 0);
 
@@ -547,6 +547,59 @@ async function postToDiscord(channel, content, allowed_mentions) {
   }).catch(e => ({ ok: false, status: e.message }));
 }
 
+// ── Scheduled task announcements ─────────────────────────────────
+// Tasks created with a future start date (sup_tasks.assigned_date) are saved
+// with announced_at = NULL. Post "New Task Added" once the start date has
+// arrived in UTC — i.e. at 00:00 UTC on that day (checked every minute).
+function taskStartIso(s) {
+  if (!s) return null;
+  const str = String(s).trim();
+  let m = str.match(/^(\d{1,2})[\/\-.\s]([A-Za-z]+)[\/\-.\s](\d{4})$/);
+  if (m) {
+    const idx = MONTH_LOOKUP[m[2].toUpperCase().slice(0, 9)] ?? MONTH_LOOKUP[m[2].toUpperCase().slice(0, 3)];
+    if (idx === undefined) return null;
+    return `${m[3]}-${String(idx + 1).padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  }
+  m = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+  m = str.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);   // day first, like the website
+  if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  return null;
+}
+
+async function announceStartingTasks() {
+  let db;
+  try {
+    db = new Database(DB_PATH);
+    db.pragma('busy_timeout = 5000');
+    const todayUtc = new Date().toISOString().slice(0, 10);
+    const held = db.prepare(
+      "SELECT id, task_name, owner, assigned_date, due_date FROM sup_tasks WHERE announced_at IS NULL AND status != 'Completed' AND is_historical = 0"
+    ).all();
+    for (const t of held) {
+      const start = taskStartIso(t.assigned_date);
+      if (start && start > todayUtc) continue;           // not its day yet
+      // Claim it first so a second run can never double-post.
+      const claim = db.prepare("UPDATE sup_tasks SET announced_at = datetime('now') WHERE id = ? AND announced_at IS NULL").run(t.id);
+      if (!claim.changes) continue;
+      const assignee = t.owner?.trim() || 'TBD';
+      const due      = t.due_date?.trim() ? `\n**Due:** ${t.due_date.trim()}` : '';
+      const res = await postToDiscord(NOTIFY_CHANNEL,
+        `<@&${SUPERVISOR_ROLE}> **New Task Added**\n**Task:** ${t.task_name}\n**Assigned To:** ${assignee}${due}\nhttps://ecrplsems.com/tasks`,
+        { parse: [], roles: [SUPERVISOR_ROLE] });
+      if (res?.ok) console.log(`[Tasks] Announced task #${t.id} (start ${t.assigned_date}).`);
+      else {
+        db.prepare('UPDATE sup_tasks SET announced_at = NULL WHERE id = ?').run(t.id);   // retry next minute
+        console.error(`[Tasks] Announce failed for task #${t.id}: ${res?.status}`);
+      }
+    }
+  } catch (e) {
+    console.error('[Tasks] Announce error:', e.message);
+  } finally {
+    try { db?.close(); } catch {}
+  }
+}
+
 async function sendCalendarReminders() {
   let db;
   try {
@@ -623,6 +676,8 @@ client.once(Events.ClientReady, async c => {
   scheduleDailyDigest();
   sendCalendarReminders();
   setInterval(sendCalendarReminders, 60 * 1000);
+  announceStartingTasks();
+  setInterval(announceStartingTasks, 60 * 1000);
   console.log('[LOA Bot] Running startup catchup scan (last 100 messages)...');
   await pollChannel(c, 100);
   await pollResignChannel(c, 100);

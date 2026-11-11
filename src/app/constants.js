@@ -104,6 +104,15 @@ export function toStoredDate(d = new Date()) {
 // Dates MUST be compared as dates: "05/Aug/2026" sorts before "20/Jul/2026"
 // as text, which used to pick the wrong "last payment" and therefore the
 // wrong next amount and due date.
+// Same as buildLastPaymentMap, but active retention-bonus resolutions also
+// settle the schedule up to their milestone's due date (no money involved).
+export function buildSettledMap(payments = [], resolutions = []) {
+  const extra = resolutions
+    .filter(r => !r.undone_at)
+    .map(r => ({ employee_name: r.employee_name, paid_date: r.due_date, amount: 0, months_tenure: r.months_tenure, resolution: true }));
+  return buildLastPaymentMap([...payments, ...extra]);
+}
+
 export function buildLastPaymentMap(payments = []) {
   const map = {};
   for (const p of payments) {

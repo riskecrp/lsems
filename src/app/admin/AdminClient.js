@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { updateAppSetting } from '../actions';
 
 const fr = e => { e.currentTarget.style.borderColor='var(--c-accent)'; e.currentTarget.style.boxShadow='0 0 0 2px var(--c-accent-glow)'; };
@@ -117,8 +117,10 @@ function SectionTitle({ title, sub }) {
   );
 }
 
-export default function AdminClient({ settings: initial, rankOrder, realLevel, viewAs: initialViewAs, auditLog = [] }) {
+export default function AdminClient({ settings: initial, rankOrder, realLevel, viewAs: initialViewAs, auditLog = [], supStats = [] }) {
   const [section,     setSection]     = useState('hours');
+  const [statsPast,   setStatsPast]   = useState(false);
+  const [statsSort,   setStatsSort]   = useState({ key:'name', dir:1 });
   const [auditSearch, setAuditSearch] = useState('');
   const [viewAs,      setViewAs]      = useState(initialViewAs);
 
@@ -176,6 +178,24 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
            (r.timestamp||'').toLowerCase().includes(s);
   });
 
+  const statsRows = useMemo(() => {
+    const rate = p => (p.responded + p.noResponse) ? p.responded / (p.responded + p.noResponse) : null;
+    const rows = supStats.filter(p => statsPast || p.current).map(p => ({ ...p, rate: rate(p) }));
+    const { key, dir } = statsSort;
+    return rows.sort((a, b) => {
+      const av = a[key], bv = b[key];
+      if (key === 'name') return dir * a.name.localeCompare(b.name);
+      if (av === bv) return a.name.localeCompare(b.name);
+      if (av === null) return 1;
+      if (bv === null) return -1;
+      return dir * (av - bv);
+    });
+  }, [supStats, statsPast, statsSort]);
+  const statsTotals = useMemo(() => statsRows.reduce((t, p) => ({
+    tasksCompleted: t.tasksCompleted + p.tasksCompleted, responded: t.responded + p.responded,
+    noResponse: t.noResponse + p.noResponse, excused: t.excused + p.excused,
+  }), { tasksCompleted:0, responded:0, noResponse:0, excused:0 }), [statsRows]);
+
   const NAV = [
     { id:'hours',    label:'Hour Requirements' },
     { id:'salaries', label:'Salaries'          },
@@ -186,6 +206,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
       { id:'access',      label:'Access Control'  },
       { id:'permissions', label:'Discord Roles'   },
     ] : []),
+    { id:'supstats', label:'Supervisor Stats'  },
     { id:'audit',    label:'Audit Log'         },
   ];
 
@@ -241,6 +262,86 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
 
         {/* Content panel */}
         <div style={{ flex:1, minWidth:0 }}>
+
+          {/* ── Supervisor Stats ── */}
+          {section === 'supstats' && (() => {
+            const COLS = [
+              ['name',           'Supervisor',      'left'  ],
+              ['tasksCompleted', 'Tasks Completed', 'right' ],
+              ['responded',      'Responded',       'right' ],
+              ['noResponse',     'No Response',     'right' ],
+              ['excused',        'Excused (LOA)',   'right' ],
+              ['rate',           'Response Rate',   'right' ],
+            ];
+            const sortBy = key => setStatsSort(s => s.key === key ? { key, dir: -s.dir } : { key, dir: key === 'name' ? 1 : -1 });
+            const td = { padding:'7px 14px', fontSize:12, whiteSpace:'nowrap' };
+            const num = (v, color) => <span style={{ fontWeight:700, fontVariantNumeric:'tabular-nums', color: v ? color : 'var(--text-4)' }}>{v}</span>;
+            return (
+              <div className="surface overflow-hidden">
+                <div style={{ padding:'14px 16px 0' }}>
+                  <SectionTitle title="Supervisor Stats" sub="Tasks completed and discussion responses per supervisor. No response and Excused are recorded when a discussion is archived." />
+                </div>
+                <div style={{ padding:'0 16px 12px', display:'flex', alignItems:'center', gap:10 }}>
+                  <label style={{ display:'flex', alignItems:'center', gap:6, fontSize:11, color:'var(--text-3)', cursor:'pointer', userSelect:'none' }}>
+                    <input type="checkbox" checked={statsPast} onChange={e => setStatsPast(e.target.checked)} style={{ accentColor:'var(--c-accent)' }} />
+                    Include past supervisors
+                  </label>
+                  <span style={{ marginLeft:'auto', fontSize:10, color:'var(--text-4)' }}>Click a column to sort</span>
+                </div>
+                <div className="overflow-x-auto custom-scrollbar">
+                  <table style={{ width:'100%', borderCollapse:'collapse', minWidth:640 }}>
+                    <thead>
+                      <tr style={{ background:'var(--bg-sub)', borderBottom:'1px solid var(--border)', borderTop:'1px solid var(--border)' }}>
+                        {COLS.map(([key, label, align]) => (
+                          <th key={key} onClick={() => sortBy(key)}
+                            style={{ padding:'7px 14px', fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', textAlign:align, whiteSpace:'nowrap', cursor:'pointer', userSelect:'none',
+                              color: statsSort.key === key ? 'var(--c-accent)' : 'var(--text-4)' }}>
+                            {label}{statsSort.key === key ? (statsSort.dir === 1 ? ' ▲' : ' ▼') : ''}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {statsRows.length === 0 ? (
+                        <tr><td colSpan={COLS.length} style={{ padding:32, textAlign:'center', color:'var(--text-4)', fontStyle:'italic', fontSize:12 }}>No supervisors found.</td></tr>
+                      ) : statsRows.map((p, i) => (
+                        <tr key={p.name} style={{ borderBottom:'1px solid var(--border)', background: i%2===0 ? 'var(--bg-stripe)' : 'transparent' }}>
+                          <td style={{ ...td, fontWeight:600, color: p.current ? 'var(--text-1)' : 'var(--text-3)' }}>
+                            {p.name}
+                            {p.onLoa && <span className="pill pill-warning" style={{ marginLeft:8, fontSize:9 }}>LOA</span>}
+                            {!p.current && <span style={{ marginLeft:8, fontSize:9, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.06em', color:'var(--text-4)' }}>Past</span>}
+                          </td>
+                          <td style={{ ...td, textAlign:'right' }}>{num(p.tasksCompleted, 'var(--c-accent)')}</td>
+                          <td style={{ ...td, textAlign:'right' }}>{num(p.responded, 'var(--c-success)')}</td>
+                          <td style={{ ...td, textAlign:'right' }}>{num(p.noResponse, 'var(--c-danger)')}</td>
+                          <td style={{ ...td, textAlign:'right' }}>{num(p.excused, 'var(--c-warning)')}</td>
+                          <td style={{ ...td, textAlign:'right', fontVariantNumeric:'tabular-nums', fontWeight:600,
+                            color: p.rate === null ? 'var(--text-4)' : p.rate >= 0.8 ? 'var(--c-success)' : p.rate >= 0.5 ? 'var(--c-warning)' : 'var(--c-danger)' }}>
+                            {p.rate === null ? '—' : `${Math.round(p.rate * 100)}%`}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    {statsRows.length > 0 && (
+                      <tfoot>
+                        <tr style={{ background:'var(--bg-sub)' }}>
+                          <td style={{ ...td, fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'var(--text-3)' }}>Total</td>
+                          <td style={{ ...td, textAlign:'right', fontWeight:700, color:'var(--text-2)' }}>{statsTotals.tasksCompleted}</td>
+                          <td style={{ ...td, textAlign:'right', fontWeight:700, color:'var(--text-2)' }}>{statsTotals.responded}</td>
+                          <td style={{ ...td, textAlign:'right', fontWeight:700, color:'var(--text-2)' }}>{statsTotals.noResponse}</td>
+                          <td style={{ ...td, textAlign:'right', fontWeight:700, color:'var(--text-2)' }}>{statsTotals.excused}</td>
+                          <td style={td}></td>
+                        </tr>
+                      </tfoot>
+                    )}
+                  </table>
+                </div>
+                <div style={{ padding:'10px 16px', fontSize:10, color:'var(--text-4)', borderTop:'1px solid var(--border)' }}>
+                  Response rate = responded ÷ (responded + no response). Excused and still-open topics aren&apos;t counted against anyone.
+                </div>
+              </div>
+            );
+          })()}
 
           {/* ── Hour Requirements ── */}
           {section === 'hours' && (
@@ -580,6 +681,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
                 { key:'view_quarterly', label:'View Quarterly Bonuses Tab'   },
                 { key:'view_retention', label:'View Retention Bonuses Tab'   },
                 { key:'pay',            label:'Mark Bonus Paid'              },
+                { key:'resolve',        label:'Resolve / Dismiss Overdue Bonus' },
                 { key:'copy_bbcode',    label:'Copy Quarterly BBCode'        },
               ]},
               { page:'history',     label:'History',      actions:[
@@ -596,6 +698,7 @@ export default function AdminClient({ settings: initial, rankOrder, realLevel, v
                 { key:'add',            label:'Post Discussion'              },
                 { key:'delete',         label:'Delete Discussion'            },
                 { key:'respond',        label:'Mark Response'                },
+                { key:'archive',        label:'Archive Discussion'           },
               ]},
               { page:'calendar',    label:'Calendar',     actions:[
                 { key:'view',           label:'View Calendar'                },

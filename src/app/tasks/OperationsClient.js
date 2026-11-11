@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo, useCallback } from 'react';
-import { addSupTask, updateSupTask, deleteSupTask, addDiscussion, deleteDiscussion, toggleDiscussionResponse } from '../actions';
+import { addSupTask, updateSupTask, deleteSupTask, addDiscussion, deleteDiscussion, toggleDiscussionResponse, archiveDiscussion, unarchiveDiscussion, getArchivedDiscussions } from '../actions';
 
 // ── Shared helpers ────────────────────────────────────────────
 const fr = e => { e.currentTarget.style.borderColor='var(--c-accent)'; e.currentTarget.style.boxShadow='0 0 0 3px var(--c-accent-glow)'; };
@@ -21,6 +21,15 @@ const _MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','No
 function today() {
   const d = new Date();
   return `${String(d.getDate()).padStart(2,'0')}/${_MONTHS[d.getMonth()]}/${d.getFullYear()}`;
+}
+function daysUntilDate(str) {
+  const m = String(str||'').trim().match(/^(\d{1,2})[\/\-.\s]([A-Za-z]+)[\/\-.\s](\d{4})$/);
+  if (!m) return null;
+  const idx = _MONTHS.findIndex(x => x.toLowerCase() === m[2].slice(0,3).toLowerCase());
+  if (idx < 0) return null;
+  const d = new Date(+m[3], idx, +m[1]);
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((d - now) / 86400000);
 }
 function Fl({ label, children }) {
   return <div><label style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',color:'var(--text-3)',display:'block',marginBottom:6}}>{label}</label>{children}</div>;
@@ -44,6 +53,40 @@ function Btns({ processing, onCancel, onConfirm, label }) {
         {processing?'Saving…':label}
       </button>
     </div>
+  );
+}
+
+function NameChips({ label, names, tone }) {
+  if (!names?.length) return null;
+  const c = {
+    danger:  { color:'var(--c-danger)',  bg:'var(--c-danger-bg)',   border:'var(--c-danger-glow)' },
+    warning: { color:'var(--c-warning)', bg:'var(--c-warn-bg)',     border:'var(--c-warn-glow)'   },
+    success: { color:'var(--c-success)', bg:'var(--c-succ-bg)',     border:'var(--c-succ-glow)'   },
+  }[tone];
+  return (
+    <div>
+      <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',color:c.color,marginBottom:6}}>{label} ({names.length})</div>
+      <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+        {names.map(n => (
+          <span key={n} style={{padding:'4px 9px',borderRadius:7,border:`1px solid ${c.border}`,background:c.bg,color:c.color,fontSize:11,fontWeight:600}}>{n}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+function ConfirmModal({ box, busy, onClose }) {
+  return (
+    <Modal title={box.title} subtitle={box.subtitle} onClose={busy?()=>{}:onClose}>
+      {box.body && <div style={{display:'flex',flexDirection:'column',gap:12,fontSize:12,color:'var(--text-2)',lineHeight:1.5}}>{box.body}</div>}
+      <div style={{display:'flex',gap:10,marginTop:18}}>
+        <button onClick={onClose} disabled={busy} className="btn-ghost" style={{flex:1,textAlign:'center'}}>Cancel</button>
+        <button onClick={box.onConfirm} disabled={busy} className="btn-primary"
+          style={{flex:1,textAlign:'center',justifyContent:'center',
+            ...(box.danger ? {background:'var(--c-danger-bg)',color:'var(--c-danger)',border:'1px solid var(--c-danger-glow)',boxShadow:'0 0 10px var(--c-danger-glow)'} : {})}}>
+          {busy ? 'Working…' : box.label}
+        </button>
+      </div>
+    </Modal>
   );
 }
 
@@ -74,6 +117,11 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
   const [discErr,     setDiscErr]     = useState('');
   const [discProc,    setDiscProc]    = useState(false);
   const [pending,     setPending]     = useState(new Set());
+  const [discView,    setDiscView]    = useState('active');   // 'active' | 'archived'
+  const [archived,    setArchived]    = useState(null);       // null = not loaded yet
+  const [archExpanded,setArchExpanded]= useState(null);
+  const [archBusy,    setArchBusy]    = useState(null);       // discussion id being (un)archived
+  const [confirmBox,  setConfirmBox]  = useState(null);       // themed confirm dialog
 
   // ── Derived ──────────────────────────────────────────────────
   const activeSups      = useMemo(() => supervisors.filter(s=>!s.is_on_loa), [supervisors]);
@@ -160,12 +208,87 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
     finally { setDiscProc(false); }
   };
 
-  const handleDeleteDisc = async id => {
-    if (!confirm('Delete this discussion?')) return;
-    await deleteDiscussion(id);
-    setDiscussions(d=>d.filter(x=>x.id!==id));
-    if (expanded===id) setExpanded(null);
+  const handleDeleteDisc = disc => setConfirmBox({
+    title:'Delete Discussion', subtitle:disc.topic, label:'Delete', danger:true,
+    body:<div>This permanently deletes the discussion and every response recorded for it. To keep a record of who responded, use <b style={{color:'var(--text-1)'}}>Archive</b> instead.</div>,
+    onConfirm: async () => {
+      setArchBusy(disc.id); setDiscErr('');
+      try {
+        const r = await deleteDiscussion(disc.id);
+        if (r?.ok===false) { setDiscErr(r.error); return; }
+        setDiscussions(d=>d.filter(x=>x.id!==disc.id));
+        if (expanded===disc.id) setExpanded(null);
+      } catch(e) { setDiscErr(e.message); }
+      finally { setArchBusy(null); setConfirmBox(null); }
+    },
+  });
+
+  const reloadArchived = async () => setArchived(await getArchivedDiscussions());
+
+  const showDiscView = v => {
+    setDiscView(v); setDiscErr('');
+    if (v==='archived' && archived===null) reloadArchived();
   };
+
+  const handleArchiveDisc = async disc => {
+    const missing = allSups.filter(s=>!disc.responses?.[s]);
+    const onLoa   = missing.filter(s=>loaMap[s]?.isOnLoa);
+    const noResp  = missing.filter(s=>!loaMap[s]?.isOnLoa);
+    setConfirmBox({
+      title:'Archive Discussion', subtitle:disc.topic, label:'Archive',
+      body:<>
+        {noResp.length===0 && onLoa.length===0
+          ? <div style={{color:'var(--c-success)',fontWeight:600}}>✓ Everyone has responded.</div>
+          : <div>Supervisors who haven&apos;t been checked off will be recorded as follows:</div>}
+        <NameChips label="No response" names={noResp} tone="danger"/>
+        <NameChips label="Excused (on LOA)" names={onLoa} tone="warning"/>
+        <div style={{fontSize:11,color:'var(--text-3)'}}>The discussion moves to the Archived view. You can unarchive it later.</div>
+      </>,
+      onConfirm: async () => {
+        setArchBusy(disc.id); setDiscErr('');
+        try {
+          const r = await archiveDiscussion(disc.id);
+          if (!r.ok) { setDiscErr(r.error); return; }
+          if (expanded===disc.id) setExpanded(null);
+          await reloadDisc();
+          if (archived!==null) await reloadArchived();
+        } catch(e) { setDiscErr(e.message); }
+        finally { setArchBusy(null); setConfirmBox(null); }
+      },
+    });
+  };
+
+  const handleUnarchiveDisc = disc => setConfirmBox({
+    title:'Unarchive Discussion', subtitle:disc.topic, label:'Unarchive',
+    body:<>
+      <div>This moves the discussion back to the active list. These supervisors go back to <b style={{color:'var(--text-1)'}}>pending</b>:</div>
+      <NameChips label="No response" names={disc.noResponse} tone="danger"/>
+      <NameChips label="Excused (LOA)" names={disc.excused} tone="warning"/>
+    </>,
+    onConfirm: async () => {
+      setArchBusy(disc.id); setDiscErr('');
+      try {
+        const r = await unarchiveDiscussion(disc.id);
+        if (!r.ok) { setDiscErr(r.error); return; }
+        await Promise.all([reloadDisc(), reloadArchived()]);
+      } catch(e) { setDiscErr(e.message); }
+      finally { setArchBusy(null); setConfirmBox(null); }
+    },
+  });
+
+  const handleDeleteArchived = disc => setConfirmBox({
+    title:'Delete Archived Discussion', subtitle:disc.topic, label:'Delete', danger:true,
+    body:<div>This permanently deletes the discussion and its record of who responded. It can&apos;t be undone.</div>,
+    onConfirm: async () => {
+      setArchBusy(disc.id); setDiscErr('');
+      try {
+        const r = await deleteDiscussion(disc.id);
+        if (r?.ok===false) { setDiscErr(r.error); return; }
+        setArchived(a=>a.filter(x=>x.id!==disc.id));
+      } catch(e) { setDiscErr(e.message); }
+      finally { setArchBusy(null); setConfirmBox(null); }
+    },
+  });
 
   const handleToggle = async (discussionId, supervisorName, current) => {
     const key = `${discussionId}::${supervisorName}`;
@@ -230,7 +353,22 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
               {canTask('add') && <button className="btn-primary" onClick={()=>setShowAddTask(true)}>+ Task</button>}
             </>
           )}
-          {tab==='discussions' && canDisc('add') && (
+          {tab==='discussions' && (
+            <div style={{display:'flex',gap:3,padding:'3px',borderRadius:8,border:'1px solid var(--border)',background:'var(--bg-sub)'}}>
+              {[['active','Active'],['archived','Archived']].map(([v,l]) => (
+                <button key={v} onClick={()=>showDiscView(v)}
+                  style={{
+                    padding:'4px 10px',borderRadius:6,border:'none',cursor:'pointer',
+                    fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.07em',
+                    background:discView===v?'var(--c-accent-bg)':'transparent',
+                    color:discView===v?'var(--c-accent)':'var(--text-3)',
+                  }}>
+                  {l}
+                </button>
+              ))}
+            </div>
+          )}
+          {tab==='discussions' && discView==='active' && canDisc('add') && (
             <button className="btn-primary" onClick={()=>setShowAddDisc(true)}>+ Discussion</button>
           )}
         </div>
@@ -273,12 +411,13 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
                   <th>Task</th>
                   <th style={{width:160}}>Owner</th>
                   <th className="text-center" style={{width:120}}>Status</th>
+                  <th style={{width:110}}>Start</th>
                   <th style={{width:100}}>Due</th>
                   <th className="text-right" style={{width:100}}>Actions</th>
                 </tr></thead>
                 <tbody>
                   {filtered.length===0 ? (
-                    <tr><td colSpan={5} style={{padding:'40px 16px',textAlign:'center',color:'var(--text-3)',fontStyle:'italic'}}>No tasks found.</td></tr>
+                    <tr><td colSpan={6} style={{padding:'40px 16px',textAlign:'center',color:'var(--text-3)',fontStyle:'italic'}}>No tasks found.</td></tr>
                   ) : filtered.map(task => {
                     const od  = isOverdue(task);
                     const ss  = statusStyle(task.status);
@@ -323,15 +462,29 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
                           </select>
                           {od && <div style={{fontSize:9,fontWeight:700,color:'var(--c-danger)',marginTop:2,textShadow:'0 0 8px var(--c-danger-glow)'}}>OVERDUE</div>}
                         </td>
+                        <td style={{fontSize:12,whiteSpace:'nowrap'}}>
+                          {(() => {
+                            const held = !task.announced_at && task.status!=='Completed';
+                            const du   = daysUntilDate(task.assigned_date);
+                            return (<>
+                              <div style={{color: held ? 'var(--c-accent)' : 'var(--text-3)'}}>{task.assigned_date||'—'}</div>
+                              {held && (
+                                <div title="Discord is notified at 00:00 UTC on the start date" style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.06em',color:'var(--c-accent)',marginTop:2}}>
+                                  {du!=null && du>0 ? `Starts in ${du}d` : 'Starting'}
+                                </div>
+                              )}
+                            </>);
+                          })()}
+                        </td>
                         <td style={{fontSize:12,color:od?'var(--c-danger)':'var(--text-2)'}}>{task.due_date||'—'}</td>
                         <td style={{textAlign:'right',whiteSpace:'nowrap'}}>
-                          {canTask('edit') && <button className="pill pill-accent" style={{cursor:'pointer',marginRight:4}} onClick={()=>{setEditTask(task);setEditForm({status:task.status,owner:task.owner||'',completedDate:task.completed_date||'',notes:task.notes||''});}}>Edit</button>}
+                          {canTask('edit') && <button className="pill pill-accent" style={{cursor:'pointer',marginRight:4}} onClick={()=>{setEditTask(task);setEditForm({status:task.status,owner:task.owner||'',completedDate:task.completed_date||'',notes:task.notes||'',startDate:task.assigned_date||''});}}>Edit</button>}
                           {canTask('delete') && <button className="pill pill-danger" style={{cursor:'pointer'}} onClick={()=>handleDeleteTask(task.id)}>Del</button>}
                         </td>
                       </tr>,
                       sn && task.notes && (
                         <tr key={`${task.id}-n`} style={{background:'rgba(128,0,0,0.04)'}}>
-                          <td colSpan={5} style={{padding:'8px 20px',fontSize:12,color:'var(--text-2)',lineHeight:1.5}}>{task.notes}</td>
+                          <td colSpan={6} style={{padding:'8px 20px',fontSize:12,color:'var(--text-2)',lineHeight:1.5}}>{task.notes}</td>
                         </tr>
                       )
                     ];
@@ -345,7 +498,7 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
       )}
 
       {/* ── DISCUSSIONS TAB ───────────────────────────────────── */}
-      {tab==='discussions' && (
+      {tab==='discussions' && discView==='active' && (
         <>
           <div className="surface" style={{overflow:'hidden'}}>
             {discussions.length===0 ? (
@@ -382,9 +535,16 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
                         Forum ↗
                       </a>
                     )}
+                    {canDisc('archive') && (
+                      <button className="pill pill-accent" style={{cursor:'pointer',opacity:archBusy===disc.id?0.5:1}}
+                        disabled={archBusy===disc.id} title="Archive this discussion"
+                        onClick={e=>{e.stopPropagation();handleArchiveDisc(disc);}}>
+                        {archBusy===disc.id?'…':'Archive'}
+                      </button>
+                    )}
                     {canDisc('delete') && (
                       <button className="pill pill-danger" style={{cursor:'pointer'}}
-                        onClick={e=>{e.stopPropagation();handleDeleteDisc(disc.id);}}>✕</button>
+                        onClick={e=>{e.stopPropagation();handleDeleteDisc(disc);}}>✕</button>
                     )}
                   </div>
 
@@ -436,6 +596,80 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
         </>
       )}
 
+      {/* ── ARCHIVED DISCUSSIONS ───────────────────────────────── */}
+      {tab==='discussions' && discView==='archived' && (
+        <>
+          <div className="surface" style={{overflow:'hidden'}}>
+            {archived===null ? (
+              <div style={{padding:'40px 16px',textAlign:'center',color:'var(--text-3)',fontStyle:'italic'}}>Loading…</div>
+            ) : archived.length===0 ? (
+              <div style={{padding:'40px 16px',textAlign:'center',color:'var(--text-3)',fontStyle:'italic'}}>No archived discussions.</div>
+            ) : archived.map((disc,i) => {
+              const open = archExpanded===disc.id;
+              const groups = [
+                ['Responded',   disc.responded,  'var(--c-success)', 'rgba(52,211,153,0.07)', 'var(--c-succ-glow)'],
+                ['No response', disc.noResponse, 'var(--c-danger)',  'var(--c-danger-bg)',    'var(--c-danger-glow)'],
+                ['Excused (LOA)', disc.excused,  'var(--c-warning)', 'rgba(251,191,36,0.05)', 'rgba(251,191,36,0.28)'],
+              ];
+              return (
+                <div key={disc.id}>
+                  <div
+                    style={{
+                      display:'flex',alignItems:'center',gap:10,padding:'10px 16px',
+                      cursor:'pointer',borderBottom:'1px solid var(--border)',
+                      background: i%2===0 ? 'var(--bg-stripe)' : 'transparent',
+                    }}
+                    onClick={()=>setArchExpanded(open?null:disc.id)}>
+                    <span style={{fontSize:11,color:'var(--text-4)',flexShrink:0,transition:'transform 0.15s',transform:open?'rotate(90deg)':'none'}}>▶</span>
+                    <span style={{fontSize:11,fontFamily:'monospace',color:'var(--text-3)',flexShrink:0,width:80}}>{disc.date_posted}</span>
+                    <span style={{fontSize:13,fontWeight:600,color:'var(--text-1)',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{disc.topic}</span>
+                    <span className="pill pill-success">✓ {disc.responded.length}</span>
+                    {disc.noResponse.length>0 && <span className="pill pill-danger">✗ {disc.noResponse.length}</span>}
+                    {disc.excused.length>0 && <span className="pill pill-warning">LOA {disc.excused.length}</span>}
+                    {/^https?:\/\//i.test(disc.link || '') && (
+                      <a href={disc.link} target="_blank" rel="noreferrer"
+                        className="pill pill-accent" style={{cursor:'pointer',textDecoration:'none'}}
+                        onClick={e=>e.stopPropagation()}>
+                        Forum ↗
+                      </a>
+                    )}
+                    {canDisc('archive') && (
+                      <button className="pill pill-accent" style={{cursor:'pointer',opacity:archBusy===disc.id?0.5:1}}
+                        disabled={archBusy===disc.id}
+                        onClick={e=>{e.stopPropagation();handleUnarchiveDisc(disc);}}>
+                        {archBusy===disc.id?'…':'Unarchive'}
+                      </button>
+                    )}
+                    {canDisc('delete') && (
+                      <button className="pill pill-danger" style={{cursor:'pointer'}}
+                        onClick={e=>{e.stopPropagation();handleDeleteArchived(disc);}}>✕</button>
+                    )}
+                  </div>
+                  {open && (
+                    <div style={{padding:'12px 16px',borderBottom:'1px solid var(--border)',background:'rgba(0,0,0,0.18)',display:'flex',flexDirection:'column',gap:10}}>
+                      <div style={{fontSize:10,color:'var(--text-3)'}}>
+                        Archived {disc.archived_at}{disc.archived_by?` by ${disc.archived_by}`:''}
+                      </div>
+                      {groups.filter(([,names])=>names.length>0).map(([label,names,color,bg,border]) => (
+                        <div key={label}>
+                          <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.08em',color,marginBottom:6}}>{label} ({names.length})</div>
+                          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:6}}>
+                            {names.map(n => (
+                              <div key={n} style={{padding:'7px 10px',borderRadius:8,border:`1px solid ${border}`,background:bg,fontSize:11,fontWeight:600,color,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{n}</div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {discErr && <div style={{padding:'10px 14px',borderRadius:10,border:'1px solid var(--c-danger-glow)',background:'var(--c-danger-bg)',color:'var(--c-danger)',fontSize:13}}>{discErr}</div>}
+        </>
+      )}
+
       {/* ── MODALS ────────────────────────────────────────────── */}
 
       {showAddTask && (
@@ -449,9 +683,14 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
               </select>
             </Fl>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-              <Fl label="Assigned"><input className="lsems-input" placeholder="DD/Mon/YYYY" value={addForm.assignedDate} onChange={e=>setAddForm(f=>({...f,assignedDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
+              <Fl label="Start"><input className="lsems-input" placeholder="Today (DD/Mon/YYYY)" value={addForm.assignedDate} onChange={e=>setAddForm(f=>({...f,assignedDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
               <Fl label="Due"><input className="lsems-input" placeholder="DD/Mon/YYYY" value={addForm.dueDate} onChange={e=>setAddForm(f=>({...f,dueDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
             </div>
+            {daysUntilDate(addForm.assignedDate) > 0 && (
+              <div style={{fontSize:11,color:'var(--c-accent)',marginTop:-4}}>
+                Future start. The Discord announcement is held until 00:00 UTC on {addForm.assignedDate.trim()}.
+              </div>
+            )}
             <Fl label="Notes"><textarea className="lsems-input" style={{minHeight:68,resize:'vertical'}} value={addForm.notes} onChange={e=>setAddForm(f=>({...f,notes:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
           </div>
           <Btns processing={taskProc} onCancel={()=>setShowAddTask(false)} onConfirm={handleAddTask} label="Create Task"/>
@@ -472,6 +711,10 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
                 {assignees.map(a=><option key={a.name} value={a.name}>{a.name}{a.isOnLoa?' (LOA)':''}</option>)}
               </select>
             </Fl>
+            <Fl label="Start"><input className="lsems-input" placeholder="DD/Mon/YYYY" value={editForm.startDate||''} onChange={e=>setEditForm(f=>({...f,startDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
+            {!editTask.announced_at && editTask.status!=='Completed' && (
+              <div style={{fontSize:11,color:'var(--c-accent)',marginTop:-4}}>Not announced yet. Discord is notified at 00:00 UTC on the start date.</div>
+            )}
             {editForm.status==='Completed' && (
               <Fl label="Completed Date"><input className="lsems-input" placeholder="DD/Mon/YYYY" value={editForm.completedDate} onChange={e=>setEditForm(f=>({...f,completedDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
             )}
@@ -480,6 +723,8 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
           <Btns processing={taskProc} onCancel={()=>setEditTask(null)} onConfirm={handleEditTask} label="Save Changes"/>
         </Modal>
       )}
+
+      {confirmBox && <ConfirmModal box={confirmBox} busy={archBusy!==null} onClose={()=>setConfirmBox(null)}/>}
 
       {showAddDisc && (
         <Modal title="Add Discussion" onClose={()=>setShowAddDisc(false)}>

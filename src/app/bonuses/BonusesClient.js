@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { markBonusPaid } from '../actions';
-import { sortByRank, daysEmployed, getNextBonus, buildLastPaymentMap, toStoredDate, fmtDate, fmtCurrency, getRankIndex } from '../constants';
+import { markBonusPaid, resolveBonus, undoBonusResolution, getBonusResolutions } from '../actions';
+import { sortByRank, daysEmployed, getNextBonus, buildSettledMap, toStoredDate, fmtDate, fmtCurrency, getRankIndex } from '../constants';
 
 const _MON = { Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11 };
 function parseDate(s) {
@@ -50,12 +50,97 @@ function bbMoney(n) {
 const fr = e => { e.currentTarget.style.borderColor='var(--c-accent)'; e.currentTarget.style.boxShadow='0 0 0 3px var(--c-accent-glow)'; };
 const fb = e => { e.currentTarget.style.borderColor='var(--border)';   e.currentTarget.style.boxShadow='none'; };
 
-export default function BonusesClient({ bonuses: initial, payments: initialPayments, divData, bbcodeTemplates, bonusCycle, perms = {} }) {
+const DISMISS_REASONS = ['Missed before tracking began', 'Paid outside the dashboard', 'Not eligible at the time'];
+
+function ResolveModal({ modal, setModal, payments, busy, err, onSubmit }) {
+  const empPayments = payments.filter(p => p.id != null && p.employee_name?.toLowerCase() === modal.name.toLowerCase());
+  const seg = (v, label) => (
+    <button key={v} onClick={() => setModal(m => ({ ...m, type: v }))}
+      style={{ flex:1, padding:'6px 10px', borderRadius:6, border:'none', cursor:'pointer', fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.07em',
+        background: modal.type === v ? 'var(--c-accent-bg)' : 'transparent', color: modal.type === v ? 'var(--c-accent)' : 'var(--text-3)' }}>
+      {label}
+    </button>
+  );
+  const lbl = { fontSize:10, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'var(--text-3)', display:'block', marginBottom:6 };
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background:'rgba(0,0,0,0.80)' }} onClick={() => !busy && setModal(null)}>
+      <div className="surface glass-modal p-5 w-full max-w-md" style={{ borderRadius:16 }} onClick={e => e.stopPropagation()}>
+        <div style={{ fontSize:15, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Resolve Overdue Bonus</div>
+        <div style={{ fontSize:11, color:'var(--text-3)', marginBottom:14 }}>Clears it from the overdue list without recording a new payment.</div>
+        <div style={{ display:'flex', flexDirection:'column', gap:6, marginBottom:14, fontSize:13 }}>
+          <div style={{ display:'flex', justifyContent:'space-between' }}><span style={{ color:'var(--text-3)' }}>Employee</span><strong style={{ color:'var(--text-1)' }}>{modal.name}</strong></div>
+          <div style={{ display:'flex', justifyContent:'space-between' }}><span style={{ color:'var(--text-3)' }}>Milestone</span><span className="pill pill-muted">#{modal.milestone} · {modal.months}-month</span></div>
+          <div style={{ display:'flex', justifyContent:'space-between' }}><span style={{ color:'var(--text-3)' }}>Was due</span><span style={{ color:'var(--c-danger)', fontWeight:600 }}>{fmtDate(modal.dueDate)} · {fmtCurrency(modal.amount)}</span></div>
+        </div>
+
+        <div style={{ display:'flex', gap:3, padding:3, borderRadius:8, border:'1px solid var(--border)', background:'var(--bg-sub)', marginBottom:14 }}>
+          {seg('covered', 'Covered by a payment')}
+          {seg('dismissed', 'Dismiss with reason')}
+        </div>
+
+        {modal.type === 'covered' ? (
+          <div style={{ marginBottom:12 }}>
+            <label style={lbl}>Which payment covers it?</label>
+            {empPayments.length === 0 ? (
+              <div style={{ fontSize:12, color:'var(--text-3)', fontStyle:'italic', padding:'10px 0' }}>No payments recorded for {modal.name}. Use “Dismiss with reason” instead.</div>
+            ) : (
+              <div className="custom-scrollbar" style={{ display:'flex', flexDirection:'column', gap:6, maxHeight:200, overflowY:'auto' }}>
+                {empPayments.map(p => {
+                  const sel = modal.paymentId === p.id;
+                  return (
+                    <label key={p.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 10px', borderRadius:8, cursor:'pointer', fontSize:12,
+                      border:`1px solid ${sel ? 'var(--c-accent-glow)' : 'var(--border)'}`, background: sel ? 'var(--c-accent-bg)' : 'var(--bg-sub)' }}>
+                      <input type="radio" name="resolve-payment" checked={sel} onChange={() => setModal(m => ({ ...m, paymentId: p.id }))} style={{ accentColor:'var(--c-accent)' }} />
+                      <span style={{ fontFamily:'monospace', color:'var(--text-2)' }}>{p.paid_date}</span>
+                      <span className="pill pill-muted">{p.months_tenure ? `${p.months_tenure}mo` : '—'}</span>
+                      <span className="stat-success" style={{ marginLeft:'auto', fontFamily:'monospace', fontWeight:700 }}>{fmtCurrency(p.amount)}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+            <label style={{ ...lbl, marginTop:12 }}>Note (optional)</label>
+            <input className="lsems-input" placeholder="e.g. Aug payment was for this milestone" value={modal.reason}
+              onChange={e => setModal(m => ({ ...m, reason: e.target.value }))} onFocus={fr} onBlur={fb} />
+          </div>
+        ) : (
+          <div style={{ marginBottom:12 }}>
+            <label style={lbl}>Reason (required)</label>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginBottom:8 }}>
+              {DISMISS_REASONS.map(r => (
+                <button key={r} className="pill pill-muted" style={{ cursor:'pointer' }} onClick={() => setModal(m => ({ ...m, reason: r }))}>{r}</button>
+              ))}
+            </div>
+            <textarea className="lsems-input" style={{ minHeight:70, resize:'vertical' }} placeholder="Why is this bonus being dismissed?"
+              value={modal.reason} onChange={e => setModal(m => ({ ...m, reason: e.target.value }))} onFocus={fr} onBlur={fb} />
+          </div>
+        )}
+
+        <p style={{ fontSize:11, color:'var(--text-3)', marginBottom:12 }}>No money is moved. This is logged and can be undone from Payment History.</p>
+        {err && <p style={{ fontSize:11, color:'var(--c-danger)', marginBottom:10 }}>{err}</p>}
+        <div style={{ display:'flex', gap:10 }}>
+          <button onClick={() => setModal(null)} disabled={busy} className="btn-ghost" style={{ flex:1, textAlign:'center' }}>Cancel</button>
+          <button onClick={onSubmit} disabled={busy || (modal.type === 'covered' ? !modal.paymentId : modal.reason.trim().length < 5)}
+            className="btn-primary" style={{ flex:1, justifyContent:'center' }}>
+            {busy ? 'Saving…' : modal.type === 'covered' ? 'Mark Covered' : 'Dismiss'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function BonusesClient({ bonuses: initial, payments: initialPayments, resolutions: initialResolutions = [], divData, bbcodeTemplates, bonusCycle, perms = {} }) {
   const can = (key) => perms[key] !== false;
   const [tab,        setTab]        = useState(() => can('view_quarterly') ? 'quarterly' : can('view_retention') ? 'retention' : 'history');
   const [search,     setSearch]     = useState('');
   const [payments,   setPayments]   = useState(initialPayments);
   const [payModal,   setPayModal]   = useState(null);
+  const [resolutions,   setResolutions]   = useState(initialResolutions);
+  const [resolveModal,  setResolveModal]  = useState(null);
+  const [resolveBusy,   setResolveBusy]   = useState(false);
+  const [resolveErr,    setResolveErr]    = useState('');
+  const [undoTarget,    setUndoTarget]    = useState(null);
   const [processing, setProcessing] = useState(false);
   const [error,      setError]      = useState('');
   const [showAll,    setShowAll]    = useState(false);
@@ -201,7 +286,7 @@ ${notRecBB}${recExcBB}Please let me know if you have any follow up questions!
   // Most recent payment per employee — only used to tell whether the
   // currently-due milestone has been settled. The schedule itself comes
   // from the hire date.
-  const lastPaymentByEmployee = useMemo(() => buildLastPaymentMap(payments), [payments]);
+  const lastPaymentByEmployee = useMemo(() => buildSettledMap(payments, resolutions), [payments, resolutions]);
 
   const enriched = useMemo(() => sortByRank(initial).map(b => ({
     ...b,
@@ -225,6 +310,35 @@ ${notRecBB}${recExcBB}Please let me know if you have any follow up questions!
       setPayModal(null);
     } catch(e) { setError(e.message); }
     finally { setProcessing(false); }
+  };
+
+  const openResolve = b => {
+    setResolveErr('');
+    setResolveModal({ name:b.name, months:b.bonus.monthsTenure, milestone:b.bonus.milestone, amount:b.bonus.nextAmount, dueDate:b.bonus.nextDate, type:'covered', paymentId:null, reason:'' });
+  };
+
+  const handleResolve = async () => {
+    const m = resolveModal; if (!m) return;
+    setResolveBusy(true); setResolveErr('');
+    try {
+      const res = await resolveBonus({ employeeName:m.name, monthsTenure:m.months, amount:m.amount, type:m.type, paymentId:m.paymentId, reason:m.reason });
+      if (!res.ok) { setResolveErr(res.error); return; }
+      setResolutions(await getBonusResolutions());
+      setResolveModal(null);
+    } catch(e) { setResolveErr(e.message); }
+    finally { setResolveBusy(false); }
+  };
+
+  const handleUndo = async () => {
+    if (!undoTarget) return;
+    setResolveBusy(true); setError('');
+    try {
+      const res = await undoBonusResolution(undoTarget.id);
+      if (!res.ok) { setError(res.error); return; }
+      setResolutions(await getBonusResolutions());
+      setUndoTarget(null);
+    } catch(e) { setError(e.message); }
+    finally { setResolveBusy(false); }
   };
 
   const TABS = [
@@ -574,6 +688,10 @@ ${notRecBB}${recExcBB}Please let me know if you have any follow up questions!
                       : d <= 0
                         ? <span className="pill pill-danger" style={{cursor: can('pay') ? 'pointer' : 'default'}} onClick={() => can('pay') && setPayModal({ name:b.name, amount:b.bonus.nextAmount, months: b.bonus.monthsTenure, milestone: b.bonus.milestone })}>{d === 0 ? 'Due today' : `${-d}d overdue`}</span>
                         : <span style={{ fontSize:11, fontFamily:'monospace', color: d <= 30 ? 'var(--c-warning)' : 'var(--text-2)' }}>in {d}d</span>;
+                    const resolveBtn = d != null && d <= 0 && can('resolve')
+                      ? <button className="pill pill-accent" style={{ cursor:'pointer', marginLeft:6 }} title="Mark as covered by an existing payment, or dismiss with a reason"
+                          onClick={() => openResolve(b)}>Resolve</button>
+                      : null;
                     return (
                       <tr key={b.name} style={d != null && d <= 0 ? { background:'var(--c-danger-bg)', boxShadow:'inset 3px 0 0 var(--c-danger)' } : undefined}>
                         <td style={{ fontWeight:600, color:'var(--text-1)' }}>{b.name}</td>
@@ -581,7 +699,7 @@ ${notRecBB}${recExcBB}Please let me know if you have any follow up questions!
                         <td className="text-center"><span className="pill pill-muted">#{b.bonus?.milestone ?? '—'}</span></td>
                         <td className="text-right font-mono font-semibold stat-success">{b.bonus ? fmtCurrency(b.bonus.nextAmount) : '—'}</td>
                         <td className="text-right" style={{ color:'var(--text-2)' }}>{b.bonus ? fmtDate(b.bonus.nextDate) : '—'}</td>
-                        <td className="text-center">{badge}</td>
+                        <td className="text-center" style={{ whiteSpace:'nowrap' }}>{badge}{resolveBtn}</td>
                       </tr>
                     );
                   })}
@@ -615,6 +733,73 @@ ${notRecBB}${recExcBB}Please let me know if you have any follow up questions!
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          <div className="surface" style={{ overflow:'hidden' }}>
+            <div style={{ padding:'9px 18px', background:'rgba(0,0,0,0.25)', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', gap:10 }}>
+              <span style={{ fontSize:11, fontWeight:800, textTransform:'uppercase', letterSpacing:'0.10em', color:'var(--text-3)' }}>Resolved &amp; Dismissed</span>
+              <span style={{ fontSize:10, color:'var(--text-4)' }}>Overdue milestones cleared without a new payment. Not counted as money paid.</span>
+            </div>
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="lsems-table" style={{ minWidth:640 }}>
+                <thead><tr><th>Resolved</th><th>Employee</th><th className="text-center">Milestone</th><th className="text-center">Type</th><th>Details</th><th>By</th><th></th></tr></thead>
+                <tbody>
+                  {resolutions.length===0 ? (
+                    <tr><td colSpan={7} style={{ padding:'28px', textAlign:'center', color:'var(--text-3)', fontStyle:'italic' }}>Nothing resolved or dismissed yet.</td></tr>
+                  ) : resolutions.map(r => {
+                    const undone = !!r.undone_at;
+                    return (
+                      <tr key={r.id} style={undone ? { opacity:0.5 } : undefined}>
+                        <td style={{ fontFamily:'monospace', fontSize:12, color:'var(--text-3)', whiteSpace:'nowrap' }}>{fmtDate(r.resolved_at?.replace(' ', 'T') + 'Z')}</td>
+                        <td style={{ fontWeight:600, color:'var(--text-1)' }}>{r.employee_name}</td>
+                        <td style={{ textAlign:'center' }}><span className="pill pill-muted">{r.months_tenure}mo</span></td>
+                        <td style={{ textAlign:'center' }}>
+                          <span className={r.type === 'covered' ? 'pill pill-success' : 'pill pill-warning'}>{r.type === 'covered' ? 'Covered' : 'Dismissed'}</span>
+                        </td>
+                        <td style={{ fontSize:12, color:'var(--text-2)' }}>
+                          {r.type === 'covered' && (r.payment_date
+                            ? <span>By payment {r.payment_date} ({fmtCurrency(r.payment_amount)})</span>
+                            : <span style={{ color:'var(--text-4)' }}>Linked payment no longer exists</span>)}
+                          {r.reason && <span>{r.type === 'covered' ? ' · ' : ''}{r.reason}</span>}
+                          <div style={{ fontSize:10, color:'var(--text-4)' }}>Was due {fmtDate(r.due_date + 'T00:00:00')}{r.amount ? ` · ${fmtCurrency(r.amount)}` : ''}</div>
+                        </td>
+                        <td style={{ fontSize:12, color:'var(--text-3)', whiteSpace:'nowrap' }}>
+                          {r.resolved_by || '—'}
+                          {undone && <div style={{ fontSize:10 }}>Undone by {r.undone_by || '—'}</div>}
+                        </td>
+                        <td style={{ textAlign:'right' }}>
+                          {!undone && can('resolve') && (
+                            <button className="pill pill-danger" style={{ cursor:'pointer' }} onClick={() => setUndoTarget(r)}>Undo</button>
+                          )}
+                          {undone && <span className="pill pill-muted">Undone</span>}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {resolveModal && <ResolveModal modal={resolveModal} setModal={setResolveModal} payments={payments} busy={resolveBusy} err={resolveErr} onSubmit={handleResolve} />}
+
+      {undoTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background:'rgba(0,0,0,0.80)' }} onClick={() => !resolveBusy && setUndoTarget(null)}>
+          <div className="surface glass-modal p-5 w-full max-w-sm" style={{ borderRadius:16 }} onClick={e => e.stopPropagation()}>
+            <div style={{ fontSize:15, fontWeight:700, color:'var(--text-1)', marginBottom:4 }}>Undo {undoTarget.type === 'covered' ? 'Resolution' : 'Dismissal'}</div>
+            <div style={{ fontSize:11, color:'var(--text-3)', marginBottom:14 }}>{undoTarget.employee_name} · {undoTarget.months_tenure}-month milestone</div>
+            <p style={{ fontSize:12, color:'var(--text-2)', marginBottom:16, lineHeight:1.5 }}>
+              The milestone goes back to being due unless a payment covers it. This record stays in the history, marked as undone.
+            </p>
+            <div style={{ display:'flex', gap:10 }}>
+              <button onClick={() => setUndoTarget(null)} disabled={resolveBusy} className="btn-ghost" style={{ flex:1, textAlign:'center' }}>Cancel</button>
+              <button onClick={handleUndo} disabled={resolveBusy} className="btn-primary"
+                style={{ flex:1, justifyContent:'center', background:'var(--c-danger-bg)', color:'var(--c-danger)', border:'1px solid var(--c-danger-glow)', boxShadow:'0 0 10px var(--c-danger-glow)' }}>
+                {resolveBusy ? 'Working…' : 'Undo'}
+              </button>
             </div>
           </div>
         </div>
