@@ -832,10 +832,11 @@ function taskStartIso(dateStr) {
   const d = parseFlexDate(dateStr);
   return d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` : null;
 }
-// Future start → Discord is told by loa-bot.mjs at 00:00 UTC on the start date.
+// Start more than 24h away → Discord is told by loa-bot.mjs once it is within
+// 24 hours (00:00 UTC the day before the start date).
 function taskStartsLater(dateStr) {
   const iso = taskStartIso(dateStr);
-  return !!iso && iso > new Date().toISOString().slice(0, 10);
+  return !!iso && iso > new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
 export async function addSupTask({ taskName, owner, assignedDate, dueDate, notes }) {

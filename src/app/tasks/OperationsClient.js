@@ -686,9 +686,9 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
               <Fl label="Start"><input className="lsems-input" placeholder="Today (DD/Mon/YYYY)" value={addForm.assignedDate} onChange={e=>setAddForm(f=>({...f,assignedDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
               <Fl label="Due"><input className="lsems-input" placeholder="DD/Mon/YYYY" value={addForm.dueDate} onChange={e=>setAddForm(f=>({...f,dueDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
             </div>
-            {daysUntilDate(addForm.assignedDate) > 0 && (
+            {daysUntilDate(addForm.assignedDate) > 1 && (
               <div style={{fontSize:11,color:'var(--c-accent)',marginTop:-4}}>
-                Future start. The Discord announcement is held until 00:00 UTC on {addForm.assignedDate.trim()}.
+                Future start. The Discord announcement is held until 24 hours before {addForm.assignedDate.trim()} (00:00 UTC the day before).
               </div>
             )}
             <Fl label="Notes"><textarea className="lsems-input" style={{minHeight:68,resize:'vertical'}} value={addForm.notes} onChange={e=>setAddForm(f=>({...f,notes:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
@@ -713,7 +713,7 @@ export default function OperationsClient({ tasks:initial, supervisors, assignees
             </Fl>
             <Fl label="Start"><input className="lsems-input" placeholder="DD/Mon/YYYY" value={editForm.startDate||''} onChange={e=>setEditForm(f=>({...f,startDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>
             {!editTask.announced_at && editTask.status!=='Completed' && (
-              <div style={{fontSize:11,color:'var(--c-accent)',marginTop:-4}}>Not announced yet. Discord is notified at 00:00 UTC on the start date.</div>
+              <div style={{fontSize:11,color:'var(--c-accent)',marginTop:-4}}>Not announced yet. Discord is notified 24 hours before the start date (00:00 UTC the day before).</div>
             )}
             {editForm.status==='Completed' && (
               <Fl label="Completed Date"><input className="lsems-input" placeholder="DD/Mon/YYYY" value={editForm.completedDate} onChange={e=>setEditForm(f=>({...f,completedDate:e.target.value}))} onFocus={fr} onBlur={fb}/></Fl>

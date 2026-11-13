@@ -134,8 +134,8 @@ async function processMessage(msg, db) {
     const noteLink = govLink || `https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id}`;
     const taskNotes = `On LOA from ${startDate} to ${endDate}\n${noteLink}`;
     db.prepare(
-      `INSERT INTO sup_tasks (task_name, owner, status, assigned_date, due_date, notes, is_historical)
-       VALUES (?, '', 'Assigned', ?, ?, ?, 0)`
+      `INSERT INTO sup_tasks (task_name, owner, status, assigned_date, due_date, notes, is_historical, announced_at)
+       VALUES (?, '', 'Assigned', ?, ?, ?, 0, datetime('now'))`
     ).run(taskName, todayStr, dueDateStr, taskNotes);
     console.log(`[LOA Bot] Task created: ${taskName} (due ${dueDateStr})`);
     fetch(`https://discord.com/api/v10/channels/${NOTIFY_CHANNEL}/messages`, {
@@ -185,8 +185,8 @@ async function processResignation(msg, db) {
   const dueDateStr = `${String(dueD.getDate()).padStart(2,'0')}/${MONTH_NAMES[dueD.getMonth()]}/${dueD.getFullYear()}`;
 
   db.prepare(
-    `INSERT INTO sup_tasks (task_name, owner, status, assigned_date, due_date, notes, is_historical)
-     VALUES (?, '', 'Assigned', ?, ?, ?, 0)`
+    `INSERT INTO sup_tasks (task_name, owner, status, assigned_date, due_date, notes, is_historical, announced_at)
+     VALUES (?, '', 'Assigned', ?, ?, ?, 0, datetime('now'))`
   ).run(taskName, todayStr, dueDateStr, govLink || '');
 
   fetch(`https://discord.com/api/v10/channels/${NOTIFY_CHANNEL}/messages`, {
@@ -236,8 +236,8 @@ async function processRibbonRequest(msg, db) {
   const dueDateStr = `${String(dueD.getDate()).padStart(2,'0')}/${MONTH_NAMES[dueD.getMonth()]}/${dueD.getFullYear()}`;
 
   db.prepare(
-    `INSERT INTO sup_tasks (task_name, owner, status, assigned_date, due_date, notes, is_historical)
-     VALUES (?, '', 'Assigned', ?, ?, ?, 0)`
+    `INSERT INTO sup_tasks (task_name, owner, status, assigned_date, due_date, notes, is_historical, announced_at)
+     VALUES (?, '', 'Assigned', ?, ?, ?, 0, datetime('now'))`
   ).run(taskName, todayStr, dueDateStr, govLink || '');
 
   fetch(`https://discord.com/api/v10/channels/${NOTIFY_CHANNEL}/messages`, {
@@ -549,8 +549,10 @@ async function postToDiscord(channel, content, allowed_mentions) {
 
 // ── Scheduled task announcements ─────────────────────────────────
 // Tasks created with a future start date (sup_tasks.assigned_date) are saved
-// with announced_at = NULL. Post "New Task Added" once the start date has
-// arrived in UTC — i.e. at 00:00 UTC on that day (checked every minute).
+// with announced_at = NULL. Post "New Task Added" once the start is within
+// 24 hours — i.e. at 00:00 UTC the day before the start date (checked every
+// minute). Tasks the bot itself creates (LOA/resignation/ribbon) are pinged
+// immediately and saved with announced_at set, so they are never re-posted.
 function taskStartIso(s) {
   if (!s) return null;
   const str = String(s).trim();
@@ -572,13 +574,13 @@ async function announceStartingTasks() {
   try {
     db = new Database(DB_PATH);
     db.pragma('busy_timeout = 5000');
-    const todayUtc = new Date().toISOString().slice(0, 10);
+    const windowUtc = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const held = db.prepare(
       "SELECT id, task_name, owner, assigned_date, due_date FROM sup_tasks WHERE announced_at IS NULL AND status != 'Completed' AND is_historical = 0"
     ).all();
     for (const t of held) {
       const start = taskStartIso(t.assigned_date);
-      if (start && start > todayUtc) continue;           // not its day yet
+      if (start && start > windowUtc) continue;          // more than 24h out
       // Claim it first so a second run can never double-post.
       const claim = db.prepare("UPDATE sup_tasks SET announced_at = datetime('now') WHERE id = ? AND announced_at IS NULL").run(t.id);
       if (!claim.changes) continue;
